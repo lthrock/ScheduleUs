@@ -1,4 +1,4 @@
-lab4
+Final Project
 ====
 
-Lab 4: Programming with Javascript
+Final Project: Scheduling Helper
