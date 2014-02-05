@@ -10,6 +10,11 @@ label {
     margin-bottom: 20px;
 }
 
+/*.back-button {
+    font-weight: bold;
+    font-size: 15px;
+}*/
+
 .center-block {
   display: block;
   margin-left: auto;
@@ -17,33 +22,82 @@ label {
   text-align: center;
 }
 
+.table {
+    display:table;
+    width:100%;
+}
+.tr {
+    display:table-row;
+}
+.d1 {
+    display:table-cell;
+    width:20%;
+}
+.d2 {
+    display:table-cell;
+    text-align:center;
+    width:60%;
+}
+.d3 {
+    display:table-cell;
+    text-align:right;
+    width:20%;
+}
+
+/* d4 and d5 are used for a two column format, as seen in the preference
+    screen, where the time fields are located. */
+.d4 {
+    display:table-cell;
+    text-align:left;
+    width:90px;
+}
+.d5 {
+    display:table-cell;
+    text-align:left;
+    width:80px;
+}
+
+/*.divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+}*/
+
 /* applies to anything of class "example-class-selector" */
 .example-class-selector {
-	margin-top: 2em;
+    margin-top: 2em;
 }
 
 /* applies to any <p> descendants of an element of class "example-class-selector" */
 .example-class-selector p {
-	/* Colors are in hexadecimal: http://www.colorpicker.com/ */	
-	color: #CC00AA;
+    /* Colors are in hexadecimal: http://www.colorpicker.com/ */    
+    color: #CC00AA;
+}
+
+.header {
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.inline-button {
+    display: inline-block;
 }
 
 .jumbotron {
-	position: relative;
-	background: none;
+    position: relative;
+    background: none;
 }
 
 .jumbotron:after {
      content:"";
-     background: url("../images/Calendar.jpeg");
-     background-repeat: no-repeat;
+     background: url("../images/lorempixel.jumbotron.jpeg");
      opacity: 0.2;
      top: 0;
      left: 0;
      bottom: 0;
      right: 0;
      position: absolute;
-     z-index: -1;	
+     z-index: -1;   
 }
 
 .jumbotron p {
@@ -51,9 +105,5 @@ label {
 }
 
 .project a {
-     text-align: center;
-}
-
-.buttons {
      text-align: center;
 }
