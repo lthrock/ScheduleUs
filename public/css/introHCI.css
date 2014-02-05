@@ -16,7 +16,8 @@
 
 .jumbotron:after {
      content:"";
-     background: url("../images/lorempixel.jumbotron.jpeg");
+     background: url("../images/Calendar.jpeg");
+     background-repeat: no-repeat;
      opacity: 0.2;
      top: 0;
      left: 0;
@@ -31,5 +32,9 @@
 }
 
 .project a {
+     text-align: center;
+}
+
+.buttons {
      text-align: center;
 }
