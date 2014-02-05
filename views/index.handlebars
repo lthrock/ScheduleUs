@@ -5,10 +5,9 @@
 	<title>HCI Project Portfolio</title>	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="../public/css/bootstrap.min.css" rel="stylesheet">
-	<link href="../public/css/bootstrap-theme.min.css" rel="stylesheet">
-	<link href="../public/css/introHCI.css" rel="stylesheet">
-	<!-- this is a comment in HTML -->
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="/css/introHCI.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -20,64 +19,25 @@
 
 <body>
 	<div class="container">
-		<label>
-			Event name:
-			<input type="text" class="form-control" class = "top-buffer" placeholder="Event Name"><div>
-		</label>
-		<label>
-			People:
-			<input type="text" class="form-control" class = "top-buffer" placeholder="People"><div>
-		</label>
-		<label> Location:
-			<input type="text" class="form-control" class = "top-buffer" placeholder="Location"><div>
-		</label>
-		<label> 
-			Duration of event: 
-			<input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours"><div>
-		</label>
-		<!-- <input type="number" class="form-control" placeholder="Repeat"><div> -->
-		Repeat:
+		<!-- h1 through h6 are headers. The higher the number, the smaller the header -->
+		<!-- p means paragraph -->
+		<div class="jumbotron">
+      		<h1>TBD</h1>
+     		<p>Schedule time with your friends faster!</p>
+    	</div>
 
-		<select class="form-control">
-		  <option>Never</option>
-		  <option>Twice a Week</option>
-		  <option>Weekly</option>
-		  <option>Every Two Weeks</option>
-		  <option>Monthly</option>
-		</select>
-
-		<!-- <select class="form-control">
-		  <option>None</option>
-		  <option>1</option>
-		  <option>2</option>
-		  <option>4</option>
-		  <option>5</option>
-		  <option>6</option>
-		  <option>7</option>
-		</select> -->
-		<!-- times <div> per
-		<select class="form-control">
-		  <option>N/A</option>
-		  <option>1</option>
-		  <option>2</option>
-		  <option>4</option>
-		</select>
-		<select class="form-control">
-		  <option>N/A</option>
-		  <option>week</option>
-		  <option>month</option>
-		  <option>year</option>
-		</select>  -->
-
-
-	<div class="center-block">
-
-		<button id="testjs" class="btn btn-primary btn-lg">Confirm</button>
-		<button id="testjs" class="btn btn-primary btn-lg">Cancel</button>
+    	<div class="buttons">
+	    	<button id="create" class="btn btn-primary btn-lg">Create Event</button>
+	    	<a href="/view">
+		    	<button id="view" class="btn btn-primary btn-lg">View Events</button>
+		    </a>
+	    	<button id="settings" class="btn btn-primary btn-lg">Settings</button>
+	    </div>
 
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/introHCI.js"></script>
 </body>
 </html>
