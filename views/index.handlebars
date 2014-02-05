@@ -5,9 +5,9 @@
 	<title>HCI Project Portfolio</title>	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
-	<link href="/css/introHCI.css" rel="stylesheet">
+	<link href="../public/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../public/css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="../public/css/introHCI.css" rel="stylesheet">
 	<!-- this is a comment in HTML -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -20,34 +20,60 @@
 
 <body>
 	<div class="container">
-		<!-- h1 through h6 are headers. The higher the number, the smaller the header -->
-		<!-- p means paragraph -->
-		<div class="jumbotron">
-      		<h1>{{projectName}}</h1>
-     		<p>one-sentence description of project</p>
-    	</div>
+		<label>
+			Event name:
+			<input type="text" class="form-control" class = "top-buffer" placeholder="Event Name"><div>
+		</label>
+		<label>
+			People:
+			<input type="text" class="form-control" class = "top-buffer" placeholder="People"><div>
+		</label>
+		<label> Location:
+			<input type="text" class="form-control" class = "top-buffer" placeholder="Location"><div>
+		</label>
+		<label> 
+			Duration of event: 
+			<input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours"><div>
+		</label>
+		<!-- <input type="number" class="form-control" placeholder="Repeat"><div> -->
+		Repeat:
 
-		<ol>
-		    {{#each projects}}
-		      <li><a href="#{{id}}">{{name}}</a></li>
-		    {{/each}}
-	    </ol>
+		<select class="form-control">
+		  <option>Never</option>
+		  <option>Twice a Week</option>
+		  <option>Weekly</option>
+		  <option>Every Two Weeks</option>
+		  <option>Monthly</option>
+		</select>
+
+		<!-- <select class="form-control">
+		  <option>None</option>
+		  <option>1</option>
+		  <option>2</option>
+		  <option>4</option>
+		  <option>5</option>
+		  <option>6</option>
+		  <option>7</option>
+		</select> -->
+		<!-- times <div> per
+		<select class="form-control">
+		  <option>N/A</option>
+		  <option>1</option>
+		  <option>2</option>
+		  <option>4</option>
+		</select>
+		<select class="form-control">
+		  <option>N/A</option>
+		  <option>week</option>
+		  <option>month</option>
+		  <option>year</option>
+		</select>  -->
 
 
-		<h4>Projects</h4>
-		<!-- divs are invisible structuring elements that stack vertically by default. Use them to organize your code -->
-		<!-- img tags are images. Lorem Pixel will deliver random images; handy! -->
-		<!-- a are anchors, also known as hyperlinks. Use the href attribute to tell the browser where to go when the user clicks -->
+	<div class="center-block">
 
-
-		{{#each projects}}
-	      <div class="project" id="{{id}}">
-	        <a href="project/{{name}}" class="thumbnail">
-	          <img src="images/{{image}}" ... />
-	          <p>{{name}}</p>
-	        </a>
-	      </div>
-	    {{/each}}
+		<button id="testjs" class="btn btn-primary btn-lg">Confirm</button>
+		<button id="testjs" class="btn btn-primary btn-lg">Cancel</button>
 
 	</div>
 
