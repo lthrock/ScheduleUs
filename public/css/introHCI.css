@@ -110,5 +110,6 @@ label {
 }
 
 .buttons {
+     /*vertical-align: center;*/
      text-align: center;
 }
