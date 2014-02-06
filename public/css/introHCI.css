@@ -86,6 +86,7 @@ label {
 .jumbotron {
     position: relative;
     background: none;
+    padding-top: 100px;
 }
 
 .jumbotron:after {
