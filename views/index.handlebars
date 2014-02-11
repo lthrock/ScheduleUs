@@ -8,6 +8,16 @@
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
 	<link href="/css/introHCI.css" rel="stylesheet">
+	<script type="text/javascript">
+    	(function () {
+	      var po = document.createElement('script');
+	      po.type = 'text/javascript';
+	      po.async = true;
+	      po.src = 'https://plus.google.com/js/client:plusone.js?onload=start';
+	      var s = document.getElementsByTagName('script')[0];
+	      s.parentNode.insertBefore(po, s);
+	    })();
+  	</script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -26,22 +36,73 @@
      		<!-- <br><br> -->
     	</div>
 
-    	<div class="buttons">
-    		<a href="/create">
-		    	<button id="create" class="btn btn-primary btn-lg">Create Event</button>
-		    </a>
-	    	<a href="/view">
-		    	<button id="view" class="btn btn-primary btn-lg">View Events</button>
-		    </a>
-		    <a href="/settings">
-		    	<button id="settings" class="btn btn-primary btn-lg">Preferences</button>
-		    </a>
-	    </div>
+	<div id="signinButton">
+	  <span class="g-signin"
+	    data-scope="https://www.googleapis.com/auth/plus.login"
+	    data-clientid="93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercontent.com";
+	    data-redirecturi="http://localhost:3000/"
+	    data-accesstype="offline"
+	    data-cookiepolicy="single_host_origin"
+	    data-callback="signInCallback">
+	  </span>
+	</div>
+	<div class="buttons">
+		<a href="/create">
+	    	<button id="create" class="btn btn-primary btn-lg" style="display:none;">Create Event</button>
+	    </a>
+		<a href="/view">
+	    	<button id="view" class="btn btn-primary btn-lg" style="display:none;">View Events</button>
+	    </a>
+	    <a href="/settings">
+	    	<button id="settings" class="btn btn-primary btn-lg" style="display:none;">Preferences</button>
+	    </a>
+	</div>
+	<div id="results"></div>
 
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	<script src="/js/introHCI.js"></script>
+	<script type="text/javascript">
+		function signInCallback(authResult) {
+			if (authResult['code']) {
+
+			// Show the typical buttons of the app
+		    $('.buttons button').show();
+		    
+		    // Hide the sign-in button now that the user is authorized, for example:
+		    $('#signinButton').attr('style', 'display: none');
+
+
+		    // Send the code to the server
+		    $.ajax({
+		      type: 'POST',
+		      url: 'localhost:3000/',
+		      contentType: 'application/octet-stream; charset=utf-8',
+		      success: function(result) {
+		        // Handle or verify the server response if necessary.
+
+		        // Prints the list of people that the user has allowed the app to know
+		        // to the console.
+		        console.log(result);
+		        if (result['profile'] && result['people']){
+		          $('#results').html('Hello ' + result['profile']['displayName'] + '. You successfully made a server side call to people.get and people.list');
+		        } else {
+		          $('#results').html('Failed to make a server-side call. Check your configuration and console.');
+		        }
+		      },
+		      processData: false,
+		      data: authResult['code']
+		    });
+		  } else if (authResult['error']) {
+		    // There was an error.
+		    // Possible error codes:
+		    //   "access_denied" - User denied access to your app
+		    //   "immediate_failed" - Could not automatially log in the user
+		    // console.log('There was an error: ' + authResult['error']);
+		  }
+		}
+	</script>
 </body>
 </html>
