@@ -40,6 +40,19 @@ if ('development' == app.get('env')) {
 
 // Add routes here
 app.get('/', index.view);
+
+// TODO: This needs to get moved to index.js - it needs to save the body data somehow
+app.post('/', function(req, res) {
+	var chunk = '';
+	req.on('data', function(data) {
+      console.log("Received body data:");
+      chunk += data;
+    });
+    req.on('end', function() {
+      console.log("OK " + chunk);
+      res.send({'profile': 'wtf', 'people': 'wtf2'})
+    });
+});
 app.get('/view', events.viewEvents);
 app.get('/create', events.createEvent);
 app.get('/settings', settings.view);

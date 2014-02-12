@@ -87,12 +87,14 @@ label {
     position: relative;
     background: none;
     padding-top: 100px;
+    text-align: center;
 }
 
 .jumbotron:after {
      content:"";
      background: url("../images/Calendar.jpeg");
      background-repeat: no-repeat;
+     background-size: cover;
      opacity: 0.2;
      top: 0;
      left: 0;

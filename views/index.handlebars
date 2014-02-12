@@ -36,7 +36,7 @@
      		<!-- <br><br> -->
     	</div>
 
-	<div id="signinButton">
+	<div class="buttons" id="signinButton">
 	  <span class="g-signin"
 	    data-scope="https://www.googleapis.com/auth/plus.login"
 	    data-clientid="93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercontent.com";
@@ -67,6 +67,7 @@
 	<script type="text/javascript">
 		function signInCallback(authResult) {
 			if (authResult['code']) {
+				console.log("authResult has a code! " + authResult['code']);
 
 			// Show the typical buttons of the app
 		    $('.buttons button').show();
@@ -78,7 +79,7 @@
 		    // Send the code to the server
 		    $.ajax({
 		      type: 'POST',
-		      url: 'localhost:3000/',
+		      url: '/',
 		      contentType: 'application/octet-stream; charset=utf-8',
 		      success: function(result) {
 		        // Handle or verify the server response if necessary.
