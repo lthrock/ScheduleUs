@@ -115,6 +115,7 @@ var getData = function() {
   });
 };
 
+app.get('/add', events.addEvent);
 // app.get('/project', project.viewProject);
 // app.get('/project/:name', project.viewProject);
 // Example route

@@ -9,3 +9,7 @@ exports.viewEvents = function(req, res){
 exports.editEvent = function(req, res){
   res.render('editEvent');
 };
+
+exports.addEvent = function(req, res){
+	res.render('confirm');
+};
