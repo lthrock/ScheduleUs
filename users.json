@@ -9,22 +9,16 @@
 				["14:2:14:15:00", "14:2:14:16:00"],
 				["", ""],
 			],
-			"pendingEvents": [
-				{
-					"organizer": "lucast@stanford.edu",
-					"eventName": "147workParty",
-					"eventDuration": "5.0",
-					"eventLocation": "Branner",
-					// "repeat": "",
-					"timePeriod": ["true, true, true"],
-					"guests": [
-						["lucast@stanford.edu", "true"],
-						["ekfrey@stanford.edu", "true"],
-						["dwang21@stanford.edu", "false"]
-					]
-
-				}
+			"eventsAwaitingConfirmation": [
+				"0000000001"
 			],
+			"pendingEvents": [
+
+			],
+			"invites": [
+
+			],
+
 			"dayStart": "7:00",
 			"dayEnd": "22:00"
 		},
@@ -37,6 +31,16 @@
 				["14:2:14:14:00", "14:2:14:16:00"],
 				["14:2:14:16:00", "14:2:14:17:00"],
 			],
+			"eventsAwatingConfirmation": [
+				"0000000001"
+			],
+			"pendingEvents": [
+				"0000000001"
+			],
+			"invites": [
+
+			],
+
 			"dayStart": "8:30",
 			"dayEnd": "20:00"
 		},
@@ -48,8 +52,38 @@
 				["14:2:14:16:00", "14:2:14:18:00"],
 				["14:2:14:20:00", "14:2:14:20:30"],
 			],
+			"eventsAwatingConfirmation": [
+				
+			],
+			"pendingEvents": [
+
+			],
+			"invites": [
+				"0000000001"
+			],
+
 			"dayStart": "10:00",
 			"dayEnd": "21:00"	
 		}
+	],
+
+	"events": [
+		{	
+			"id": "0000000001",
+			"organizer": "lucast@stanford.edu",
+			"eventName": "147workParty",
+			"eventDuration": "5.0",
+			"eventLocation": "Branner",
+			// "repeat": "",
+			"timePeriod": ["true, true, true"],
+			"guests": [
+				["lucast@stanford.edu", "true"],
+				["ekfrey@stanford.edu", "true"],
+				["dwang21@stanford.edu", "false"]
+			]
+
+		}
+
+
 	]
 }
