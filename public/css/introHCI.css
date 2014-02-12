@@ -3,12 +3,12 @@ label, input {
 }
 
 button {
-     margin-top: 15px;
+     margin-top: 5px;
 }
 
-label {
+/*label {
     margin-bottom: 20px;
-}
+}*/
 
 /*.back-button {
     font-weight: bold;
