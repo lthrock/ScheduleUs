@@ -143,15 +143,15 @@ exports.editEvent = function(req, res){
 };
 
 exports.addEvent = function(req, res){
-	var organizer = ;
-	var eventName = ;
-	var eventDuration = ;
-	var eventLocation = ;
+	var organizer = req.app.get("current_user");
+	var eventName = req.query.name;
+	var eventDuration = req.query.duration;
+	var eventLocation = req.query.location;
+	// var morning = 
+	// if (req.query.morning) {
+
+	// }
 	var morningAfternoonEvening = [];
 	var guests = new Array();
-	
-
-
-
 	res.render('confirm');
 };
