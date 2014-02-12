@@ -57,6 +57,7 @@ app.get('/view', events.viewEvents);
 app.get('/create', events.createEvent);
 app.get('/settings', settings.view);
 app.get('/edit', events.editEvent);
+app.get('/add', events.addEvent);
 // app.get('/project', project.viewProject);
 // app.get('/project/:name', project.viewProject);
 // Example route
