@@ -11,6 +11,7 @@
 			],
 			"pendingEvents": [
 				{
+					"organizer": "lucast@stanford.edu",
 					"eventName": "147workParty",
 					"eventDuration": "5.0",
 					"eventLocation": "Branner",
