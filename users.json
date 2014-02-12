@@ -15,7 +15,7 @@
 					"eventName": "147workParty",
 					"eventDuration": "5.0",
 					"eventLocation": "Branner",
-					"repeat": "",
+					// "repeat": "",
 					"timePeriod": ["true, true, true"],
 					"guests": [
 						["lucast@stanford.edu", "true"],
