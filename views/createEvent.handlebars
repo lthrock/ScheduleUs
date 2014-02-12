@@ -39,41 +39,38 @@
 		</div>
 
 
-		<div class="container">
-			<label>
-				Event name:
-				<input type="text" class="form-control" class = "top-buffer" placeholder="Event Name"><div>
-			</label>
-			<label>
-				Add guests:
-				<input type="text" class="form-control" class = "top-buffer" placeholder="Enter email addresses"><div>
-			</label>
-			<label>
-				Location:
-				<input type="text" class="form-control" class = "top-buffer" placeholder="Location"><div>
-			</label>
-			<label> 
-				Duration of event: 
-				<input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours"><div>
-			</label>
-			<!-- <input type="number" class="form-control" placeholder="Repeat"><div> -->
-			
+		
+		<form id="addFriendForm" role="form" method="get" action="/add">
+			<div class="form-group">
+				<label>Event name:</label>
+				<input type="text" class="form-control" class="top-buffer" placeholder="Event Name" name="name"><div>
+			</div>
+			<div class="form-group">
+				<label>Add guests:</label>
+				<input type="text" class="form-control" class="top-buffer" placeholder="Enter email addresses" name="attendees"><div>
+			</div>
+			<div class="form-group">
+				<label>Location:</label>
+				<input type="text" class="form-control" class="top-buffer" placeholder="Location" name="location"><div>
+			</div>
+			<div class="form-group">
+				<label>Duration of event:</label>
+				<input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours" name="duration"><div>
+			</div>
 
-			<label> 
-	   		<span class ="clearfix">
-				Repeat:
-				<select class="form-control">
+			<div class="form-group">
+				<label>Repeat:</label> 
+				<select class="form-control" name="repeat">
 				  <option>Never</option>
 				  <option>Twice a Week</option>
 				  <option>Weekly</option>
 				  <option>Every Two Weeks</option>
 				  <option>Monthly</option>
 				</select>
-			</span>
-			</label> 
+			</div>
 
-			<label> 
-				Schedule the event and notify me exactly
+			<!-- <label> 
+				Notify me exactly
 				<select class="form-control">
 					<option>now!</option>
 					<option>1 day</option>
@@ -85,62 +82,32 @@
 					<option>7 days</option>
 				</select>
 				in advance of the event.
-			</label> 
-
-			<form class="form-horizontal">
-				<div class="center-block">
-				<strong>Times event can occur:</strong>
-				</div>
-				<div class="center-block">
-	    		<label class="radio-inline">
-	     			<input id="inlineradio1" name="sampleinlineradio" type="checkbox" value="option1">Morning
-	     		</label>
-	    		<label class="radio-inline">
-	     			<input id="inlineradio2" name="sampleinlineradio" type="checkbox" value="option2">Afternoon
-	     		</label>
-	    		<label class="radio-inline">
-	     			<input id="inlineradio3" name="sampleinlineradio" type="checkbox" value="option3">Evening
-	    		</label>
-	   		</form>
-
-			<!-- <select class="form-control">
-			  <option>None</option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>4</option>
-			  <option>5</option>
-			  <option>6</option>
-			  <option>7</option>
-			</select> -->
-			<!-- times <div> per
-			<select class="form-control">
-			  <option>N/A</option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>4</option>
-			</select>
-			<select class="form-control">
-			  <option>N/A</option>
-			  <option>week</option>
-			  <option>month</option>
-			  <option>year</option>
-			</select>  -->
-
-		
-			
-
-
-
-
-
+			</label>  -->
 
 			<div class="center-block">
-				<button id="testjs" class="btn btn-primary btn-lg">Confirm</button>
-				<!-- <div class="divider"/> -->
-				<button id="testjs" class="btn btn-primary btn-lg">Cancel</button>
+				<strong>Times event can occur:</strong>
 			</div>
-		</div>
-	</form>
+			<div class="center-block">
+	    		<label class="radio-inline">
+	     			<input type="checkbox" name="morning">Morning
+	     		</label>
+	    		<label class="radio-inline">
+	     			<input type="checkbox" name="afternoon">Afternoon
+	     		</label>
+	    		<label class="radio-inline">
+	     			<input type="checkbox" name="evening">Evening
+	    		</label>
+	    	</div>
+	    	<div class="center-block">
+		   		<input type="submit" id="submitBtn" class="btn btn-primary" value="Confirm"></input>
+	   		</div>
+	   	</form>
+	<!-- 	<div class="center-block">
+			<button id="testjs" class="btn btn-primary btn-lg">Confirm</button>
+			<div class="divider"/>
+			<button id="testjs" class="btn btn-primary btn-lg">Cancel</button>
+		</div> -->
+	<!-- </form> -->
 	</div>
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
