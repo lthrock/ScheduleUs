@@ -3,11 +3,14 @@
 		{
 			"name": "Lucas Throckmorton",
 			"email": "lucast@stanford.edu",
-			"calendar": [ // [start, end] => year:month:day:hour:minute
+			"calendar": [ // [start, end] => year:month:day:hour:minute (may get rid of)
 				["14:2:14:8:00", "14:2:14:9:00"],
 				["14:2:14:11:00", "14:2:14:13:00"],
 				["14:2:14:15:00", "14:2:14:16:00"],
 				["", ""],
+			],
+			"eventsToSchedule": [
+
 			],
 			"eventsAwaitingConfirmation": [
 				"0000000001"
@@ -80,8 +83,8 @@
 				["lucast@stanford.edu", "true"],
 				["ekfrey@stanford.edu", "true"],
 				["dwang21@stanford.edu", "false"]
-			]
-
+			],
+			"time": "" // (Date) start
 		}
 
 
