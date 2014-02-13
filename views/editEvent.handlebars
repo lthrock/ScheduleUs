@@ -38,85 +38,77 @@
 		    </div>
 		</div>
 
+		<form id="addFriendForm" role="form" method="get" action="/add">
+			<div class="form-group">
+				<label>Event name:</label>
+				<input type="text" class="form-control" class="top-buffer" value="Event Name" name="name"><div>
+			</div>
+			<div class="form-group">
+				<label>Add guests:</label>
+				<input type="text" class="form-control" class="top-buffer" value="Enter email addresses" name="attendees"><div>
+			</div>
+			<div class="form-group">
+				<label>Location:</label>
+				<input type="text" class="form-control" class="top-buffer" value="Location" name="location"><div>
+			</div>
+			<div class="form-group">
+				<label>Duration of event:</label>
+				<input type="number" class="form-control" class = "top-buffer" value="1.5" name="duration"><div>
+			</div>
 
+<!-- 			<div class="form-group">
+				<label>Repeat:</label> 
+				<select class="form-control" name="repeat">
+				  <option>Never</option>
+				  <option>Twice a Week</option>
+				  <option>Weekly</option>
+				  <option>Every Two Weeks</option>
+				  <option>Monthly</option>
+				</select>
+			</div> -->
 
-		<label>
-			Event name:
-			<input type="text" class="form-control"  class = "top-buffer" value="Event Name"><div>
-		</label>
-		<label>
-			Add guests:
-			<input type="text" class="form-control" class = "top-buffer" value="Enter email addresses"><div>
-		</label>
-		<label> Location:
-			<input type="text" class="form-control" class = "top-buffer" value="Location"><div>
-		</label>
-		<label> 
-			Duration of event (hours): 
-			<input type="number" class="form-control" class = "top-buffer" value="1.5"><div>
-		</label>
-		
+			<!-- <label> 
+				Notify me exactly
+				<select class="form-control">
+					<option>now!</option>
+					<option>1 day</option>
+					<option>2 days</option>
+					<option>3 days</option>
+					<option>4 days</option>
+					<option>5 days</option>
+					<option>6 days</option>
+					<option>7 days</option>
+				</select>
+				in advance of the event.
+			</label>  -->
 
-		<label> 
-   		<span class ="clearfix">
-			Repeat:
-			<select class="form-control">
-			  <option>Never</option>
-			  <option>Twice a Week</option>
-			  <option>Weekly</option>
-			  <option>Every Two Weeks</option>
-			  <option>Monthly</option>
-			</select>
-		</span>
-		</label> 
-
-		<label> 
-			Schedule the event and notify me exactly
-			<select class="form-control">
-				<option>now!</option>
-				<option>1 day</option>
-				<option>2 days</option>
-				<option>3 days</option>
-				<option>4 days</option>
-				<option>5 days</option>
-				<option>6 days</option>
-				<option>7 days</option>
-			</select>
-			in advance of the event.
-		</label> 
-
-		<form class="form-horizontal">
 			<div class="center-block">
-			<strong>Times event can occur:</strong>
+				<strong>Times event can occur:</strong>
 			</div>
 			<div class="center-block">
-     		<!-- <label class="radio-inline"><strong>Times event can occur:</strong></label> -->
-    		<label class="radio-inline">
-     			<input id="inlineradio1" name="sampleinlineradio" type="checkbox" value="option1">Morning
-     		</label>
-    		<label class="radio-inline">
-     			<input id="inlineradio2" name="sampleinlineradio" type="checkbox" value="option2">Afternoon
-     		</label>
-    		<label class="radio-inline">
-     			<input id="inlineradio3" name="sampleinlineradio" type="checkbox" value="option3">Evening
-    		</label>
-   		</form>
+	    		<label class="radio-inline">
+	     			<input type="checkbox" name="morning">Morning
+	     		</label>
+	    		<label class="radio-inline">
+	     			<input type="checkbox" name="afternoon">Afternoon
+	     		</label>
+	    		<label class="radio-inline">
+	     			<input type="checkbox" name="evening">Evening
+	    		</label>
+	    	</div>
+	    	<div class="center-block">
+		   		<input type="submit" id="submitBtn" class="btn btn-primary" value="Confirm"></input>
+		   		<a href="/view">
+		   			<button id="delete" class="btn btn-primary">Delete</button>
+		   		</a>
+	   		</div>
+	   	</form>
 
-
-
-	
-		
-
-
-
-
-
-
-		<div class="center-block">
+		<!-- <div class="center-block">
 			<button id="testjs" class="btn btn-primary btn-lg">Confirm</button>
-			<!-- <div class="divider"/> -->
+			<div class="divider"/>
 			<button id="testjs" class="btn btn-primary btn-lg">Delete</button>
-		</div>
+		</div> -->
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>

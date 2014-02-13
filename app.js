@@ -11,7 +11,7 @@ var googleapis = require('googleapis');
 var OAuth2Client = googleapis.OAuth2Client;
 var gcal = require('google-calendar');
 
-var index = require('./routes/index');
+// var index = require('./routes/index');
 var events = require('./routes/events');
 var settings = require('./routes/settings');
 
@@ -70,6 +70,7 @@ app.get('/view', events.viewEvents);
 app.get('/create', events.createEvent);
 app.get('/settings', settings.view);
 app.get('/edit', events.editEvent);
+app.get('/add', events.addEvent);
 
 var myClient;
 
@@ -119,7 +120,6 @@ var getData = function() {
   });
 };
 
-app.get('/add', events.addEvent);
 // app.get('/project', project.viewProject);
 // app.get('/project/:name', project.viewProject);
 // Example route

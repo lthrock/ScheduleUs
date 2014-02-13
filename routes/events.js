@@ -61,74 +61,161 @@ function findOverlap(firstEventStart, firstEventEnd, secondEventStart, secondEve
  * where each day is its own array containing all the free blocks 
  * of time.
  */
-function convertToDaysAndFreetime(calendar) {
-	var days = new Array();
+function convertToFreetime(calendar) {
+	var times = new Array();
 	var daysEvents = new Array();
 
-	var currYear = 0;
-	var currMonth = 0;
-	var currDay = 0;
+	var currYear = "2000";
+	var currMonth = "01";
+	var currDay = "01";
 	var hour, minute;
 
-	var lastEnd = "0:00";
+	var lastEnd = "00:00";
 
 	for (var i = 0; i < calendar.length; i++) {
-		var start = calendar[i][0].split(":");
-		var end = calendar[i][1].split(":");
 
-		var newYear = start[0];
-		var newMonth = start[1];
-		var newDay = start[2];
+
+
+		var start = new Date(Date.parse(calendar[i][0]));
+		var end = new Date(Date.parse(calendar[i][1]));
+
+		var newYear = "" + start.getFullYear();
+		var newMonth = start.getMonth() + 1;
+		newMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+		var newDay = "" + start.getDate();
+		newDay = (newDay < 10) ? "0" + newDay : "" + newDay;
+
+
 
 		if (newDay == currDay && newMonth == currMonth && newYear == currYear) {
-			daysEvents.push([lastEnd, start[3] + ":" + start[4]]);
+			times.push([ 
+				new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
+				new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " +start.getHours() + ":" + start.getMinutes()))
+			]);
 
-			if (start[0] == end[0] && start[1] == end[1] && start[2] == end[2]) {
-				lastEnd = end[3] + ":" + end[4];
+			if (start.getFullYear() == end.getFullYear() && start.getMonth() == end.getMonth() && start.getDate() == end.getDate()) {
+				lastEnd = end.getHours() + ":" + end.getMinutes() + ":00 GMT-0800";
 			} else {
-				lastEnd = "24:00"
+				lastEnd = "23:59:59 GMT-0800"
 			}
 			
 		} else {
-			if (currYear != 0) {
-				daysEvents.push([lastEnd, "24:00"]);
-				days.push([currYear + ":" + currMonth + ":" + currDay, daysEvents]);
-				daysEvents = new Array();
-				daysEvents.push(["0:00", start[3] + ":" + start[4]]);
-				lastEnd = end[3] + ":" + end[4];
-				
+			if (currYear != "2000") {
+				times.push([ 
+					new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
+					new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
+				]);
+
+				times.push([ 
+					new Date(Date.parse(newYear + "/" + newMonth + "/" + newDay + " " + "00:00:00 GMT-0800")), 
+					new Date(Date.parse(newYear + "/" + newMonth + "/" + newDay + " " + start.getHours() + ":" + start.getMinutes()))
+				]);
+
 
 			} else {
-				daysEvents.push([lastEnd, start[3] + ":" + start[4]]);
-				lastEnd = end[3] + ":" + end[4];
+				times.push([ 
+					new Date(Date.parse(newYear + "/" + newMonth + "/" + newDay + " " + lastEnd)), 
+					new Date(Date.parse(newYear + "/" + newMonth + "/" + newDay + " " + start.getHours() + ":" + start.getMinutes()))
+				]);
+
+				
 			}
+			lastEnd = end.getHours() + ":" + end.getMinutes() + ":00 GMT-0800";
 			currYear = newYear;
 			currMonth = newMonth;
 			currDay = newDay;
 		}
 	}
-	daysEvents.push([lastEnd, "24:00"]);
-	days.push([currYear + ":" + currMonth + ":" + currDay, daysEvents]);
-	return days;
+
+	times.push([ 
+		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
+		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
+	]);
+	return times;
+}
+
+function createWeekMasterSchedule(morningAfternoonEvening, dayStart, dayEnd, startDate) {
+	var masterSchedule = new Array();
+
+
+	for (var i = 0; i < 6; i++) {
+		var start = new Date(Date.parse(startDate));
+		var nextDay = new Date(start.getTime() + i*(24 * 60 * 60 * 1000));
+		var date = "" + nextDay.getFullYear() + "/" + (nextDay.getMonth()+1) + "/" + nextDay.getDate();
+
+		if (morningAfternoonEvening[0] && morningAfternoonEvening[1] && morningAfternoonEvening[2]) {
+			masterSchedule.push([
+				new Date(Date.parse(date + " " + dayStart + " GMT-0800")),
+				new Date(Date.parse(date + " " + dayEnd + " GMT-0800"))
+			]);
+		} else if (morningAfternoonEvening[0] && morningAfternoonEvening[1]) {
+			masterSchedule.push([
+				new Date(Date.parse(date + " " + dayStart + " GMT-0800")),
+				new Date(Date.parse(date + " 17:00:00 GMT-0800"))
+
+			]);
+		} else if (morningAfternoonEvening[1] && morningAfternoonEvening[2]) {
+			masterSchedule.push([
+				new Date(Date.parse(date + " 12:00:00 GMT-0800")),
+				new Date(Date.parse(date + " " + dayEnd + " GMT-0800"))
+			]);
+		} else {
+			if (morningAfternoonEvening[0]) {
+				masterSchedule.push([
+					new Date(Date.parse(date + " " + dayStart + " GMT-0800")),
+					new Date(Date.parse(date + " 12:00:00 GMT-0800"))
+				]);
+			}
+			if (morningAfternoonEvening[1]) {
+				masterSchedule.push([
+					new Date(Date.parse(date + " 12:00:00 GMT-0800")),
+					new Date(Date.parse(date + " 17:00:00 GMT-0800"))
+				]);
+			}
+			if (morningAfternoonEvening[2]) {
+				masterSchedule.push([
+					new Date(Date.parse(date + " 17:00:00 GMT-0800")),
+					new Date(Date.parse(date + " " + dayEnd + " GMT-0800"))
+				]);
+			}
+
+		}
+	}
+	return masterSchedule;
 }
 
 
-/*
- *  Example calendar array, to be passed into convertToDaysAndFreetime
- *
- *	var calendar = [
- *			["14:2:14:9:00", "14:2:14:9:30"],
- *			["14:2:14:12:00", "14:2:14:13:00"],
- *			["14:2:14:14:00", "14:2:14:16:00"],
- *			["14:2:14:16:00", "14:2:14:17:00"],
- *			["14:3:14:9:00", "14:3:14:9:30"],
- *			["14:3:14:12:00", "14:3:14:13:00"],
- *			["14:3:14:14:00", "14:3:14:16:00"],
- *			["14:3:14:16:00", "14:3:14:17:00"],
- *		];
- */
+// var calendar1 = [
+// 			["2014-02-14 08:00:00 GMT-0800", "2014-02-14 10:30:00 GMT-0800"],
+// 			["2014-02-14 12:00:00 GMT-0800", "2014-02-14 13:00:00 GMT-0800"],
+// 			["2014-02-14 14:00:00 GMT-0800", "2014-02-14 16:00:00 GMT-0800"],
+// 			["2014-02-14 17:00:00 GMT-0800", "2014-02-14 18:00:00 GMT-0800"],
+// 			["2014-02-15 09:00:00 GMT-0800", "2014-02-15 09:30:00 GMT-0800"],
+// 			["2014-02-15 12:00:00 GMT-0800", "2014-02-15 13:00:00 GMT-0800"],
+// 			["2014-02-15 14:00:00 GMT-0800", "2014-02-15 14:30:00 GMT-0800"],
+// 			["2014-02-15 15:00:00 GMT-0800", "2014-02-15 17:00:00 GMT-0800"],
+// 		];
+
+// var calendar2 = [
+// 			["2014-02-14 08:00:00 GMT-0800", "2014-02-14 09:30:00 GMT-0800"],
+// 			["2014-02-14 12:00:00 GMT-0800", "2014-02-14 13:00:00 GMT-0800"],
+// 			["2014-02-14 14:00:00 GMT-0800", "2014-02-14 16:00:00 GMT-0800"],
+// 			["2014-02-14 16:00:00 GMT-0800", "2014-02-14 17:00:00 GMT-0800"],
+// 			["2014-02-15 09:00:00 GMT-0800", "2014-02-15 09:30:00 GMT-0800"],
+// 			["2014-02-15 12:00:00 GMT-0800", "2014-02-15 13:00:00 GMT-0800"],
+// 			["2014-02-15 14:00:00 GMT-0800", "2014-02-15 16:00:00 GMT-0800"],
+// 			["2014-02-15 16:00:00 GMT-0800", "2014-02-15 17:00:00 GMT-0800"],
+// 		];
 
 
+// var freeCal1 = convertToFreetime(calendar1);
+// var freeCal2 = convertToFreetime(calendar2);
+// var masterSchedule = createWeekMasterSchedule([true, true, false], "09:00:00", "21:00:00", "2014-02-14 14:00:00 GMT-0800")
+
+// var masterSchedule = scheduler(masterSchedule, [freeCal1, freeCal2], 30);
+// console.log(masterSchedule);
+
+var users = require("../users.json");
 
 exports.createEvent = function(req, res){
   res.render('createEvent');
@@ -143,15 +230,43 @@ exports.editEvent = function(req, res){
 };
 
 exports.addEvent = function(req, res){
-	var organizer = ;
-	var eventName = ;
-	var eventDuration = ;
-	var eventLocation = ;
+	var organizer = req.app.get("current_user");
+	var eventName = req.query.name;
+	var eventDuration = req.query.duration;
+	var eventLocation = req.query.location;
 	var morningAfternoonEvening = [];
-	var guests = new Array();
-	
-
-
-
+	if (req.query.morning) {
+		morningAfternoonEvening.push(true);
+	} else {
+		morningAfternoonEvening.push(false);
+	}
+	if (req.query.afternoon) {
+		morningAfternoonEvening.push(true);
+	} else {
+		morningAfternoonEvening.push(false);
+	}
+	if (req.query.evening) {
+		morningAfternoonEvening.push(true);
+	} else {
+		morningAfternoonEvening.push(false);
+	}
+	var guests = [];
+	if (req.query.attendees != '') guests = req.query.attendees.split(", ");
+	var guestsArray = [[organizer, true]];
+	for (var i = 0; i < guests.length; i++) {
+		guestsArray.push([guests[i], false]);
+	}
+	var newEvent = {
+		"id": Date.now(),
+		"organizer": organizer,
+		"eventName": eventName,
+		"eventDuration": eventDuration,
+		"eventLocation": eventLocation,
+		"timePeriod": morningAfternoonEvening,
+		"guests": guestsArray,
+		"time": ""
+	}
+	users["events"].push(newEvent);
+	console.log(users["events"]);
 	res.render('confirm');
 };
