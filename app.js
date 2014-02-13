@@ -108,12 +108,37 @@ app.get('/oauth2callback', function(req, res) {
   });
 });
 
+var users = require("./users.json");
+
 // DO SHIT LIKE THIS FOR EVERY GOOGLE API
 var getData = function() {
 	var myClient = app.get('client');
   myClient.oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
        console.log(results);
        app.set('current_user', results['email']);
+       var newUser = {
+          "name": results['name'],
+          "email": results['email'],
+          "calendar": [
+            
+          ],
+          "eventsToSchedule": [
+
+          ],
+          "eventsAwaitingConfirmation": [
+            
+          ],
+          "pendingEvents": [
+
+          ],
+          "invites": [
+
+          ],
+
+          "dayStart": "10:00",
+          "dayEnd": "22:00"
+      };
+      users["users"].push(newUser);
   });
   myClient.calendar.calendarList.list().withAuthClient(oauth2Client).execute(function(err, results){
     // console.log(results);

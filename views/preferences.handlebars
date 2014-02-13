@@ -41,39 +41,39 @@
 		<div class="center-block"><h4> Start/End of Day: </h4></div>
 		<div class="center-block"><h5> In what time frame can events be scheduled? </h5></div>
 
-
-		<div class="table">
-		    <div class="tr">
-		        <div class="d4">
-					Starting as early as:
-		        </div>
-		        <div class="d5">	
-					<span class="header">
-						<span class="btn-group">
-							<input type="time" class="form-control" placeholder="Text input">
+		<form id="preferencesForm" role="form" method="get" action="/settings">
+			<div class="table">
+			    <div class="tr">
+			        <div class="d4">
+						Starting as early as:
+			        </div>
+			        <div class="d5">	
+						<span class="header">
+							<span class="btn-group">
+								<input type="time" class="form-control" value="{{startTime}}" name="start">
+							</span>
 						</span>
-					</span>
-		        </div>
-		    </div>
-		    <div class="tr">
-		    	<div class="d4">
-					Ending as late as:
-		        </div>
-		        <div class="d5">	
-					<span class="header">
-						<span class="btn-group">
-							<input type="time" class="form-control" placeholder="Text input">
+			        </div>
+			    </div>
+			    <div class="tr">
+			    	<div class="d4">
+						Ending as late as:
+			        </div>
+			        <div class="d5">	
+						<span class="header">
+							<span class="btn-group">
+								<input type="time" class="form-control" value="{{endTime}}" name="end">
+							</span>
 						</span>
-					</span>
-		        </div>
-		    </div>
-		</div>
+			        </div>
+			    </div>
+			</div>
 
-		<div class="buttons">
-			<a href="/">
-		    	<button id="index" class="btn btn-primary btn-lg">Save</button>
-		    </a>
-		</div>
+			<div class="buttons">
+			    	<!-- <button id="index" class="btn btn-primary btn-lg">Save</button> -->
+		    	<input type="submit" id="submitBtn" class="btn btn-primary btn-lg" value="Save"></input>
+			</div>
+		<form>
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>

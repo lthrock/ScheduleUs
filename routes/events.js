@@ -219,6 +219,7 @@ var users = require("../users.json");
 
 exports.createEvent = function(req, res){
   res.render('createEvent');
+  console.log(users["users"]);
 };
 
 exports.viewEvents = function(req, res){
