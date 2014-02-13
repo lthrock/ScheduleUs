@@ -41,22 +41,24 @@
 		<hr>
 
 		<div class="table">
-			<form>
-				<!-- {{#each invites}} -->
+			<!-- <form> -->
+				{{#each toSchedule}}
 				    <div class="tr">
 				        <div class="d12">	
 							<span class="list">
-								<span class="btn-group">Your event <!-- {{eventName}} -->STUDY PARTY at <!-- {{eventLocation}} -->Branner is ready to schedule!</span>
+								<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule!</span>
 							</span>
 				        </div>
 				        <div class="d3">
-				        	<input type="submit" id="{{id}}" class="btn btn-primary" value="Schedule!"></input>
+				        	<a href="schedule">
+					        	<button id="{{id}}" class="btn btn-primary">Schedule!</button>
+					        </a>
 				        </div>
 				    </div>
 				    <hr>
-				 <!-- {{/each}}    -->
+				{{/each}}   
 
-		   	</form>
+		   	<!-- </form> -->
 		</div>
 
 

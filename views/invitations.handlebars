@@ -41,22 +41,21 @@
 		<hr>
 
 		<div class="table">
-			<form>
-				{{#each invites}}
-				    <div class="tr">
-				        <div class="d12">	
-							<span class="list">
-								<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
-							</span>
-				        </div>
-				        <div class="d3">
-				        	<input type="submit" id="{{id}}" class="btn btn-primary" value="Confirm!"></input>
-				        </div>
-				    </div>
-				    <hr>
-				{{/each}}   
-
-		   	</form>
+			{{#each invites}}
+			    <div class="tr">
+			        <div class="d12">	
+						<span class="list">
+							<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+						</span>
+			        </div>
+			        <div class="d3">
+			        	<a href="confirm/{{id}}">
+				        	<button id="{{id}}" class="btn btn-primary">Confirm!</button>
+				        </a>
+			        </div>
+			    </div>
+			    <hr>
+			{{/each}}
 		</div>
 
 

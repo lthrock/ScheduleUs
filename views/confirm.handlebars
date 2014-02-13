@@ -31,7 +31,11 @@
 		        <!-- <div class="d3"></div> -->
 		    </div>
 		</div>
-		<p>You have successfully created your event. The other attendees have been sent a notification asking them to confirm the event before you may select a time.</p>
+		{{#if isOrganizer}}
+			<p>You have successfully created your event. The other attendees have been sent a notification asking them to confirm the event before you may select a time.</p>
+		{{else}}
+			<p>Thank you for confirming this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.</p>
+		{{/if}}
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>

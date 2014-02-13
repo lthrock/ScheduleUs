@@ -220,6 +220,7 @@ var users = require("../users.json");
 exports.createEvent = function(req, res){
   res.render('createEvent');
   console.log(users["users"]);
+  console.log(users["events"]);
 };
 
 exports.viewEvents = function(req, res){
@@ -283,12 +284,32 @@ exports.addEvent = function(req, res){
 		users["users"][currUser].invites.push(id);
 	}
 
-	console.log(users["events"]);
-	res.render('confirm');
+	// console.log(users);
+	res.render('confirm', {'isOrganizer': true });
 };
 
 exports.scheduleList = function(req, res){
-  res.render('readyToScheduleEvents');
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.app.get("current_user")) {
+			currUser = user;
+		}
+	}
+	// console.log(users["users"][currUser]);
+	toSchedule = []
+	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
+		console.log(j);
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
+				toSchedule.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+
+	console.log(toSchedule);
+  	res.render('readyToScheduleEvents', { 'toSchedule': toSchedule });
 };
 
 exports.invitations = function(req, res){
@@ -301,11 +322,11 @@ exports.invitations = function(req, res){
 	// console.log(users["users"][currUser]);
 	invites = []
 	for (var invite in users.users[currUser].invites) {
-		console.log(invite);
+		// console.log(invite);
 		for (var i in users["events"]) {
 			// console.log(users["users"][user]);
 			if (users["events"][i].id == users.users[currUser].invites[invite]) {
-				invites.push(users["events"][i])
+				invites.push(users["events"][i]);
 				break;
 			}
 		}
@@ -313,4 +334,53 @@ exports.invitations = function(req, res){
 
 	console.log(invites);
     res.render('invitations', { 'invites': invites });
+};
+
+exports.confirmEvent = function(req, res){
+	var id = req.params.id;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.app.get("current_user")) {
+			currUser = user;
+		}
+	}
+	var currEvent;
+	for (var i in users["events"]) {
+		// console.log(users["events"][i].id);
+		// console.log(id);
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var index = users.users[currUser].invites.indexOf(id);
+	users.users[currUser].invites.splice(index, 1);
+	var attendees = users.events[currEvent].guests;
+	for (var i in attendees){
+		if (attendees[i][0] == req.app.get("current_user"))
+			users.events[currEvent].guests[i][1] = true;
+	}
+	// console.log(users.events[currEvent].guests);
+	var readyToSchedule = true;
+	for (var i in attendees){
+		// console.log(attendees[i][1]);
+		if (!attendees[i][1]) {
+			readyToSchedule = false;
+			break;
+		}
+	}
+	if (readyToSchedule) {
+		var organizer = users.events[currEvent].guests[0][0];
+		for (var user in users["users"]) {
+			if (users["users"][user].email == organizer) {
+				console.log(users["users"][user]);
+				users["users"][user].eventsAwaitingConfirmation.push(id);
+				break;
+			}
+		}
+	}
+	res.render('confirm', {'isOrganizer': false });
+};
+
+exports.scheduleEvent = function(req, res){
+	res.render('schedule');
 };

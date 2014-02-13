@@ -73,6 +73,8 @@ app.get('/edit', events.editEvent);
 app.get('/add', events.addEvent);
 app.get('/readyToSchedule', events.scheduleList);
 app.get('/invitations', events.invitations);
+app.get('/confirm/:id', events.confirmEvent);
+app.get('/schedule', events.scheduleEvent);
 
 var myClient;
 
