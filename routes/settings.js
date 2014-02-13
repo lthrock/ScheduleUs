@@ -5,9 +5,6 @@ exports.view = function(req, res){
 	var startTime = req.query.start;
 	var endTime = req.query.end;
 
-	// var userData = $.grep(users["users"], function (item) {
-	//     return item.email == req.app.get("current_user");
-	// });
 	var currUser;
 	for (var user in users["users"]) {
 		// console.log(users["users"][user]);

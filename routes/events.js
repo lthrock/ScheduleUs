@@ -271,3 +271,11 @@ exports.addEvent = function(req, res){
 	console.log(users["events"]);
 	res.render('confirm');
 };
+
+exports.scheduleList = function(req, res){
+  res.render('readyToScheduleEvents');
+};
+
+exports.invitations = function(req, res){
+  res.render('invitations');
+};
