@@ -232,7 +232,7 @@ exports.editEvent = function(req, res){
 };
 
 exports.addEvent = function(req, res){
-	var organizer = req.app.get("current_user");
+	var organizer = req.session.current_user;
 	var eventName = req.query.name;
 	var eventDuration = req.query.duration;
 	var eventLocation = req.query.location;
@@ -262,7 +262,7 @@ exports.addEvent = function(req, res){
 	var id = Date.now();
 	var newEvent = {
 		"id": id,
-		"organizer": req.app.get("current_user_name"),
+		"organizer": req.session.current_user_name,
 		"eventName": eventName,
 		"eventDuration": eventDuration,
 		"eventLocation": eventLocation,
@@ -291,7 +291,7 @@ exports.addEvent = function(req, res){
 exports.scheduleList = function(req, res){
 	var currUser;
 	for (var user in users["users"]) {
-		if (users["users"][user].email == req.app.get("current_user")) {
+		if (users["users"][user].email == req.session.current_user) {
 			currUser = user;
 		}
 	}
@@ -315,16 +315,14 @@ exports.scheduleList = function(req, res){
 exports.invitations = function(req, res){
 	var currUser;
 	for (var user in users["users"]) {
-		if (users["users"][user].email == req.app.get("current_user")) {
+		if (users["users"][user].email == req.session.current_user) {
 			currUser = user;
 		}
 	}
-	// console.log(users["users"][currUser]);
+	console.log("CURRENT USER IS " + req.session.current_user);
 	invites = []
 	for (var invite in users.users[currUser].invites) {
-		// console.log(invite);
 		for (var i in users["events"]) {
-			// console.log(users["users"][user]);
 			if (users["events"][i].id == users.users[currUser].invites[invite]) {
 				invites.push(users["events"][i]);
 				break;
@@ -340,7 +338,7 @@ exports.confirmEvent = function(req, res){
 	var id = req.params.id;
 	var currUser;
 	for (var user in users["users"]) {
-		if (users["users"][user].email == req.app.get("current_user")) {
+		if (users["users"][user].email == req.session.current_user) {
 			currUser = user;
 		}
 	}
@@ -356,7 +354,7 @@ exports.confirmEvent = function(req, res){
 	users.users[currUser].invites.splice(index, 1);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
-		if (attendees[i][0] == req.app.get("current_user"))
+		if (attendees[i][0] == req.session.current_user)
 			users.events[currEvent].guests[i][1] = true;
 	}
 	// console.log(users.events[currEvent].guests);

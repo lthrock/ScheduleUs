@@ -8,7 +8,7 @@ exports.view = function(req, res){
 	var currUser;
 	for (var user in users["users"]) {
 		// console.log(users["users"][user]);
-		if (users["users"][user].email == req.app.get("current_user")) {
+		if (users["users"][user].email == req.session.current_user) {
 			currUser = user;
 		}
 	}

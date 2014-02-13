@@ -57,7 +57,7 @@ if ('development' == app.get('env')) {
 //app.get('/', index.view);
 app.get('/', function(req, res) {
 	var logged_in = true;
-	if (app.get('tokens') == null)
+  if (req.session.tokens == null)
 		logged_in = false;
 	data = {
 		"calendar_auth_url": calendar_auth_url,
@@ -89,7 +89,6 @@ googleapis
   .execute(function(err, client){
     if(!err) {
       app.set('client', client);
-      // callback(client);
   	}
   });
 
@@ -98,57 +97,47 @@ app.get('/oauth2callback', function(req, res) {
   var code = req.query.code;
   oauth2Client.getToken(code, function(err, tokens) {
   	oauth2Client.credentials = tokens;
+    req.session.tokens = tokens;
   	getData();
-  	app.set('tokens', tokens);
-  	  	
-  	var logged_in = true;
-	if (app.get('tokens') == null)
-		logged_in = false;
-	data = {
-		"calendar_auth_url": calendar_auth_url,
-		"logged_in": logged_in
-	}
-	res.render('index', data);
   });
+  
+  // DO SHIT LIKE THIS FOR EVERY GOOGLE API
+  var getData = function() {
+    var myClient = app.get('client');
+    myClient.oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
+         req.session.current_user = results['email'];
+         req.session.current_user_name = results['name'];
+         var newUser = {
+            "name": results['name'],
+            "email": results['email'],
+            "calendar": [],
+            "eventsToSchedule": [],
+            "eventsAwaitingConfirmation": [],
+            "pendingEvents": [],
+            "invites": [],
+            "dayStart": "10:00",
+            "dayEnd": "22:00"
+        };
+        users["users"].push(newUser);
+          
+      var logged_in = true;
+      if (req.session.tokens == null)
+        logged_in = false;
+      data = {
+        "calendar_auth_url": calendar_auth_url,
+        "logged_in": logged_in
+      }
+      res.render('index', data);
+    });
+    
+    myClient.calendar.calendarList.list().withAuthClient(oauth2Client).execute(function(err, results){
+      // console.log(results);
+    });
+  };
 });
 
 var users = require("./users.json");
 
-// DO SHIT LIKE THIS FOR EVERY GOOGLE API
-var getData = function() {
-	var myClient = app.get('client');
-  myClient.oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
-       console.log(results);
-       app.set('current_user', results['email']);
-       app.set('current_user_name', results['name']);
-       var newUser = {
-          "name": results['name'],
-          "email": results['email'],
-          "calendar": [
-            
-          ],
-          "eventsToSchedule": [
-
-          ],
-          "eventsAwaitingConfirmation": [
-            
-          ],
-          "pendingEvents": [
-
-          ],
-          "invites": [
-
-          ],
-
-          "dayStart": "10:00",
-          "dayEnd": "22:00"
-      };
-      users["users"].push(newUser);
-  });
-  myClient.calendar.calendarList.list().withAuthClient(oauth2Client).execute(function(err, results){
-    // console.log(results);
-  });
-};
 
 // app.get('/project', project.viewProject);
 // app.get('/project/:name', project.viewProject);
