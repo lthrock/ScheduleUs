@@ -19,7 +19,7 @@ var CLIENT_ID = "93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercon
 var CLIENT_SECRET = "_m1_ZRsGUeo-fb2AMdkltmv8";
 var REDIRECT_LIVE_URL = "http://http://scheduleus.herokuapp.com/oauth2callback";
 var REDIRECT_URL = "http://localhost:3000/oauth2callback";
-var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_LIVE_URL);
+var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 var calendar_auth_url = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar'
