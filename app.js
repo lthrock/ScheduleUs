@@ -17,8 +17,10 @@ var settings = require('./routes/settings');
 
 var CLIENT_ID = "93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercontent.com";
 var CLIENT_SECRET = "_m1_ZRsGUeo-fb2AMdkltmv8";
-var REDIRECT_LIVE_URL = "http://http://efltdw-project.herokuapp.com/oauth2callback";
 var REDIRECT_URL = "http://localhost:3000/oauth2callback";
+var CLIENT_LIVE_ID = "93833969413-j9ovm1ca49fg3g0u7bfqeb8vdu106njj.apps.googleusercontent.com";
+var CLIENT_LIVE_SECRET = "1XOvmIp8M627Fc3cpaaMymS0";
+var REDIRECT_LIVE_URL = "http://scheduleus.herokuapp.com/oauth2callback";
 var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 var calendar_auth_url = oauth2Client.generateAuthUrl({
   access_type: 'offline',
