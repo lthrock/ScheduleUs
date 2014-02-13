@@ -252,14 +252,16 @@ exports.addEvent = function(req, res){
 		morningAfternoonEvening.push(false);
 	}
 	var guests = [];
-	if (req.query.attendees != '') guests = req.query.attendees.split(", ");
+	if (req.query.attendees != '')
+		guests = req.query.attendees.split(", ");
 	var guestsArray = [[organizer, true]];
 	for (var i = 0; i < guests.length; i++) {
 		guestsArray.push([guests[i], false]);
 	}
+	var id = Date.now();
 	var newEvent = {
-		"id": Date.now(),
-		"organizer": organizer,
+		"id": id,
+		"organizer": req.app.get("current_user_name"),
 		"eventName": eventName,
 		"eventDuration": eventDuration,
 		"eventLocation": eventLocation,
@@ -268,6 +270,19 @@ exports.addEvent = function(req, res){
 		"time": ""
 	}
 	users["events"].push(newEvent);
+
+	for (var guest in guests) {
+		var currUser;
+		for (var user in users["users"]) {
+			// console.log(users["users"][user]);
+			if (users["users"][user].email == guests[guest]) {
+				currUser = user;
+				break;
+			}
+		}
+		users["users"][currUser].invites.push(id);
+	}
+
 	console.log(users["events"]);
 	res.render('confirm');
 };
@@ -277,5 +292,25 @@ exports.scheduleList = function(req, res){
 };
 
 exports.invitations = function(req, res){
-  res.render('invitations');
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.app.get("current_user")) {
+			currUser = user;
+		}
+	}
+	// console.log(users["users"][currUser]);
+	invites = []
+	for (var invite in users.users[currUser].invites) {
+		console.log(invite);
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users.users[currUser].invites[invite]) {
+				invites.push(users["events"][i])
+				break;
+			}
+		}
+	}
+
+	console.log(invites);
+    res.render('invitations', { 'invites': invites });
 };

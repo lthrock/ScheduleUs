@@ -42,11 +42,11 @@
 
 		<div class="table">
 			<form>
-				<!-- {{#each invites}} -->
+				{{#each invites}}
 				    <div class="tr">
 				        <div class="d12">	
 							<span class="list">
-								<span class="btn-group"><!-- {{organizer}} -->lucast@stanford.edu invited you to <!-- {{eventName}} -->STUDY PARTY at <!-- {{eventLocation}} -->Branner for <!-- {{duration}} -->4.0 hours!</span>
+								<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
 							</span>
 				        </div>
 				        <div class="d3">
@@ -54,7 +54,7 @@
 				        </div>
 				    </div>
 				    <hr>
-				 <!-- {{/each}}    -->
+				{{/each}}   
 
 		   	</form>
 		</div>

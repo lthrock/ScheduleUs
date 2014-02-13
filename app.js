@@ -118,6 +118,7 @@ var getData = function() {
   myClient.oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
        console.log(results);
        app.set('current_user', results['email']);
+       app.set('current_user_name', results['name']);
        var newUser = {
           "name": results['name'],
           "email": results['email'],

@@ -14,8 +14,8 @@ exports.view = function(req, res){
 	}
 	// console.log(currUser);
 	if (startTime)
-		users["users"][user].dayStart = startTime;
+		users["users"][currUser].dayStart = startTime;
 	if (endTime)
-		users["users"][user].dayEnd = endTime;
+		users["users"][currUser].dayEnd = endTime;
   	res.render('preferences', { 'startTime': users["users"][user].dayStart, 'endTime': users["users"][user].dayEnd });
 };
