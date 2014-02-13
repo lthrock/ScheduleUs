@@ -215,7 +215,7 @@ function createWeekMasterSchedule(morningAfternoonEvening, dayStart, dayEnd, sta
 // var masterSchedule = scheduler(masterSchedule, [freeCal1, freeCal2], 30);
 // console.log(masterSchedule);
 
-
+var users = require("../users.json");
 
 exports.createEvent = function(req, res){
   res.render('createEvent');
@@ -234,11 +234,39 @@ exports.addEvent = function(req, res){
 	var eventName = req.query.name;
 	var eventDuration = req.query.duration;
 	var eventLocation = req.query.location;
-	// var morning = 
-	// if (req.query.morning) {
-
-	// }
 	var morningAfternoonEvening = [];
-	var guests = new Array();
+	if (req.query.morning) {
+		morningAfternoonEvening.push(true);
+	} else {
+		morningAfternoonEvening.push(false);
+	}
+	if (req.query.afternoon) {
+		morningAfternoonEvening.push(true);
+	} else {
+		morningAfternoonEvening.push(false);
+	}
+	if (req.query.evening) {
+		morningAfternoonEvening.push(true);
+	} else {
+		morningAfternoonEvening.push(false);
+	}
+	var guests = [];
+	if (req.query.attendees != '') guests = req.query.attendees.split(", ");
+	var guestsArray = [[organizer, true]];
+	for (var i = 0; i < guests.length; i++) {
+		guestsArray.push([guests[i], false]);
+	}
+	var newEvent = {
+		"id": Date.now(),
+		"organizer": organizer,
+		"eventName": eventName,
+		"eventDuration": eventDuration,
+		"eventLocation": eventLocation,
+		"timePeriod": morningAfternoonEvening,
+		"guests": guestsArray,
+		"time": ""
+	}
+	users["events"].push(newEvent);
+	console.log(users["events"]);
 	res.render('confirm');
 };

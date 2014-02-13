@@ -3,11 +3,10 @@
 		{
 			"name": "Lucas Throckmorton",
 			"email": "lucast@stanford.edu",
-			"calendar": [ // [start, end] => year:month:day:hour:minute (may get rid of)
+			"calendar": [
 				["14:2:14:8:00", "14:2:14:9:00"],
 				["14:2:14:11:00", "14:2:14:13:00"],
-				["14:2:14:15:00", "14:2:14:16:00"],
-				["", ""],
+				["14:2:14:15:00", "14:2:14:16:00"]
 			],
 			"eventsToSchedule": [
 
@@ -32,10 +31,10 @@
 				["14:2:14:9:00", "14:2:14:9:30"],
 				["14:2:14:12:00", "14:2:14:13:00"],
 				["14:2:14:14:00", "14:2:14:16:00"],
-				["14:2:14:16:00", "14:2:14:17:00"],
+				["14:2:14:16:00", "14:2:14:17:00"]
 			],
 			"eventsAwatingConfirmation": [
-				"0000000001"
+			
 			],
 			"pendingEvents": [
 				"0000000001"
@@ -53,7 +52,7 @@
 			"calendar": [
 				["14:2:14:10:30", "14:2:14:12:30"],
 				["14:2:14:16:00", "14:2:14:18:00"],
-				["14:2:14:20:00", "14:2:14:20:30"],
+				["14:2:14:20:00", "14:2:14:20:30"]
 			],
 			"eventsAwatingConfirmation": [
 				
@@ -66,7 +65,7 @@
 			],
 
 			"dayStart": "10:00",
-			"dayEnd": "21:00"	
+			"dayEnd": "21:00"
 		}
 	],
 
@@ -77,16 +76,13 @@
 			"eventName": "147workParty",
 			"eventDuration": "5.0",
 			"eventLocation": "Branner",
-			// "repeat": "",
-			"timePeriod": ["true, true, true"],
+			"timePeriod": [true, true, true],
 			"guests": [
-				["lucast@stanford.edu", "true"],
-				["ekfrey@stanford.edu", "true"],
-				["dwang21@stanford.edu", "false"]
+				["lucast@stanford.edu", true],
+				["ekfrey@stanford.edu", true],
+				["dwang21@stanford.edu", true]
 			],
-			"time": "" // (Date) start
+			"time": ""
 		}
-
-
 	]
 }
