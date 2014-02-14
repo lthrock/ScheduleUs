@@ -21,8 +21,8 @@ var REDIRECT_URL = "http://localhost:3000/oauth2callback";
 var CLIENT_LIVE_ID = "93833969413-j9ovm1ca49fg3g0u7bfqeb8vdu106njj.apps.googleusercontent.com";
 var CLIENT_LIVE_SECRET = "1XOvmIp8M627Fc3cpaaMymS0";
 var REDIRECT_LIVE_URL = "http://scheduleus.herokuapp.com/oauth2callback";
-var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-// var oauth2Client = new OAuth2Client(CLIENT_LIVE_ID, CLIENT_LIVE_SECRET, REDIRECT_LIVE_URL);
+// var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+var oauth2Client = new OAuth2Client(CLIENT_LIVE_ID, CLIENT_LIVE_SECRET, REDIRECT_LIVE_URL);
 var calendar_auth_url = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar'
@@ -75,7 +75,8 @@ app.get('/add', events.addEvent);
 app.get('/readyToSchedule', events.scheduleList);
 app.get('/invitations', events.invitations);
 app.get('/confirm/:id', events.confirmEvent);
-app.get('/schedule', events.scheduleEvent);
+app.get('/schedule/:id', events.scheduleEvent);
+app.get('/selectTime/:id', events.selectTime);
 
 var myClient;
 
@@ -106,20 +107,32 @@ app.get('/oauth2callback', function(req, res) {
   var getData = function() {
     var myClient = app.get('client');
     myClient.oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
-         req.session.current_user = results['email'];
-         req.session.current_user_name = results['name'];
-         var newUser = {
-            "name": results['name'],
-            "email": results['email'],
-            "calendar": [],
-            "eventsToSchedule": [],
-            "eventsAwaitingConfirmation": [],
-            "pendingEvents": [],
-            "invites": [],
-            "dayStart": "10:00",
-            "dayEnd": "22:00"
+      req.session.current_user = results['email'];
+      req.session.current_user_name = results['name'];
+      for (var user in users["users"]) {
+        // console.log(users["users"][user]);
+        if (users["users"][user].email == results['email']) {
+          var currUser = user;
+          users["users"][user].name = results['name'];
+        }
+      }
+      if (!currUser) {
+        var newUser = {
+           "name": results['name'],
+           "email": results['email'],
+           "calendar": [],
+           "eventsToSchedule": [],
+           "eventsAwaitingConfirmation": [],
+           "pendingEvents": [],
+           "invites": [],
+           "dayStart": "10:00",
+           "dayEnd": "22:00"
         };
         users["users"].push(newUser);
+        var currUser = users["users"].indexOf(newUser);
+      }
+      req.session.current_user_id = currUser;
+      // console.log(currUser);
           
       var logged_in = true;
       if (req.session.tokens == null)

@@ -31,10 +31,14 @@
 		        <!-- <div class="d3"></div> -->
 		    </div>
 		</div>
-		{{#if isOrganizer}}
-			<p>You have successfully created your event. The other attendees have been sent a notification asking them to confirm the event before you may select a time.</p>
+		{{#if isScheduled}}
+			<p>You have scheduled your event! The time you selected will be added to yours and all participants' Google calendars.</p>
 		{{else}}
-			<p>Thank you for confirming this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.</p>
+			{{#if isOrganizer}}
+				<p>You have successfully created your event. The other attendees have been sent a notification asking them to confirm the event before you may select a time.</p>
+			{{else}}
+				<p>Thank you for confirming this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.</p>
+			{{/if}}
 		{{/if}}
 	</div>
 

@@ -258,6 +258,27 @@ exports.addEvent = function(req, res){
 	var guestsArray = [[organizer, true]];
 	for (var i = 0; i < guests.length; i++) {
 		guestsArray.push([guests[i], false]);
+		var present = false;
+		for (var user in users["users"]) {
+			if (users["users"][user].email == guests[i]) {
+				present = true;
+				break;
+			}
+		}
+		if (!present) {
+			var newUser = {
+	           "name": "",
+	           "email": guests[i],
+	           "calendar": [],
+	           "eventsToSchedule": [],
+	           "eventsAwaitingConfirmation": [],
+	           "pendingEvents": [],
+	           "invites": [],
+	           "dayStart": "10:00",
+	           "dayEnd": "22:00"
+	        };
+	        users["users"].push(newUser);
+		}
 	}
 	var id = Date.now();
 	var newEvent = {
@@ -380,5 +401,18 @@ exports.confirmEvent = function(req, res){
 };
 
 exports.scheduleEvent = function(req, res){
-	res.render('schedule');
+	var id = req.params.id;
+	res.render('schedule', { "id": id });
+};
+
+exports.selectTime = function(req, res){
+	var id = req.params.id;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			var currUser = user;
+		}
+	}
+	var index = users["users"][currUser].eventsAwaitingConfirmation.indexOf(id);
+	users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
+	res.render('confirm', { 'isScheduled': true });
 };
