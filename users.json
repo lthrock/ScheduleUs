@@ -1,5 +1,13 @@
 {
 	"users": [
+		
+	],
+
+	"events": [
+		
+	],
+
+	"samples": [
 		{
 			"name": "Lucas Throckmorton",
 			"email": "lucast@stanford.edu",
@@ -66,10 +74,7 @@
 
 			"dayStart": "10:00",
 			"dayEnd": "21:00"
-		}
-	],
-
-	"events": [
+		},
 		{	
 			"id": "0000000001",
 			"organizer": "lucast@stanford.edu",
