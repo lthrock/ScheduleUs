@@ -517,6 +517,7 @@ exports.scheduleEvent = function(req, res) {
 		
 		eventsToShow.add([eventStart, eventEnd, date]);
 	}
+}
 
 
 exports.scheduleEvent = function(req, res){
@@ -605,7 +606,7 @@ function createGCalendarJSON(start, end, attendees, creator, summary, location, 
 		"status": "tentative",
 		"guestsCanInviteOthers": false
 	}
-}
+};
 
 Date.prototype.yyyymmdd = function() {                                         
     var yyyy = this.getFullYear().toString();                                    
