@@ -447,7 +447,7 @@ exports.scheduleEvent = function(req, res) {
 	var guests = eventToSchedule.guests
 	
 	var calendars = new Array();
-	var organizer = eventToSchedule.organizer;
+	var organizer = eventToSchedule.guests[0];
 
 	// not honestly sure why I have to set these in the loop as opposed to after
 	var start;
