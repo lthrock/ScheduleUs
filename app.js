@@ -145,7 +145,7 @@ app.get('/oauth2callback', function(req, res) {
             users["users"].push(newUser);
             var currUser = users["users"].indexOf(newUser);
 
-                  req.session.current_user_id = currUser;
+            req.session.current_user_id = currUser;
                 
             var logged_in = true;
             if (req.session.tokens == null)
@@ -154,8 +154,20 @@ app.get('/oauth2callback', function(req, res) {
               "calendar_auth_url": calendar_auth_url,
               "logged_in": logged_in
             }
+            /*  var currCalendar = {calendarId: newUser.email}
+            myClient.calendar.events.list(currCalendar).withAuthClient(oauth2Client).execute(function(err, results) {
+              console.log("Errors are ", err);
+              console.log("Results are ", results);
+              res.render('index', data);
+            }); */
             res.render('index', data);
           });
+      } else {
+        data = {
+          "calendar_auth_url": calendar_auth_url,
+          "logged_in": true
+        }
+        res.render('index', data);
       }
     });
     
