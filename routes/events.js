@@ -323,8 +323,9 @@ exports.addEvent = function(req, res){
 		// console.log("wef5", blah);
       //      console.log(err);
             //newEvent.gcalID = results.id
+            newEvent.gcalID = results.id;
+            users["events"].push(newEvent);
         });	
-	users["events"].push(newEvent);
 
 	for (var guest in guests) {
 		var currUser;
@@ -434,6 +435,7 @@ exports.confirmEvent = function(req, res){
 	res.render('confirm', {'isOrganizer': false});
 };
 
+
 exports.scheduleEvent = function(req, res) {
 	var id = req.params.id;
 	var eventToSchedule;
@@ -516,6 +518,52 @@ exports.scheduleEvent = function(req, res) {
 		eventsToShow.add([eventStart, eventEnd, date]);
 	}
 
+
+exports.scheduleEvent = function(req, res){
+	var id = req.params.id;
+	var currUser = users["users"][req.session.current_user_id];
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var attendees = users.events[currEvent].guests;
+	var internal_counter = 0;
+	listSchedules = []
+	var toRender = function() {
+		if (++internal_counter == attendees.length) {
+			console.log(listSchedules);
+			res.render('schedule', { "id": id });
+		}
+	}
+	for (var i in attendees){
+		var currSchedule = []
+		for (var user in users["users"]) {
+			if (attendees[i][0] == users["users"][user].email) {
+				var myClient = req.app.get('client')
+				var oauth2Client = require("../app").oauth2[attendees[i][0]];
+				// var currCalendar = {calendarId: users["users"][user].calendarID};
+				var currCalendar = {calendarId: users["users"][user].email};
+				myClient.calendar.events.list(currCalendar).withAuthClient(oauth2Client).execute(function(err, results) {
+					// console.log("Errors are ", err);
+					// console.log("Results are ", results);
+					if (results != undefined) {
+						for (var item in results.items) {
+							if (results.items[item].start.dateTime != undefined && 
+								results.items[item].end.dateTime != undefined) {
+								currSchedule.push([results.items[item].start.dateTime, results.items[item].end.dateTime]);
+							} else if (results.items[item].start.date != undefined && 
+								results.items[item].end.date != undefined) {
+								currSchedule.push([results.items[item].start.date, results.items[item].end.date]);
+							}
+						}
+					}
+					listSchedules.push(currSchedule);
+					toRender();
+				});
+			}
+		}
+	}
 	res.render('schedule', { "id": id });
 
 	for (var i = 0; eventsToShow.length(); i++) {
@@ -545,7 +593,7 @@ function createGCalendarJSON(start, end, attendees, creator, summary, location, 
 	}
 	var today = new Date();
     var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-    var description = "Duration: " + duration + " hours." + "Go to scheduleus.herokuapp.com to RSVP!" 
+    var description = "Duration: " + duration + " hours." + "Go to http://scheduleus.herokuapp.com to RSVP!" 
 	return {
 		"end": { "date": nextweek.yyyymmdd() },
 		"start": { "date": today.yyyymmdd() },
@@ -553,7 +601,7 @@ function createGCalendarJSON(start, end, attendees, creator, summary, location, 
 		"creator": creator,
 		"summary": summary,
 		"location": location,
-		"description": "Duration: " + duration + " hours",
+		"description": description,
 		"status": "tentative",
 		"guestsCanInviteOthers": false
 	}
