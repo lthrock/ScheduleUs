@@ -436,8 +436,8 @@ exports.confirmEvent = function(req, res){
 };
 
 exports.scheduleEvent = function(req, res){
-	/* 
 	var id = req.params.id;
+	/* 
 	var currUser = users["users"][req.session.current_user_id];
 	for (var i in users["events"]) {
 		if (users["events"][i].id == id) {

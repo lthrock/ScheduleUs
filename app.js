@@ -79,6 +79,7 @@ app.get('/schedule/:id', events.scheduleEvent);
 app.get('/selectTime/:id', events.selectTime);
 
 var myClient;
+var users = require("./users.json");
 
 googleapis
   .discover('calendar', 'v3')
@@ -144,7 +145,6 @@ app.get('/oauth2callback', function(req, res) {
             newUser.calendarID = results.id
             users["users"].push(newUser);
             var currUser = users["users"].indexOf(newUser);
-
             req.session.current_user_id = currUser;
                 
             var logged_in = true;
@@ -167,7 +167,19 @@ app.get('/oauth2callback', function(req, res) {
           "calendar_auth_url": calendar_auth_url,
           "logged_in": true
         }
-        res.render('index', data);
+        if (users["users"][currUser].calendarID == undefined) {
+          var calendar = {'summary': 'ScheduleUs Calendar'};
+          myClient.calendar.calendars.insert(calendar).
+            withAuthClient(oauth2Client).execute(function(err, results) {
+            users["users"][currUser].calendarID = results.id;
+            // req.session.calendar_id = results.id;
+            req.session.current_user_id = currUser;
+                
+            res.render('index', data);
+          });
+        } else {
+          res.render('index', data);
+        }
       }
     });
     
@@ -176,9 +188,6 @@ app.get('/oauth2callback', function(req, res) {
     });
   };
 });
-
-var users = require("./users.json");
-
 
 // app.get('/project', project.viewProject);
 // app.get('/project/:name', project.viewProject);
