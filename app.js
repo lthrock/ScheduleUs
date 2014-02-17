@@ -80,16 +80,14 @@ app.get('/selectTime/:id', events.selectTime);
 
 var myClient;
 
-  var callback = function(clients) {
-  	myClient = clients;
-  	console.log(clients);
-  }
-
 googleapis
   .discover('calendar', 'v3')
   .discover('oauth2', 'v2')
   .execute(function(err, client){
     if(!err) {
+      app.set('cal', client.calendar);
+      app.set('oauth', client.oauth2);
+      app.set('oauth2Client', oauth2Client);
       app.set('client', client);
   	}
   });
@@ -97,8 +95,10 @@ googleapis
 // CAN WE CHANGE THIS TO POST? without getting a redirect_uri_mismatch
 app.get('/oauth2callback', function(req, res) {
   var code = req.query.code;
-  oauth2Client.getToken(code, function(err, tokens) {
-  	oauth2Client.credentials = tokens;
+  req.session.oauth2Client = oauth2Client;
+  // console.log("ARE THE SAME ", req.session.oauth2Client == oauth2Client);
+  req.session.oauth2Client.getToken(code, function(err, tokens) {
+  	req.session.oauth2Client.credentials = tokens;
     req.session.tokens = tokens;
   	getData();
   });
@@ -109,17 +109,23 @@ app.get('/oauth2callback', function(req, res) {
     myClient.oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
       req.session.current_user = results['email'];
       req.session.current_user_name = results['name'];
+      if (!('oauth' in exports)) {
+        exports.oauth2 = {};
+      }
+      var currUser;
+      exports.oauth2[results['email']] = oauth2Client;
       for (var user in users["users"]) {
-        // console.log(users["users"][user]);
         if (users["users"][user].email == results['email']) {
-          var currUser = user;
+          currUser = user;
           users["users"][user].name = results['name'];
         }
       }
+      // console.log(results.email, " ", currUser)
       if (!currUser) {
         var newUser = {
            "name": results['name'],
            "email": results['email'],
+           "calendarID": -1,
            "calendar": [],
            "eventsToSchedule": [],
            "eventsAwaitingConfirmation": [],
@@ -128,20 +134,29 @@ app.get('/oauth2callback', function(req, res) {
            "dayStart": "10:00",
            "dayEnd": "22:00"
         };
-        users["users"].push(newUser);
-        var currUser = users["users"].indexOf(newUser);
+        var calendar = {'summary': 'ScheduleUs Calendar'};
+        myClient.calendar.calendars.insert(calendar).
+          withAuthClient(oauth2Client).execute(function(err, results) {
+            // console.log("RESULTS.ID ", results.id)
+            req.session.calendar_id = results.id;
+            // console.log("req.session.calendar_id ", req.session.calendar_id);
+            exports.calendar_id = req.session.calendar_id;
+            newUser.calendarID = results.id
+            users["users"].push(newUser);
+            var currUser = users["users"].indexOf(newUser);
+
+                  req.session.current_user_id = currUser;
+                
+            var logged_in = true;
+            if (req.session.tokens == null)
+              logged_in = false;
+            data = {
+              "calendar_auth_url": calendar_auth_url,
+              "logged_in": logged_in
+            }
+            res.render('index', data);
+          });
       }
-      req.session.current_user_id = currUser;
-      // console.log(currUser);
-          
-      var logged_in = true;
-      if (req.session.tokens == null)
-        logged_in = false;
-      data = {
-        "calendar_auth_url": calendar_auth_url,
-        "logged_in": logged_in
-      }
-      res.render('index', data);
     });
     
     myClient.calendar.calendarList.list().withAuthClient(oauth2Client).execute(function(err, results){

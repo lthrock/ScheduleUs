@@ -1,3 +1,4 @@
+
 function scheduler(masterSchedule, schedules, timeNeeded) {
 	if (schedules.length == 0) return null;
 
@@ -73,9 +74,6 @@ function convertToFreetime(calendar) {
 	var lastEnd = "00:00";
 
 	for (var i = 0; i < calendar.length; i++) {
-
-
-
 		var start = new Date(Date.parse(calendar[i][0]));
 		var end = new Date(Date.parse(calendar[i][1]));
 
@@ -219,8 +217,8 @@ var users = require("../users.json");
 
 exports.createEvent = function(req, res){
   res.render('createEvent');
-  console.log(users["users"]);
-  console.log(users["events"]);
+  /*console.log(users["users"]);
+  console.log(users["events"]);*/
 };
 
 exports.viewEvents = function(req, res){
@@ -233,6 +231,12 @@ exports.editEvent = function(req, res){
 
 exports.addEvent = function(req, res){
 	var organizer = req.session.current_user;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			currUser = user;
+		}
+	}
 	var eventName = req.query.name;
 	var eventDuration = req.query.duration;
 	var eventLocation = req.query.location;
@@ -268,7 +272,8 @@ exports.addEvent = function(req, res){
 		if (!present) {
 			var newUser = {
 	           "name": "",
-	           "email": guests[i],
+	           "email": guests[i], 
+	           "calendarID": -1,
 	           "calendar": [],
 	           "eventsToSchedule": [],
 	           "eventsAwaitingConfirmation": [],
@@ -291,6 +296,34 @@ exports.addEvent = function(req, res){
 		"guests": guestsArray,
 		"time": ""
 	}
+	var calendarID = currUser.calendarID;//req.session.calendar_id;
+	// console.log("1 ", req.session.calendar_id, " 2 ", currUser.calendarID);
+	//var calendarID = currUser.calendarID;
+	var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
+		eventName, eventLocation, eventDuration);
+	// console.log(eventBody.end);
+	//var myClient = req.session.client;
+	var myClient = req.app.get('client')
+	var oauth2Client = require("../app").oauth2[req.session.current_user];
+	calendarID = req.session.calendar_id;
+	var request = myClient.oauth2.userinfo.get();
+	request.execute(function(err, results) {
+	// 	console.log("errors");
+	// 	console.log(err);
+	// 	console.log(results);
+	});
+	var oauth2 = req.app.get('oauth');
+	oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
+	//	console.log("try #2");
+	//	console.log(err);
+	//	console.log(results);
+	});
+	var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody);
+	blah.withAuthClient(oauth2Client).execute(function(err, results) {
+		// console.log("wef5", blah);
+      //      console.log(err);
+            //newEvent.gcalID = results.id
+        });	
 	users["events"].push(newEvent);
 
 	for (var guest in guests) {
@@ -306,7 +339,8 @@ exports.addEvent = function(req, res){
 	}
 
 	// console.log(users);
-	res.render('confirm', {'isOrganizer': true });
+	res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
+		'body': eventBody , 'event': newEvent});
 };
 
 exports.scheduleList = function(req, res){
@@ -501,3 +535,34 @@ exports.selectTime = function(req, res) {
 	users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
 	res.render('confirm', { 'isScheduled': true });
 };
+
+function createGCalendarJSON(start, end, attendees, creator, summary, location, duration) {
+	var listAttendees = []
+	for (var attendee in attendees) {
+		listAttendees.push({
+			"email": attendees[attendee]
+		})
+	}
+	var today = new Date();
+    var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+    var description = "Duration: " + duration + " hours." + "Go to scheduleus.herokuapp.com to RSVP!" 
+	return {
+		"end": { "date": nextweek.yyyymmdd() },
+		"start": { "date": today.yyyymmdd() },
+		"attendees": listAttendees,
+		"creator": creator,
+		"summary": summary,
+		"location": location,
+		"description": "Duration: " + duration + " hours",
+		"status": "tentative",
+		"guestsCanInviteOthers": false
+	}
+}
+
+Date.prototype.yyyymmdd = function() {                                         
+    var yyyy = this.getFullYear().toString();                                    
+    var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based         
+    var dd  = this.getDate().toString();             
+                            
+    return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]);
+};  
