@@ -57,6 +57,25 @@ button {
     width:80px;
 }
 
+.d12 {
+    display:table-cell;
+    width:80%;
+}
+
+.tableLeftHalf {
+    display:table-cell;
+    width:20%;
+    font-weight: bold;
+    font-size: 23px;
+    text-align:right;
+}
+
+.tableRightHalf {
+    display:table-cell;
+    width:80%;
+    font-weight: bold;
+}
+
 /*.divider{
     width:5px;
     height:auto;
@@ -77,6 +96,10 @@ button {
 .header {
     font-weight: bold;
     font-size: 25px;
+}
+
+.list {
+    font-size: 13.5px;
 }
 
 .inline-button {
