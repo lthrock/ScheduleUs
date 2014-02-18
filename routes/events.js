@@ -454,7 +454,6 @@ exports.confirmEvent = function(req, res){
 
 exports.scheduleEvent = function(req, res){
 	var id = req.params.id;
-	
 	var currUser = users["users"][req.session.current_user_id];
 	//var currEvent = getObjects(users["events"], 'id', id);
 	var attendees = getObjects(users["events"], 'id', id)[0].guests;
@@ -502,8 +501,6 @@ exports.scheduleEvent = function(req, res){
 			});
 		})(i);	
 	} 
-	console.log(listSchedules);
-	res.render('schedule', { "id": id });
 };
 
 exports.selectTime = function(req, res){
