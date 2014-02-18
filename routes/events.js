@@ -1,3 +1,21 @@
+var googleapis = require('googleapis');
+var OAuth2Client = googleapis.OAuth2Client;
+var CLIENT_ID = "93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercontent.com";
+var CLIENT_SECRET = "_m1_ZRsGUeo-fb2AMdkltmv8";
+var REDIRECT_URL = "http://localhost:3000/oauth2callback";
+
+function getObjects(obj, key, val) {
+    var objects = [];
+    for (var i in obj) {
+        if (!obj.hasOwnProperty(i)) continue;
+        if (typeof obj[i] == 'object') {
+            objects = objects.concat(getObjects(obj[i], key, val));
+        } else if (i == key && obj[key] == val) {
+            objects.push(obj);
+        }
+    }
+    return objects;
+}
 
 function scheduler(masterSchedule, schedules, timeNeeded) {
 	if (schedules.length == 0) return null;
@@ -296,7 +314,8 @@ exports.addEvent = function(req, res){
 		"guests": guestsArray,
 		"time": ""
 	}
-	var calendarID = currUser.calendarID;//req.session.calendar_id;
+	var calendarID = users["users"][currUser].calendarID;
+	//var calendarID = currUser.calendarID;//req.session.calendar_id;
 	// console.log("1 ", req.session.calendar_id, " 2 ", currUser.calendarID);
 	//var calendarID = currUser.calendarID;
 	var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
@@ -305,7 +324,7 @@ exports.addEvent = function(req, res){
 	//var myClient = req.session.client;
 	var myClient = req.app.get('client')
 	var oauth2Client = require("../app").oauth2[req.session.current_user];
-	calendarID = req.session.calendar_id;
+	// calendarID = req.session.calendar_id;
 	var request = myClient.oauth2.userinfo.get();
 	request.execute(function(err, results) {
 	// 	console.log("errors");
@@ -321,9 +340,9 @@ exports.addEvent = function(req, res){
 	var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody);
 	blah.withAuthClient(oauth2Client).execute(function(err, results) {
 		// console.log("wef5", blah);
-      //      console.log(err);
+      	    console.log("Create event ", err);
             //newEvent.gcalID = results.id
-            newEvent.gcalID = results.id;
+            //newEvent.gcalID = results.id;
             users["events"].push(newEvent);
         });	
 
@@ -354,7 +373,6 @@ exports.scheduleList = function(req, res){
 	// console.log(users["users"][currUser]);
 	toSchedule = []
 	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
-		console.log(j);
 		for (var i in users["events"]) {
 			// console.log(users["users"][user]);
 			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
@@ -364,7 +382,6 @@ exports.scheduleList = function(req, res){
 		}
 	}
 
-	console.log(toSchedule);
   	res.render('readyToScheduleEvents', { 'toSchedule': toSchedule });
 };
 
@@ -437,14 +454,10 @@ exports.confirmEvent = function(req, res){
 
 exports.scheduleEvent = function(req, res){
 	var id = req.params.id;
-	/* 
+	
 	var currUser = users["users"][req.session.current_user_id];
-	for (var i in users["events"]) {
-		if (users["events"][i].id == id) {
-			currEvent = i;
-		}
-	}
-	var attendees = users.events[currEvent].guests;
+	//var currEvent = getObjects(users["events"], 'id', id);
+	var attendees = getObjects(users["events"], 'id', id)[0].guests;
 	var internal_counter = 0;
 	listSchedules = []
 	var toRender = function() {
@@ -453,34 +466,43 @@ exports.scheduleEvent = function(req, res){
 			res.render('schedule', { "id": id });
 		}
 	}
+
+	var myClient = req.app.get('client');
+	var today = new Date();
+    var nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
 	for (var i in attendees){
-		var currSchedule = []
-		for (var user in users["users"]) {
-			if (attendees[i][0] == users["users"][user].email) {
-				var myClient = req.app.get('client')
-				var oauth2Client = require("../app").oauth2[attendees[i][0]];
-				// var currCalendar = {calendarId: users["users"][user].calendarID};
-				var currCalendar = {calendarId: users["users"][user].email};
-				myClient.calendar.events.list(currCalendar).withAuthClient(oauth2Client).execute(function(err, results) {
-					// console.log("Errors are ", err);
-					// console.log("Results are ", results);
-					if (results != undefined) {
-						for (var item in results.items) {
-							if (results.items[item].start.dateTime != undefined && 
-								results.items[item].end.dateTime != undefined) {
-								currSchedule.push([results.items[item].start.dateTime, results.items[item].end.dateTime]);
-							} else if (results.items[item].start.date != undefined && 
-								results.items[item].end.date != undefined) {
-								currSchedule.push([results.items[item].start.date, results.items[item].end.date]);
-							}
+		(function(i) {
+			var currSchedule = []
+			var user = getObjects(users["users"], 'email', attendees[i][0])[0];
+			var currCalendar = {
+			    calendarId: user.email, 
+			    timeMin: today.toISOString(), 
+			    timeMax: nextWeek.toISOString(),
+			    singleEvents: true
+			}
+			var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+			oauth2Client.credentials = user.tokens;
+			myClient.calendar.events.list(currCalendar).withAuthClient(oauth2Client).execute(function(err, results) {
+				// console.log("Calendar ", currCalendar.calendarId, "The tokens we used here were ", oauth2Client.credentials);
+				console.log("Errors are ", err);
+				if (results != undefined) {
+					for (var item = 0; item < results.items.length; item++) {
+						// console.log(results.items[item]);
+						if (results.items[item]["status"] != "confirmed") continue;
+						if (results.items[item].start.dateTime != undefined && results.items[item].end.dateTime != undefined) {
+							currSchedule.push([results.items[item].start.dateTime, results.items[item].end.dateTime]);
+						} else if (results.items[item].start.date != undefined && results.items[item].end.date != undefined) {
+							currSchedule.push([results.items[item].start.date, results.items[item].end.date]);
 						}
 					}
+					// console.log(attendees[i][0], "currSchedule is ", currSchedule)
 					listSchedules.push(currSchedule);
-					toRender();
-				});
-			}
-		}
-	} */
+				}
+				toRender();
+			});
+		})(i);	
+	} 
+	console.log(listSchedules);
 	res.render('schedule', { "id": id });
 };
 

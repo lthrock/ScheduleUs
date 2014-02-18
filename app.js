@@ -133,7 +133,8 @@ app.get('/oauth2callback', function(req, res) {
            "pendingEvents": [],
            "invites": [],
            "dayStart": "10:00",
-           "dayEnd": "22:00"
+           "dayEnd": "22:00",
+           "tokens": req.session.tokens
         };
         var calendar = {'summary': 'ScheduleUs Calendar'};
         myClient.calendar.calendars.insert(calendar).
@@ -167,13 +168,15 @@ app.get('/oauth2callback', function(req, res) {
           "calendar_auth_url": calendar_auth_url,
           "logged_in": true
         }
+        req.session.current_user_id = currUser;
+        users["users"][currUser].tokens = req.session.tokens;
         if (users["users"][currUser].calendarID == undefined) {
           var calendar = {'summary': 'ScheduleUs Calendar'};
           myClient.calendar.calendars.insert(calendar).
             withAuthClient(oauth2Client).execute(function(err, results) {
             users["users"][currUser].calendarID = results.id;
+            console.log("The new calendar is ", results.id);
             // req.session.calendar_id = results.id;
-            req.session.current_user_id = currUser;
                 
             res.render('index', data);
           });
