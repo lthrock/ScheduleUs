@@ -453,88 +453,88 @@ exports.confirmEvent = function(req, res){
 };
 
 
-exports.scheduleEvent = function(req, res) {
-	var id = req.params.id;
-	var eventToSchedule;
-	for (var ev in users["events"]) {
-		if (users["events"][ev].id == id) { // ? 
-			eventToSchedule = users["events"][ev];
-			break;
-		}
-	}
+// exports.scheduleEvent = function(req, res) {
+// 	var id = req.params.id;
+// 	var eventToSchedule;
+// 	for (var ev in users["events"]) {
+// 		if (users["events"][ev].id == id) { // ? 
+// 			eventToSchedule = users["events"][ev];
+// 			break;
+// 		}
+// 	}
 
-	var guests = eventToSchedule.guests
+// 	var guests = eventToSchedule.guests
 	
-	var calendars = new Array();
-	var organizer = eventToSchedule.guests[0];
+// 	var calendars = new Array();
+// 	var organizer = eventToSchedule.guests[0];
 
-	// not honestly sure why I have to set these in the loop as opposed to after
-	var start;
-	var end;
+// 	// not honestly sure why I have to set these in the loop as opposed to after
+// 	var start;
+// 	var end;
 
-	for (var user in users["users"]) {
-		console.log("hubbubbub: " + users["users"][user].email);
-		console.log("organizer: " + organizer);;
-		if (users["users"][user].email == organizer) {
-			organizer = users["users"][user];
-			start = users["users"][user].dayStart;
-			end = users["users"][user].dayEnd;
-			calendars.push(organizer.calendar);
-		}
-		for (var i = 0; i < guests.length; i++) {
-			if (guests[i].email == users["users"][user].email) {
-				calendars.push(guests[i].calendar);
-			}
-		}
-	}
+// 	for (var user in users["users"]) {
+// 		console.log("hubbubbub: " + users["users"][user].email);
+// 		console.log("organizer: " + organizer);;
+// 		if (users["users"][user].email == organizer) {
+// 			organizer = users["users"][user];
+// 			start = users["users"][user].dayStart;
+// 			end = users["users"][user].dayEnd;
+// 			calendars.push(organizer.calendar);
+// 		}
+// 		for (var i = 0; i < guests.length; i++) {
+// 			if (guests[i].email == users["users"][user].email) {
+// 				calendars.push(guests[i].calendar);
+// 			}
+// 		}
+// 	}
 
-	console.log("organizer: " + organizer);
-	console.log("organizer email: " + organizer.email);
+// 	console.log("organizer: " + organizer);
+// 	console.log("organizer email: " + organizer.email);
 
-	var timePeriods = eventToSchedule.timePeriod;
-	// var start = organizer.dayStart;
-	// var end = organizer.dayEnd;
+// 	var timePeriods = eventToSchedule.timePeriod;
+// 	// var start = organizer.dayStart;
+// 	// var end = organizer.dayEnd;
 
-	console.log("timePeriods: " + timePeriods);
-	console.log("start: " + start);
-	console.log("end: " + end);
-	console.log("current: " + new Date());
+// 	console.log("timePeriods: " + timePeriods);
+// 	console.log("start: " + start);
+// 	console.log("end: " + end);
+// 	console.log("current: " + new Date());
 
-	var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, new Date());
+// 	var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, new Date());
 	
-	console.log("pre scheduler: " + masterSchedule);
+// 	console.log("pre scheduler: " + masterSchedule);
 
-	masterSchedule = scheduler(masterSchedule, calendars, eventToSchedule.eventDuration);
+// 	masterSchedule = scheduler(masterSchedule, calendars, eventToSchedule.eventDuration);
 
-	console.log("post scheduler: " + masterSchedule);
+// 	console.log("post scheduler: " + masterSchedule);
 
-	// now just needs to select three time periods from the master schedule,
-	// make them the requested duration (only use the start period of the period)
-	// and then use the start, start+ duration, and date of each of these three.
-	var numEvents = 0;
-	var eventsToShow = new Array();
+// 	// now just needs to select three time periods from the master schedule,
+// 	// make them the requested duration (only use the start period of the period)
+// 	// and then use the start, start+ duration, and date of each of these three.
+// 	var numEvents = 0;
+// 	var eventsToShow = new Array();
 
-	console.log(masterSchedule);
+// 	console.log(masterSchedule);
 
-	while (masterSchedule.length > 0 && numEvents < 3) {
-		var newEvent = masterSchedule.shift();
-		var periodStart = new Date(Date.parse(newEvent[0]));
-		var periodEnd = new Date(Date.parse(newEvent[1]));
+// 	while (masterSchedule.length > 0 && numEvents < 3) {
+// 		var newEvent = masterSchedule.shift();
+// 		var periodStart = new Date(Date.parse(newEvent[0]));
+// 		var periodEnd = new Date(Date.parse(newEvent[1]));
 
 
-		var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
-		var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
-		var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+// 		var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+// 		var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
+// 		var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
 
-		if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
-			masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
-		}
+// 		if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
+// 			masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
+// 		}
 		
-		var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
+// 		var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
 		
-		eventsToShow.add([eventStart, eventEnd, date]);
-	}
-}
+// 		eventsToShow.add([eventStart, eventEnd, date]);
+// 	}
+// }
 
 
 exports.scheduleEvent = function(req, res){
