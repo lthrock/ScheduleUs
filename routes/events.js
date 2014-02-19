@@ -545,6 +545,7 @@ exports.scheduleEvent = function(req, res){
 	listSchedules = []
 	var toRender = function() {
 		if (++internal_counter == attendees.length) {
+			getTimes();x
 			console.log(listSchedules);
 			res.render('schedule', { "id": id });
 		}
@@ -587,78 +588,75 @@ exports.scheduleEvent = function(req, res){
 		})(i);	
 	} 
 
-	var eventToSchedule;
-	for (var ev in users["events"]) {
-		if (users["events"][ev].id == id) { // ? 
-			eventToSchedule = users["events"][ev];
-			break;
+	var getTimes = function() {
+		var eventToSchedule;
+		for (var ev in users["events"]) {
+			if (users["events"][ev].id == id) { // ? 
+				eventToSchedule = users["events"][ev];
+				break;
+			}
 		}
-	}
 
-	var guests = eventToSchedule.guests
-	
+		var guests = eventToSchedule.guests
+		var organizer = eventToSchedule.guests[0];
 
-	var organizer = eventToSchedule.guests[0];
+		console.log("organizer: " + organizer);
+		console.log("organizer email: " + organizer.email);
 
+		var timePeriods = eventToSchedule.timePeriod;
+		var start = organizer.dayStart;
+		var end = organizer.dayEnd;
 
-
-
-// 	console.log("organizer: " + organizer);
-// 	console.log("organizer email: " + organizer.email);
-
-	var timePeriods = eventToSchedule.timePeriod;
-	var start = organizer.dayStart;
-	var end = organizer.dayEnd;
-
-	if (start == undefined) {
-		start = "10:00:00";
-	}
-	if (end == undefined) {
-		end = "20:00:00";
-	}
-
-	console.log("timePeriods: " + timePeriods);
-	console.log("start: " + start);
-	console.log("end: " + end);
-	console.log("current: " + new Date());
-
-	var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, today);
-	
-	console.log("pre scheduler: " + masterSchedule);
-
-	masterSchedule = scheduler(masterSchedule, listSchedules, eventToSchedule.eventDuration);
-
-// 	console.log("post scheduler: " + masterSchedule);
-
-// 	// now just needs to select three time periods from the master schedule,
-// 	// make them the requested duration (only use the start period of the period)
-// 	// and then use the start, start+ duration, and date of each of these three.
-	var numEvents = 0;
-	var eventsToShow = new Array();
-
-// 	console.log(masterSchedule);
-
-	while (masterSchedule.length > 0 && numEvents < 3) {
-		var newEvent = masterSchedule.shift();
-		var periodStart = new Date(Date.parse(newEvent[0]));
-		var periodEnd = new Date(Date.parse(newEvent[1]));
-
-
-		var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
-		var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
-		var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
-
-		if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
-			masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
+		if (start == undefined) {
+			start = "10:00:00";
 		}
-		
-		var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
-		
-		eventsToShow.add([eventStart, eventEnd, date]);
-	}
+		if (end == undefined) {
+			end = "20:00:00";
+		}
 
-	console.log("Awesome stuff: ");
-	console.log(masterSchedule);
+		console.log("timePeriods: " + timePeriods);
+		console.log("start: " + start);
+		console.log("end: " + end);
+		console.log("current: " + new Date());
+
+		var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, today);
+		
+		console.log("pre scheduler: " + masterSchedule);
+
+		masterSchedule = scheduler(masterSchedule, listSchedules, eventToSchedule.eventDuration);
+
+		console.log("post scheduler: " + masterSchedule);
+
+	// 	// now just needs to select three time periods from the master schedule,
+	// 	// make them the requested duration (only use the start period of the period)
+	// 	// and then use the start, start+ duration, and date of each of these three.
+		var numEvents = 0;
+		var eventsToShow = new Array();
+
+		console.log(masterSchedule);
+
+		while (masterSchedule.length > 0 && numEvents < 3) {
+			var newEvent = masterSchedule.shift();
+			var periodStart = new Date(Date.parse(newEvent[0]));
+			var periodEnd = new Date(Date.parse(newEvent[1]));
+
+
+			var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
+			var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+
+			if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
+				masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
+			}
+			
+			var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
+			
+			eventsToShow.add([eventStart, eventEnd, date]);
+		}
+
+		console.log("Awesome stuff: ");
+		console.log(masterSchedule);
+	}
 
 };
 
