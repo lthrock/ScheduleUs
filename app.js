@@ -79,6 +79,7 @@ app.get('/schedule/:id', events.scheduleEvent);
 app.get('/selectTime/:id', events.selectTime);
 
 var myClient;
+var users = require("./users.json");
 
 googleapis
   .discover('calendar', 'v3')
@@ -132,7 +133,8 @@ app.get('/oauth2callback', function(req, res) {
            "pendingEvents": [],
            "invites": [],
            "dayStart": "10:00",
-           "dayEnd": "22:00"
+           "dayEnd": "22:00",
+           "tokens": req.session.tokens
         };
         var calendar = {'summary': 'ScheduleUs Calendar'};
         myClient.calendar.calendars.insert(calendar).
@@ -144,7 +146,6 @@ app.get('/oauth2callback', function(req, res) {
             newUser.calendarID = results.id
             users["users"].push(newUser);
             var currUser = users["users"].indexOf(newUser);
-
             req.session.current_user_id = currUser;
                 
             var logged_in = true;
@@ -167,7 +168,21 @@ app.get('/oauth2callback', function(req, res) {
           "calendar_auth_url": calendar_auth_url,
           "logged_in": true
         }
-        res.render('index', data);
+        req.session.current_user_id = currUser;
+        users["users"][currUser].tokens = req.session.tokens;
+        if (users["users"][currUser].calendarID == undefined) {
+          var calendar = {'summary': 'ScheduleUs Calendar'};
+          myClient.calendar.calendars.insert(calendar).
+            withAuthClient(oauth2Client).execute(function(err, results) {
+            users["users"][currUser].calendarID = results.id;
+            console.log("The new calendar is ", results.id);
+            // req.session.calendar_id = results.id;
+                
+            res.render('index', data);
+          });
+        } else {
+          res.render('index', data);
+        }
       }
     });
     
@@ -176,9 +191,6 @@ app.get('/oauth2callback', function(req, res) {
     });
   };
 });
-
-var users = require("./users.json");
-
 
 // app.get('/project', project.viewProject);
 // app.get('/project/:name', project.viewProject);
