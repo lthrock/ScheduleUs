@@ -243,10 +243,6 @@ exports.createEvent = function(req, res){
   console.log(users["events"]);*/
 };
 
-exports.viewEvents = function(req, res){
-  res.render('viewEvents');
-};
-
 exports.editEvent = function(req, res){
   res.render('editEvent');
 };
@@ -260,7 +256,7 @@ exports.addEvent = function(req, res){
 		}
 	}
 	var eventName = req.query.name;
-	var eventDuration = req.query.duration;
+	var eventDuration = parseInt(req.query.hrs) + parseFloat(req.query.mins)/60;
 	var eventLocation = req.query.location;
 	var morningAfternoonEvening = [];
 	if (req.query.morning) {
@@ -280,13 +276,16 @@ exports.addEvent = function(req, res){
 	}
 	var guests = [];
 	if (req.query.attendees != '')
-		guests = req.query.attendees.split(", ");
+		guests = req.query.attendees.split(",");
 	var guestsArray = [[organizer, true]];
+	console.log(guests);
 	for (var i = 0; i < guests.length; i++) {
-		guestsArray.push([guests[i], false]);
+		guestsArray.push([guests[i].trim(), false]);
+		console.log(guestsArray);
+		console.log(guests[i].trim());
 		var present = false;
 		for (var user in users["users"]) {
-			if (users["users"][user].email == guests[i]) {
+			if (users["users"][user].email == guests[i].trim()) {
 				present = true;
 				break;
 			}
@@ -294,7 +293,7 @@ exports.addEvent = function(req, res){
 		if (!present) {
 			var newUser = {
 	           "name": "",
-	           "email": guests[i], 
+	           "email": guests[i].trim(), 
 	           "calendarID": -1,
 	           "calendar": [],
 	           "eventsToSchedule": [],
@@ -318,43 +317,43 @@ exports.addEvent = function(req, res){
 		"guests": guestsArray,
 		"time": ""
 	}
-	var calendarID = users["users"][currUser].calendarID;
+	// var calendarID = users["users"][currUser].calendarID;
 	//var calendarID = currUser.calendarID;//req.session.calendar_id;
 	// console.log("1 ", req.session.calendar_id, " 2 ", currUser.calendarID);
 	//var calendarID = currUser.calendarID;
-	var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
-		eventName, eventLocation, eventDuration);
+	// var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
+	// 	eventName, eventLocation, eventDuration);
 	// console.log(eventBody.end);
 	//var myClient = req.session.client;
-	var myClient = req.app.get('client')
-	var oauth2Client = require("../app").oauth2[req.session.current_user];
+	// var myClient = req.app.get('client')
+	// var oauth2Client = require("../app").oauth2[req.session.current_user];
 	// calendarID = req.session.calendar_id;
-	var request = myClient.oauth2.userinfo.get();
-	request.execute(function(err, results) {
+	// var request = myClient.oauth2.userinfo.get();
+	// request.execute(function(err, results) {
 	// 	console.log("errors");
 	// 	console.log(err);
 	// 	console.log(results);
-	});
-	var oauth2 = req.app.get('oauth');
-	oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
+	// });
+	// var oauth2 = req.app.get('oauth');
+	// oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
 	//	console.log("try #2");
 	//	console.log(err);
 	//	console.log(results);
-	});
-	var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody);
-	blah.withAuthClient(oauth2Client).execute(function(err, results) {
+	// });
+	// var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': false}, eventBody);
+	// blah.withAuthClient(oauth2Client).execute(function(err, results) {
 		// console.log("wef5", blah);
-      	    console.log("Create event ", err);
+      	    // console.log("Create event ", err);
             //newEvent.gcalID = results.id
             //newEvent.gcalID = results.id;
-            users["events"].push(newEvent);
-        });	
-
+            
+        // });	
+	users["events"].push(newEvent);
 	for (var guest in guests) {
 		var currUser;
 		for (var user in users["users"]) {
 			// console.log(users["users"][user]);
-			if (users["users"][user].email == guests[guest]) {
+			if (users["users"][user].email == guests[guest].trim()) {
 				currUser = user;
 				break;
 			}
@@ -363,33 +362,12 @@ exports.addEvent = function(req, res){
 	}
 
 	// console.log(users);
-	res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
-		'body': eventBody , 'event': newEvent});
+	// res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
+	// 	'body': eventBody , 'event': newEvent});
+	res.render('confirm', {'isOrganizer': true});
 };
 
-exports.scheduleList = function(req, res){
-	var currUser;
-	for (var user in users["users"]) {
-		if (users["users"][user].email == req.session.current_user) {
-			currUser = user;
-		}
-	}
-	// console.log(users["users"][currUser]);
-	toSchedule = []
-	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
-		for (var i in users["events"]) {
-			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
-				toSchedule.push(users["events"][i]);
-				break;
-			}
-		}
-	}
-
-  	res.render('readyToScheduleEvents', { 'toSchedule': toSchedule });
-};
-
-exports.invitations = function(req, res){
+exports.viewEvents = function(req, res){
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -407,8 +385,30 @@ exports.invitations = function(req, res){
 		}
 	}
 
+	toSchedule = []
+	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
+				toSchedule.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+
+  	pending = []
+	for (var j in users.users[currUser].pendingEvents) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users.users[currUser].pendingEvents[j]) {
+				pending.push(users["events"][i]);
+				break;
+			}
+		}
+	}
 	console.log(invites);
-    res.render('invitations', { 'invites': invites });
+	console.log(pending);
+  	res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'pending': pending });
 };
 
 exports.confirmEvent = function(req, res){
@@ -429,6 +429,7 @@ exports.confirmEvent = function(req, res){
 	}
 	var index = users.users[currUser].invites.indexOf(id);
 	users.users[currUser].invites.splice(index, 1);
+	users.users[currUser].pendingEvents.push(id);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
 		if (attendees[i][0] == req.session.current_user)
@@ -453,6 +454,7 @@ exports.confirmEvent = function(req, res){
 			}
 		}
 	}
+	// confirm("You have just confirmed this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.")
 	res.render('confirm', {'isOrganizer': false});
 };
 

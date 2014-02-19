@@ -11,7 +11,6 @@
 </head>
 
 <body>
-	<div class="container">
 		<!-- h1 through h6 are headers. The higher the number, the smaller the header -->
 		<!-- p means paragraph -->
 		<div class="table">
@@ -25,7 +24,7 @@
 		        </div>
 		        <div class="d2">	
 					<span class="header">
-						<span class="btn-group">YOUR EVENTS</span>
+						<span class="btn-group">Your Events</span>
 					</span>
 		        </div>
 		        <div class="d3"></div>
@@ -36,19 +35,112 @@
 		    <button id="edit" class="btn btn-primary btn-lg">Edit Event</button>
 	    </a> -->
 
-	    <div class="buttons">
+	    <!-- <div class="buttons">
 			<a href="/readyToSchedule">
 		    	<button id="create" class="btn btn-primary btn-lg">Confirmed Events</button>
 		    </a>
 			<a href="/invitations">
 		    	<button id="view" class="btn btn-primary btn-lg">My Invites</button>
 		    </a>
-		</div>
+		</div> -->
+
+	<div class="container">
+		<div id="content">
+      		<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+          		<li class="active"><a href="#schedule" data-toggle="tab">schedule</a></li>
+          		<li><a href="#tentative" data-toggle="tab">tentative</a></li>
+          		<li><a href="#history" data-toggle="tab">history</a></li>
+      		</ul>
+      		<br>
+      		<div id="my-tab-content" class="tab-content">
+          		<div class="tab-pane active" id="schedule">
+					<div class="table">
+						{{#each toSchedule}}
+						    <div class="tr">
+						        <div class="d12">	
+									<span class="list">
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule!</span>
+									</span>
+						        </div>
+						        <div class="d3">
+						        	<a href="schedule/{{id}}">
+							        	<button id="{{id}}" class="btn btn-primary">Schedule!</button>
+							        </a>
+						        </div>
+						    </div>
+						    <hr>
+						{{/each}}
+					</div>
+          		</div>
+          		<div class="tab-pane" id="tentative">
+	          		<div class="table">
+	            		{{#each invites}}
+	                		<div class="tr">
+	                    		<div class="d12"> 
+	                  				<span class="list">
+	                    			<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+	                  				</span>
+	                    		</div>
+	                        	<div class="d3">
+	                          		<a href="confirm/{{id}}">
+	                            		<button id="{{id}}" class="btn btn-primary">✓</button>
+	                          		</a>
+	                       		</div>
+	                		</div>
+	                		<hr>
+	            		{{/each}}
+	            		{{#each pending}}
+	                		<div class="tr">
+	                    		<div class="d12"> 
+	                  				<span class="list">
+	                    			<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+	                  				</span>
+	                    		</div>
+	                        	<div class="d3 disabled-button">
+	                            		✓
+	                       		</div>
+	                		</div>
+	                		<hr>
+	            		{{/each}}
+	          		</div>
+          		</div>
+
+	          	<div class="tab-pane" id="history">
+	              	<div class="table">
+	            		{{#each history}}
+	                		<div class="tr">
+	                    		<div class="d12"> 
+	                  				<span class="list">
+	                    			<span class="btn-group">Reschedule {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+	                  				</span>
+	                    		</div>
+	                        	<div class="d3">
+	                          		<a href="confirm/{{id}}">
+	                            		<button id="{{id}}" class="btn btn-primary"> Reuse!</button>
+	                          		</a>
+	                       		</div>
+	                		</div>
+	                		<hr>
+	            		{{/each}}
+	          		</div>
+	          	</div>
+      		</div>
+  		</div>
+
+		<script type="text/javascript">
+    		jQuery(document).ready(function ($) {
+        		$('#tabs').tab();
+
+        		// $('#tentative button').click(function(e){
+        		// 	confirm("You have just confirmed this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.")
+        		// });
+    		});
+		</script>
 
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/introHCI.js"></script>
+	<!-- // <script src="/js/introHCI.js"></script> -->
 </body>
 </html>
