@@ -243,10 +243,6 @@ exports.createEvent = function(req, res){
   console.log(users["events"]);*/
 };
 
-exports.viewEvents = function(req, res){
-  res.render('viewEvents');
-};
-
 exports.editEvent = function(req, res){
   res.render('editEvent');
 };
@@ -371,29 +367,7 @@ exports.addEvent = function(req, res){
 	res.render('confirm', {'isOrganizer': true});
 };
 
-exports.scheduleList = function(req, res){
-	var currUser;
-	for (var user in users["users"]) {
-		if (users["users"][user].email == req.session.current_user) {
-			currUser = user;
-		}
-	}
-	// console.log(users["users"][currUser]);
-	toSchedule = []
-	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
-		for (var i in users["events"]) {
-			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
-				toSchedule.push(users["events"][i]);
-				break;
-			}
-		}
-	}
-
-  	res.render('readyToScheduleEvents', { 'toSchedule': toSchedule });
-};
-
-exports.invitations = function(req, res){
+exports.viewEvents = function(req, res){
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -411,8 +385,30 @@ exports.invitations = function(req, res){
 		}
 	}
 
+	toSchedule = []
+	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
+				toSchedule.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+
+  	pending = []
+	for (var j in users.users[currUser].pendingEvents) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users.users[currUser].pendingEvents[j]) {
+				pending.push(users["events"][i]);
+				break;
+			}
+		}
+	}
 	console.log(invites);
-    res.render('invitations', { 'invites': invites });
+	console.log(pending);
+  	res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'pending': pending });
 };
 
 exports.confirmEvent = function(req, res){
@@ -433,6 +429,7 @@ exports.confirmEvent = function(req, res){
 	}
 	var index = users.users[currUser].invites.indexOf(id);
 	users.users[currUser].invites.splice(index, 1);
+	users.users[currUser].pendingEvents.push(id);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
 		if (attendees[i][0] == req.session.current_user)
@@ -457,6 +454,7 @@ exports.confirmEvent = function(req, res){
 			}
 		}
 	}
+	// confirm("You have just confirmed this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.")
 	res.render('confirm', {'isOrganizer': false});
 };
 

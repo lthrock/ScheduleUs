@@ -105,8 +105,6 @@ app.get('/settings', function(req, res) {
 });
 app.get('/edit', events.editEvent);
 app.get('/add', events.addEvent);
-app.get('/readyToSchedule', events.scheduleList);
-app.get('/invitations', events.invitations);
 app.get('/confirm/:id', events.confirmEvent);
 app.get('/schedule/:id', events.scheduleEvent);
 app.get('/selectTime/:id', events.selectTime);
