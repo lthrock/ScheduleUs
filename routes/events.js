@@ -19,6 +19,9 @@ function getObjects(obj, key, val) {
 }
 
 function scheduler(masterSchedule, schedules, timeNeeded) {
+	console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	console.log(schedules);
+
 	if (schedules.length == 0) return null;
 
 	for (var i = 0; i < schedules.length; i++) {
@@ -469,17 +472,12 @@ exports.confirmEvent = function(req, res){
 // 	var calendars = new Array();
 // 	var organizer = eventToSchedule.guests[0];
 
-// 	// not honestly sure why I have to set these in the loop as opposed to after
-// 	var start;
-// 	var end;
 
 // 	for (var user in users["users"]) {
 // 		console.log("hubbubbub: " + users["users"][user].email);
 // 		console.log("organizer: " + organizer);;
 // 		if (users["users"][user].email == organizer) {
 // 			organizer = users["users"][user];
-// 			start = users["users"][user].dayStart;
-// 			end = users["users"][user].dayEnd;
 // 			calendars.push(organizer.calendar);
 // 		}
 // 		for (var i = 0; i < guests.length; i++) {
@@ -589,18 +587,79 @@ exports.scheduleEvent = function(req, res){
 		})(i);	
 	} 
 
-// <<<<<<< HEAD
-// 					toRender();
-// 				});
-// 			}
-// 		}
-// 	}
-// 	res.render('schedule', { "id": id });
+	var eventToSchedule;
+	for (var ev in users["events"]) {
+		if (users["events"][ev].id == id) { // ? 
+			eventToSchedule = users["events"][ev];
+			break;
+		}
+	}
 
-// 	for (var i = 0; eventsToShow.length(); i++) {
-// 		var newHTML = eventsToShow[i][0] + ' - ' + eventsToShow[i][1] + ' on ' + eventsToShow[i][2];
-// 		$('#suggestedTime' + (i+1)).html(newHTML);
-// 	}
+	var guests = eventToSchedule.guests
+	
+
+	var organizer = eventToSchedule.guests[0];
+
+
+
+
+// 	console.log("organizer: " + organizer);
+// 	console.log("organizer email: " + organizer.email);
+
+	var timePeriods = eventToSchedule.timePeriod;
+	var start = organizer.dayStart;
+	var end = organizer.dayEnd;
+
+	if (start == undefined) {
+		start = "10:00:00";
+	}
+	if (end == undefined) {
+		end = "20:00:00";
+	}
+
+	console.log("timePeriods: " + timePeriods);
+	console.log("start: " + start);
+	console.log("end: " + end);
+	console.log("current: " + new Date());
+
+	var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, today);
+	
+	console.log("pre scheduler: " + masterSchedule);
+
+	masterSchedule = scheduler(masterSchedule, listSchedules, eventToSchedule.eventDuration);
+
+// 	console.log("post scheduler: " + masterSchedule);
+
+// 	// now just needs to select three time periods from the master schedule,
+// 	// make them the requested duration (only use the start period of the period)
+// 	// and then use the start, start+ duration, and date of each of these three.
+	var numEvents = 0;
+	var eventsToShow = new Array();
+
+// 	console.log(masterSchedule);
+
+	while (masterSchedule.length > 0 && numEvents < 3) {
+		var newEvent = masterSchedule.shift();
+		var periodStart = new Date(Date.parse(newEvent[0]));
+		var periodEnd = new Date(Date.parse(newEvent[1]));
+
+
+		var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+		var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
+		var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+
+		if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
+			masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
+		}
+		
+		var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
+		
+		eventsToShow.add([eventStart, eventEnd, date]);
+	}
+
+	console.log("Awesome stuff: ");
+	console.log(masterSchedule);
+
 };
 
 exports.selectTime = function(req, res) {
