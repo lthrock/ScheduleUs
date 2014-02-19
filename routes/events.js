@@ -4,6 +4,7 @@ var CLIENT_ID = "93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercon
 var CLIENT_SECRET = "_m1_ZRsGUeo-fb2AMdkltmv8";
 var REDIRECT_URL = "http://localhost:3000/oauth2callback";
 
+// 
 function getObjects(obj, key, val) {
     var objects = [];
     for (var i in obj) {
@@ -562,7 +563,8 @@ exports.scheduleEvent = function(req, res){
 			    calendarId: user.email, 
 			    timeMin: today.toISOString(), 
 			    timeMax: nextWeek.toISOString(),
-			    singleEvents: true
+			    singleEvents: true,
+			    orderBy: "startTime"
 			}
 			var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 			oauth2Client.credentials = user.tokens;
