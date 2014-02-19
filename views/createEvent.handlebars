@@ -40,14 +40,14 @@
 
 
 		
-		<form id="createEventForm" role="form" method="get" action="/add">
+		<form id="createEventForm" role="form" method="get" action="/add" onsubmit="return validateForm()">
 			<div class="form-group">
 				<label>Event name:</label>
 				<input type="text" class="form-control" class="top-buffer" placeholder="Event Name" name="name"><div>
 			</div>
 			<div class="form-group">
-				<label>Add guests:</label>
-				<input type="text" class="form-control" class="top-buffer" placeholder="Enter email addresses" name="attendees"><div>
+				<label>Emails of all guests:</label>
+				<input type="text" class="form-control" class="top-buffer" placeholder="Enter addresses separated by commas" name="attendees"><div>
 			</div>
 			<div class="form-group">
 				<label>Location:</label>
@@ -55,7 +55,34 @@
 			</div>
 			<div class="form-group">
 				<label>Duration of event:</label>
-				<input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours" name="duration"><div>
+				<!-- <input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours" name="duration"><div> -->
+				<div class="table">
+				    <div class="tr">
+				        <div class="d6">
+				        	<span>
+								<select class="form-control top-buffer" id="hrs" name="hrs">
+								</select>
+							</span>
+				        </div>
+				        <div class="d7">	
+							<select class="form-control top-buffer" id="mins" name="mins">
+								<option value="0">0 minutes</option>
+								<option value="15">15 minutes</option>
+								<option value="30">30 minutes</option>
+								<option value="45">45 minutes</option>
+							</select>
+				        </div>
+				        <!-- <div class="d3"></div> -->
+				    </div>
+				</div>
+				<!-- <span>
+					<select class="form-control top-buffer select" id="hrs">
+					</select>
+				</span>
+				<span>
+					<select class="form-control top-buffer select" id="mins">
+					</select>
+				</span> -->
 			</div>
 
 <!-- 			<div class="form-group">
@@ -111,5 +138,6 @@
 	</div>
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/createEvent.js"></script>
 </body>
 </html>

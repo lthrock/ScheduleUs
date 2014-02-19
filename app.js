@@ -58,6 +58,7 @@ if ('development' == app.get('env')) {
 //app.get('/', index.view);
 app.get('/', function(req, res) {
 	var logged_in = true;
+  // console.log(req.session.tokens);
   if (req.session.tokens == null)
 		logged_in = false;
 	data = {
@@ -67,9 +68,41 @@ app.get('/', function(req, res) {
 	res.render('index', data);
 });
 
-app.get('/view', events.viewEvents);
-app.get('/create', events.createEvent);
-app.get('/settings', settings.view);
+// app.get('/view', events.viewEvents);
+app.get('/view', function(req, res) {
+  if (req.session.tokens == null) {
+    data = {
+      "calendar_auth_url": calendar_auth_url,
+      "logged_in": false
+    }
+    res.render('index', data);
+  } else {
+  // res.render('viewEvents');
+    events.viewEvents(req, res);
+  }
+});
+app.get('/create', function(req, res) {
+  if (req.session.tokens == null) {
+    data = {
+      "calendar_auth_url": calendar_auth_url,
+      "logged_in": false
+    }
+    res.render('index', data);
+  } else {
+    events.createEvent(req, res);
+  }
+});
+app.get('/settings', function(req, res) {
+  if (req.session.tokens == null) {
+    data = {
+      "calendar_auth_url": calendar_auth_url,
+      "logged_in": false
+    }
+    res.render('index', data);
+  } else {
+    settings.view(req, res);
+  }
+});
 app.get('/edit', events.editEvent);
 app.get('/add', events.addEvent);
 app.get('/readyToSchedule', events.scheduleList);
@@ -139,6 +172,7 @@ app.get('/oauth2callback', function(req, res) {
         var calendar = {'summary': 'ScheduleUs Calendar'};
         myClient.calendar.calendars.insert(calendar).
           withAuthClient(oauth2Client).execute(function(err, results) {
+            console.log("Errors are ", err);
             // console.log("RESULTS.ID ", results.id)
             req.session.calendar_id = results.id;
             // console.log("req.session.calendar_id ", req.session.calendar_id);
@@ -162,6 +196,7 @@ app.get('/oauth2callback', function(req, res) {
               res.render('index', data);
             }); */
             res.render('index', data);
+            // console.log("currUser is " + currUser);
           });
       } else {
         data = {
@@ -183,6 +218,7 @@ app.get('/oauth2callback', function(req, res) {
         } else {
           res.render('index', data);
         }
+        // console.log("currUser is " + currUser);
       }
     });
     
