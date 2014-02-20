@@ -103,7 +103,9 @@ app.get('/settings', function(req, res) {
     settings.view(req, res);
   }
 });
-app.get('/edit', events.editEvent);
+app.get('/edit/:id', events.editEvent);
+app.get('/delete/:id', events.deleteEvent);
+app.get('/save/:id', events.saveEvent);
 app.get('/add', events.addEvent);
 app.get('/confirm/:id', events.confirmEvent);
 app.get('/reject/:id', events.rejectEvent);

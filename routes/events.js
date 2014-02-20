@@ -260,6 +260,8 @@ var users = require("../users.json");
 module.exports = {
 	createEvent: createEvent,
 	editEvent: editEvent,
+	deleteEvent: deleteEvent,
+	saveEvent: saveEvent,
 	addEvent: addEvent,
 	confirmEvent: confirmEvent,
 	rejectEvent: rejectEvent,
@@ -277,7 +279,165 @@ function createEvent(req, res) {
 
 // exports.editEvent = function(req, res){
 function editEvent(req, res) {
-  res.render('editEvent');
+	var id = req.params.id;
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var guests = "";
+	for (var guest in users["events"][currEvent].guests) {
+		if (guest != 0) {
+			guests += users["events"][currEvent].guests[guest][0] + ", "; 
+		}
+	}
+	guests = guests.substring(0, guests.length - 2);
+	console.log(guests);
+	var morning = users["events"][currEvent].timePeriod[0];
+	var afternoon = users["events"][currEvent].timePeriod[1];
+	var evening = users["events"][currEvent].timePeriod[2];
+	var duration = (users["events"][currEvent].eventDuration + "").split(".");
+	var hours = parseInt(duration[0]);
+	if (duration[1]) {
+		var mins = parseFloat("0." + duration[1]) * 60;
+	}
+	var populatedFields = {
+		"id": id,
+		"eventName": users["events"][currEvent].eventName,
+		"eventHrs": hours,
+		"eventMins": mins,
+		"eventLocation": users["events"][currEvent].eventLocation,
+		"morning": morning,
+		"afternoon": afternoon, 
+		"evening": evening,
+		"guests": guests
+	}
+  	res.render('editEvent', populatedFields);
+};
+
+function saveEvent(req, res) {
+	var id = req.params.id;
+	var organizer = req.session.current_user;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			currUser = user;
+		}
+	}
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var guests = users["events"][currEvent].guests;
+	for (var i in guests) {
+		if (i == 0) {
+			var inside = false;
+			var index;
+			for (var ev in users["users"][currUser].eventsToSchedule) {
+				if (users["users"][currUser].eventsToSchedule[ev] == id) {
+					index = ev;
+					inside = true;
+				}
+			}
+			if (inside) users["users"][currUser].eventsToSchedule.splice(index, 1);
+			else {
+				for (var ev in users["users"][currUser].eventsAwaitingConfirmation) {
+					if (users["users"][currUser].eventsAwaitingConfirmation[ev] == id)
+						index = ev;
+				}
+				users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
+			}
+		} else {
+			for (var user in users["users"]) {
+				if (guests[i][0] == users["users"][user].email) {
+					var inside = false;
+					var index;
+					for (var ev in users["users"][user].invites) {
+						if (users["users"][user].invites[ev] == id) {
+							index = ev;
+							inside = true;
+						}
+					}
+					if (inside) users["users"][user].invites.splice(index, 1);
+					else {
+						for (var ev in users["users"][user].pendingEvents) {
+							if (users["users"][user].pendingEvents[ev] == id)
+								index = ev;
+						}
+						users["users"][user].pendingEvents.splice(index, 1);
+					}
+				}
+			}
+		}
+	}
+
+	users["events"].splice(currEvent, 1);
+	addEvent(req, res);
+};
+
+function deleteEvent(req, res) {
+	var id = req.params.id;
+	var organizer = req.session.current_user;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			currUser = user;
+		}
+	}
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var guests = users["events"][currEvent].guests;
+	for (var i in guests) {
+		if (i == 0) {
+			var inside = false;
+			var index;
+			for (var ev in users["users"][currUser].eventsToSchedule) {
+				if (users["users"][currUser].eventsToSchedule[ev] == id) {
+					index = ev;
+					inside = true;
+				}
+			}
+			if (inside) users["users"][currUser].eventsToSchedule.splice(index, 1);
+			else {
+				for (var ev in users["users"][currUser].eventsAwaitingConfirmation) {
+					if (users["users"][currUser].eventsAwaitingConfirmation[ev] == id)
+						index = ev;
+				}
+				users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
+			}
+		} else {
+			for (var user in users["users"]) {
+				if (guests[i][0] == users["users"][user].email) {
+					var inside = false;
+					var index;
+					for (var ev in users["users"][user].invites) {
+						if (users["users"][user].invites[ev] == id) {
+							index = ev;
+							inside = true;
+						}
+					}
+					if (inside) users["users"][user].invites.splice(index, 1);
+					else {
+						for (var ev in users["users"][user].pendingEvents) {
+							if (users["users"][user].pendingEvents[ev] == id)
+								index = ev;
+						}
+						users["users"][user].pendingEvents.splice(index, 1);
+					}
+				}
+			}
+		}
+	}
+
+	users["events"].splice(currEvent, 1);
+  	view(req, res);
 };
 
 // exports.addEvent = function(req, res){
@@ -500,7 +660,7 @@ function confirmEvent(req, res) {
 		if (users["users"][currUser].invites[ev] == id)
 			index = ev;
 	}
-	console.log(index);
+	// console.log(index);
 	users["users"][currUser].invites.splice(index, 1);
 	users["users"][currUser].pendingEvents.push(id);
 	var attendees = users.events[currEvent].guests;

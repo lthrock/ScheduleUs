@@ -13,25 +13,25 @@ function initializePage() {
 	for(var i = 0; i < 24; i++){
 	    var select = document.getElementById("hrs");
 	    var option = document.createElement("OPTION");
+	    var number = select.getAttribute("name");
+	    number = number.substring(0, number.length-3);
 	    select.options.add(option);
 	    if (i == 1) {
 	    	option.text = i + " hour";
 	    } else {
 		    option.text = i + " hours";
 		}
+		if (i == number)
+			option.selected = "selected";
 	    option.value = i;
 	}
-	// for(var i = 0; i < 60; i++){
-	//     var select = document.getElementById("mins");
-	//     var option = document.createElement("OPTION");
-	//     select.options.add(option);
-	//     if (i == 1) {
-	//     	option.text = i + " minute";
-	//     } else {
-	// 	    option.text = i + " minutes";
-	// 	}
-	//     option.value = i;
-	// }
+	var select = document.getElementById("mins");
+	var number = select.getAttribute("name");
+	number = number.substring(0, number.length-4);
+	if (number <= 15)
+		$("[value='" + number + "']")[1].selected = "selected";
+	else
+		$("[value='" + number + "']").selected = "selected";
 }
 
 function validateForm() {
