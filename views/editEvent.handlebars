@@ -19,7 +19,6 @@
 </head>
 
 <body>
-	<div class="container">
 		<div class="table">
 		    <div class="tr">
 		        <div class="d1">
@@ -31,29 +30,58 @@
 		        </div>
 		        <div class="d2">	
 					<span class="header">
-						<span class="btn-group">EDIT EVENT</span>
+						<span class="btn-group">Edit Event</span>
 					</span>
 		        </div>
 		        <div class="d3"></div>
 		    </div>
 		</div>
 
-		<form id="addFriendForm" role="form" method="get" action="/add">
+
+	<div class="container">
+		<form id="createEventForm" role="form" method="get" action="/save/{{id}}" onsubmit="return validateForm()">
 			<div class="form-group">
 				<label>Event name:</label>
-				<input type="text" class="form-control" class="top-buffer" value="Event Name" name="name"><div>
+				<input type="text" class="form-control" class="top-buffer" value="{{eventName}}" name="name"><div>
 			</div>
 			<div class="form-group">
-				<label>Add guests:</label>
-				<input type="text" class="form-control" class="top-buffer" value="Enter email addresses" name="attendees"><div>
+				<label>Emails of all guests:</label>
+				<input type="text" class="form-control" class="top-buffer" name="attendees" value="{{guests}}"><div>
 			</div>
 			<div class="form-group">
 				<label>Location:</label>
-				<input type="text" class="form-control" class="top-buffer" value="Location" name="location"><div>
+				<input type="text" class="form-control" class="top-buffer" value="{{eventLocation}}" name="location"><div>
 			</div>
 			<div class="form-group">
 				<label>Duration of event:</label>
-				<input type="number" class="form-control" class = "top-buffer" value="1.5" name="duration"><div>
+				<!-- <input type="number" class="form-control" class = "top-buffer" placeholder="Duration in hours" name="duration"><div> -->
+				<div class="table">
+				    <div class="tr">
+				        <div class="d6">
+				        	<span>
+								<select class="form-control top-buffer" id="hrs" name="{{eventHrs}}hrs">
+								</select>
+							</span>
+				        </div>
+				        <div class="d7">	
+							<select class="form-control top-buffer" id="mins" name="{{eventMins}}mins">
+								<option value="0">0 minutes</option>
+								<option value="15">15 minutes</option>
+								<option value="30">30 minutes</option>
+								<option value="45">45 minutes</option>
+							</select>
+				        </div>
+				        <!-- <div class="d3"></div> -->
+				    </div>
+				</div>
+				<!-- <span>
+					<select class="form-control top-buffer select" id="hrs">
+					</select>
+				</span>
+				<span>
+					<select class="form-control top-buffer select" id="mins">
+					</select>
+				</span> -->
 			</div>
 
 <!-- 			<div class="form-group">
@@ -87,31 +115,40 @@
 			</div>
 			<div class="center-block">
 	    		<label class="radio-inline">
-	     			<input type="checkbox" name="morning">Morning
+	    			{{#if morning}}
+			     			<input type="checkbox" name="morning" checked>Morning
+	     			{{else}}
+			     			<input type="checkbox" name="morning">Morning
+	     			{{/if}}
 	     		</label>
 	    		<label class="radio-inline">
-	     			<input type="checkbox" name="afternoon">Afternoon
+	    			{{#if afternoon}}
+		    			<input type="checkbox" name="afternoon" checked>Afternoon
+	    			{{else}}
+		     			<input type="checkbox" name="afternoon">Afternoon
+	     			{{/if}}
 	     		</label>
 	    		<label class="radio-inline">
-	     			<input type="checkbox" name="evening">Evening
+	    			{{#if evening}}
+		    			<input type="checkbox" name="evening" checked>Evening
+	    			{{else}}
+		     			<input type="checkbox" name="evening">Evening
+	     			{{/if}}
 	    		</label>
 	    	</div>
 	    	<div class="center-block">
-		   		<input type="submit" id="submitBtn" class="btn btn-primary" value="Confirm"></input>
-		   		<a href="/view">
-		   			<button id="delete" class="btn btn-primary">Delete</button>
-		   		</a>
+		   		<input type="submit" id="submitBtn" class="btn btn-primary" value="Save"></input>
 	   		</div>
 	   	</form>
-
-		<!-- <div class="center-block">
+	<!-- 	<div class="center-block">
 			<button id="testjs" class="btn btn-primary btn-lg">Confirm</button>
 			<div class="divider"/>
-			<button id="testjs" class="btn btn-primary btn-lg">Delete</button>
+			<button id="testjs" class="btn btn-primary btn-lg">Cancel</button>
 		</div> -->
+	<!-- </form> -->
 	</div>
-
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/createEvent.js"></script>
 </body>
 </html>

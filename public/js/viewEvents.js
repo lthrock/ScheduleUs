@@ -10,4 +10,12 @@ $(document).ready(function() {
  */
 function initializePage() {
 	// add any functionality and listeners you want here
+	$('div.clickable').click(function(e) {
+		var id = $(this).attr('id');
+		var idNumber = id.substr('host'.length);
+		$('#modal-dialog' + idNumber).modal('show');
+		// $('#awaiting').on('click', function() {
+		//     $modal.modal('show');
+		// });
+	});
 }

@@ -11,39 +11,74 @@
 </head>
 
 <body>
-	<div class="container">
 		<!-- h1 through h6 are headers. The higher the number, the smaller the header -->
 		<!-- p means paragraph -->
-		<div class="table">
+		<!-- <div class="table">
 		    <div class="tr">
 		        <div class="d1">
 		        	<span class="btn-group">
-						<a href="/" class="btn">
-							<pre>&lt; </pre>
-						</a>
+		        		{{#if isOrganizer}}
+							<a href="/" class="btn">
+								<pre>Home</pre>
+							</a>
+						{{else}}
+							<a href="/view" class="btn">
+								<pre>&lt; </pre>
+							</a>
+						{{/if}}
 					</span>
 		        </div>
-		        <div class="d2">	
+		        <div class="d2"> -->	
 					<!-- <span class="header">
 						<span class="btn-group">YOUR EVENTS</span>
 					</span> -->
-		        </div>
+		        <!-- </div> -->
 		        <!-- <div class="d3"></div> -->
-		    </div>
-		</div>
+		    <!-- </div>
+		</div> -->
+
+	<div class="container">
 		{{#if isScheduled}}
-			<p>You have scheduled your event! The time you selected will be added to yours and all participants' Google calendars.</p>
+			<div id="modal-dialog" class="modal show">
+			    <div class="modal-dialog">
+			      <div class="modal-content">
+			        <div class="modal-header">
+			            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
+			             <h3>Event Scheduled</h3>
+			        </div>
+			        <div class="modal-body">
+			             <p>You have scheduled your event! The time you selected will be added to yours and all participants' Google calendars.</p>
+			        </div>
+			        <div class="modal-footer">
+			          <a href="/view"  id="btnConfirm" class="btn confirm">OK</a> 
+			          <!-- <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a> -->
+			        </div>
+			      </div>
+			    </div>
+			</div>
 		{{else}}
-			{{#if isOrganizer}}
-				<p>You have successfully created your event. The other attendees have been sent a notification asking them to confirm the event before you may select a time.</p>
-			{{else}}
-				<p>Thank you for confirming this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.</p>
-			{{/if}}
+			<div id="modal-dialog" class="modal show">
+			    <div class="modal-dialog">
+			      <div class="modal-content">
+			        <div class="modal-header">
+			            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
+			             <h3>Event Created</h3>
+			        </div>
+			        <div class="modal-body">
+			             <p>You have successfully created your event. The other attendees have been sent an invitation to confirm the event before you may select a time.</p>
+			        </div>
+			        <div class="modal-footer">
+			          <a href="/view"  id="btnConfirm" class="btn confirm">OK</a> 
+			          <!-- <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a> -->
+			        </div>
+			      </div>
+			    </div>
+			</div>
 		{{/if}}
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/introHCI.js"></script>
+	<!-- // <script src="/js/introHCI.js"></script> -->
 </body>
 </html>

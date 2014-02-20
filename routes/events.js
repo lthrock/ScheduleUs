@@ -1,3 +1,9 @@
+// var time = require('time');
+// var a = new time.Date(1337324400000);
+// a.setTimezone('Europe/Amsterdam');
+process.env.TZ = 'America/Los_Angeles'
+
+
 var googleapis = require('googleapis');
 var OAuth2Client = googleapis.OAuth2Client;
 var CLIENT_ID = "93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercontent.com";
@@ -19,17 +25,27 @@ function getObjects(obj, key, val) {
 }
 
 function scheduler(masterSchedule, schedules, timeNeeded) {
+	timeNeeded *= (60*60*1000);
+
+	// console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	// console.log("duration: " + timeNeeded);
+
 	if (schedules.length == 0) return null;
 
 	for (var i = 0; i < schedules.length; i++) {
 		var schedule = schedules[i];
 		masterSchedule = editMasterSchedule(masterSchedule, schedule, timeNeeded);
+		// console.log("i th masterSched: " + masterSchedule);
 	}
 	return masterSchedule;
 }
 
 
 function editMasterSchedule(masterSchedule, newSchedule, timeNeeded) {
+	// console.log("oldMaster: " + masterSchedule + "////");
+	// console.log("newSched: " + newSchedule + "////");
+
+	;
 
 	var combinedSchedule = new Array();
 
@@ -43,13 +59,15 @@ function editMasterSchedule(masterSchedule, newSchedule, timeNeeded) {
 		
 
 		for (var i = newScheduleIndex; i < newSchedule.length; i++) {
-			var newWindowStartTime = newSchedule[i][0];
-			var newWindowEndTime = newSchedule[i][1];
+			var newWindowStartTime = new Date(Date.parse(newSchedule[i][0]));
+			var newWindowEndTime = new Date(Date.parse(newSchedule[i][1]));
 
 			// present for efficiency purposes to avoid unnecessary checks. 
 			if (newWindowStartTime > masterWindowEndTime) break; // This means that no future windows will fit in this slot
 
 			var newBlock = [0, 0];
+
+
 
 			if (newWindowStartTime >= masterWindowStartTime && newWindowStartTime <= masterWindowEndTime) {
 				newBlock = findOverlap(masterWindowStartTime, masterWindowEndTime, newWindowStartTime, newWindowEndTime);
@@ -58,6 +76,9 @@ function editMasterSchedule(masterSchedule, newSchedule, timeNeeded) {
 				newBlock = findOverlap(newWindowStartTime, newWindowEndTime, masterWindowStartTime, masterWindowEndTime);
 			}
 
+			// console.log("Duration: " + ((newBlock[1] - newBlock[0])/(60*60*1000)));
+			// console.log("Start: " + newBlock[1]);
+			// console.log("End: " + newBlock[0]);
 			if (newBlock[1] - newBlock[0] >= timeNeeded) {
 				combinedSchedule.push(newBlock);
 			}
@@ -148,6 +169,7 @@ function convertToFreetime(calendar) {
 		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
 		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
 	]);
+	console.log("returning: " + times);
 	return times;
 }
 
@@ -234,21 +256,192 @@ function createWeekMasterSchedule(morningAfternoonEvening, dayStart, dayEnd, sta
 
 var users = require("../users.json");
 
-exports.createEvent = function(req, res){
+
+module.exports = {
+	createEvent: createEvent,
+	editEvent: editEvent,
+	deleteEvent: deleteEvent,
+	saveEvent: saveEvent,
+	addEvent: addEvent,
+	confirmEvent: confirmEvent,
+	rejectEvent: rejectEvent,
+	scheduleEvent: scheduleEvent,
+	selectTime: selectTime,
+	viewEvents: view
+}
+
+// exports.createEvent = function(req, res){
+function createEvent(req, res) {
   res.render('createEvent');
-  /*console.log(users["users"]);
-  console.log(users["events"]);*/
+  console.log(users["users"]);
+  console.log(users["events"]);
 };
 
-exports.viewEvents = function(req, res){
-  res.render('viewEvents');
+// exports.editEvent = function(req, res){
+function editEvent(req, res) {
+	var id = req.params.id;
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var guests = "";
+	for (var guest in users["events"][currEvent].guests) {
+		if (guest != 0) {
+			guests += users["events"][currEvent].guests[guest][0] + ", "; 
+		}
+	}
+	guests = guests.substring(0, guests.length - 2);
+	console.log(guests);
+	var morning = users["events"][currEvent].timePeriod[0];
+	var afternoon = users["events"][currEvent].timePeriod[1];
+	var evening = users["events"][currEvent].timePeriod[2];
+	var duration = (users["events"][currEvent].eventDuration + "").split(".");
+	var hours = parseInt(duration[0]);
+	if (duration[1]) {
+		var mins = parseFloat("0." + duration[1]) * 60;
+	}
+	var populatedFields = {
+		"id": id,
+		"eventName": users["events"][currEvent].eventName,
+		"eventHrs": hours,
+		"eventMins": mins,
+		"eventLocation": users["events"][currEvent].eventLocation,
+		"morning": morning,
+		"afternoon": afternoon, 
+		"evening": evening,
+		"guests": guests
+	}
+  	res.render('editEvent', populatedFields);
 };
 
-exports.editEvent = function(req, res){
-  res.render('editEvent');
+function saveEvent(req, res) {
+	var id = req.params.id;
+	var organizer = req.session.current_user;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			currUser = user;
+		}
+	}
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var guests = users["events"][currEvent].guests;
+	for (var i in guests) {
+		if (i == 0) {
+			var inside = false;
+			var index;
+			for (var ev in users["users"][currUser].eventsToSchedule) {
+				if (users["users"][currUser].eventsToSchedule[ev] == id) {
+					index = ev;
+					inside = true;
+				}
+			}
+			if (inside) users["users"][currUser].eventsToSchedule.splice(index, 1);
+			else {
+				for (var ev in users["users"][currUser].eventsAwaitingConfirmation) {
+					if (users["users"][currUser].eventsAwaitingConfirmation[ev] == id)
+						index = ev;
+				}
+				users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
+			}
+		} else {
+			for (var user in users["users"]) {
+				if (guests[i][0] == users["users"][user].email) {
+					var inside = false;
+					var index;
+					for (var ev in users["users"][user].invites) {
+						if (users["users"][user].invites[ev] == id) {
+							index = ev;
+							inside = true;
+						}
+					}
+					if (inside) users["users"][user].invites.splice(index, 1);
+					else {
+						for (var ev in users["users"][user].pendingEvents) {
+							if (users["users"][user].pendingEvents[ev] == id)
+								index = ev;
+						}
+						users["users"][user].pendingEvents.splice(index, 1);
+					}
+				}
+			}
+		}
+	}
+
+	users["events"].splice(currEvent, 1);
+	addEvent(req, res);
 };
 
-exports.addEvent = function(req, res){
+function deleteEvent(req, res) {
+	var id = req.params.id;
+	var organizer = req.session.current_user;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			currUser = user;
+		}
+	}
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var guests = users["events"][currEvent].guests;
+	for (var i in guests) {
+		if (i == 0) {
+			var inside = false;
+			var index;
+			for (var ev in users["users"][currUser].eventsToSchedule) {
+				if (users["users"][currUser].eventsToSchedule[ev] == id) {
+					index = ev;
+					inside = true;
+				}
+			}
+			if (inside) users["users"][currUser].eventsToSchedule.splice(index, 1);
+			else {
+				for (var ev in users["users"][currUser].eventsAwaitingConfirmation) {
+					if (users["users"][currUser].eventsAwaitingConfirmation[ev] == id)
+						index = ev;
+				}
+				users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
+			}
+		} else {
+			for (var user in users["users"]) {
+				if (guests[i][0] == users["users"][user].email) {
+					var inside = false;
+					var index;
+					for (var ev in users["users"][user].invites) {
+						if (users["users"][user].invites[ev] == id) {
+							index = ev;
+							inside = true;
+						}
+					}
+					if (inside) users["users"][user].invites.splice(index, 1);
+					else {
+						for (var ev in users["users"][user].pendingEvents) {
+							if (users["users"][user].pendingEvents[ev] == id)
+								index = ev;
+						}
+						users["users"][user].pendingEvents.splice(index, 1);
+					}
+				}
+			}
+		}
+	}
+
+	users["events"].splice(currEvent, 1);
+  	view(req, res);
+};
+
+// exports.addEvent = function(req, res){
+function addEvent(req, res) {
 	var organizer = req.session.current_user;
 	var currUser;
 	for (var user in users["users"]) {
@@ -257,7 +450,7 @@ exports.addEvent = function(req, res){
 		}
 	}
 	var eventName = req.query.name;
-	var eventDuration = req.query.duration;
+	var eventDuration = parseInt(req.query.hrs) + parseFloat(req.query.mins)/60;
 	var eventLocation = req.query.location;
 	var morningAfternoonEvening = [];
 	if (req.query.morning) {
@@ -277,13 +470,16 @@ exports.addEvent = function(req, res){
 	}
 	var guests = [];
 	if (req.query.attendees != '')
-		guests = req.query.attendees.split(", ");
+		guests = req.query.attendees.split(",");
 	var guestsArray = [[organizer, true]];
+	console.log(guests);
 	for (var i = 0; i < guests.length; i++) {
-		guestsArray.push([guests[i], false]);
+		guestsArray.push([guests[i].trim(), false]);
+		console.log(guestsArray);
+		console.log(guests[i].trim());
 		var present = false;
 		for (var user in users["users"]) {
-			if (users["users"][user].email == guests[i]) {
+			if (users["users"][user].email == guests[i].trim()) {
 				present = true;
 				break;
 			}
@@ -291,13 +487,14 @@ exports.addEvent = function(req, res){
 		if (!present) {
 			var newUser = {
 	           "name": "",
-	           "email": guests[i], 
+	           "email": guests[i].trim(), 
 	           "calendarID": -1,
 	           "calendar": [],
 	           "eventsToSchedule": [],
 	           "eventsAwaitingConfirmation": [],
 	           "pendingEvents": [],
 	           "invites": [],
+	           "historicEvents": [],
 	           "dayStart": "10:00",
 	           "dayEnd": "22:00"
 	        };
@@ -315,43 +512,44 @@ exports.addEvent = function(req, res){
 		"guests": guestsArray,
 		"time": ""
 	}
-	var calendarID = users["users"][currUser].calendarID;
+	// var calendarID = users["users"][currUser].calendarID;
 	//var calendarID = currUser.calendarID;//req.session.calendar_id;
 	// console.log("1 ", req.session.calendar_id, " 2 ", currUser.calendarID);
 	//var calendarID = currUser.calendarID;
-	var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
-		eventName, eventLocation, eventDuration);
+	// var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
+	// 	eventName, eventLocation, eventDuration);
 	// console.log(eventBody.end);
 	//var myClient = req.session.client;
-	var myClient = req.app.get('client')
-	var oauth2Client = require("../app").oauth2[req.session.current_user];
+	// var myClient = req.app.get('client')
+	// var oauth2Client = require("../app").oauth2[req.session.current_user];
 	// calendarID = req.session.calendar_id;
-	var request = myClient.oauth2.userinfo.get();
-	request.execute(function(err, results) {
+	// var request = myClient.oauth2.userinfo.get();
+	// request.execute(function(err, results) {
 	// 	console.log("errors");
 	// 	console.log(err);
 	// 	console.log(results);
-	});
-	var oauth2 = req.app.get('oauth');
-	oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
+	// });
+	// var oauth2 = req.app.get('oauth');
+	// oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
 	//	console.log("try #2");
 	//	console.log(err);
 	//	console.log(results);
-	});
-	var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody);
-	blah.withAuthClient(oauth2Client).execute(function(err, results) {
+	// });
+	// var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': false}, eventBody);
+	// blah.withAuthClient(oauth2Client).execute(function(err, results) {
 		// console.log("wef5", blah);
-      	    console.log("Create event ", err);
+      	    // console.log("Create event ", err);
             //newEvent.gcalID = results.id
             //newEvent.gcalID = results.id;
-            users["events"].push(newEvent);
-        });	
-
+            
+        // });	
+	users["events"].push(newEvent);
+	users["users"][currUser].eventsAwaitingConfirmation.push(id);
 	for (var guest in guests) {
 		var currUser;
 		for (var user in users["users"]) {
 			// console.log(users["users"][user]);
-			if (users["users"][user].email == guests[guest]) {
+			if (users["users"][user].email == guests[guest].trim()) {
 				currUser = user;
 				break;
 			}
@@ -360,33 +558,14 @@ exports.addEvent = function(req, res){
 	}
 
 	// console.log(users);
-	res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
-		'body': eventBody , 'event': newEvent});
+	// res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
+	// 	'body': eventBody , 'event': newEvent});
+	// res.render('confirm', {'isOrganizer': true});
+	res.render('confirm');
 };
 
-exports.scheduleList = function(req, res){
-	var currUser;
-	for (var user in users["users"]) {
-		if (users["users"][user].email == req.session.current_user) {
-			currUser = user;
-		}
-	}
-	// console.log(users["users"][currUser]);
-	toSchedule = []
-	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
-		for (var i in users["events"]) {
-			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
-				toSchedule.push(users["events"][i]);
-				break;
-			}
-		}
-	}
-
-  	res.render('readyToScheduleEvents', { 'toSchedule': toSchedule });
-};
-
-exports.invitations = function(req, res){
+// exports.viewEvents = function(req, res){
+function view(req, res) {
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -394,22 +573,68 @@ exports.invitations = function(req, res){
 		}
 	}
 	console.log("CURRENT USER IS " + req.session.current_user);
-	invites = []
-	for (var invite in users.users[currUser].invites) {
+	var invites = [];
+	for (var invite in users["users"][currUser].invites) {
 		for (var i in users["events"]) {
-			if (users["events"][i].id == users.users[currUser].invites[invite]) {
+			if (users["events"][i].id == users["users"][currUser].invites[invite]) {
 				invites.push(users["events"][i]);
 				break;
 			}
 		}
 	}
 
-	console.log(invites);
-    res.render('invitations', { 'invites': invites });
+	var toSchedule = [];
+	for (var j in users["users"][currUser].eventsToSchedule) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users["users"][currUser].eventsToSchedule[j]) {
+				toSchedule.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+
+	var awaitingConfirmation = [];
+	for (var j in users["users"][currUser].eventsAwaitingConfirmation) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users["users"][currUser].eventsAwaitingConfirmation[j]) {
+				awaitingConfirmation.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+
+  	var pending = [];
+	for (var j in users["users"][currUser].pendingEvents) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users["users"][currUser].pendingEvents[j]) {
+				pending.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+
+	var history = [];
+	for (var j in users["users"][currUser].historicEvents) {
+		for (var i in users["events"]) {
+			// console.log(users["users"][user]);
+			if (users["events"][i].id == users["users"][currUser].historicEvents[j]) {
+				history.push(users["events"][i]);
+				break;
+			}
+		}
+	}
+	// console.log(invites);
+	// console.log(pending);
+  	res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 'pending': pending, 'history': history });
 };
 
-exports.confirmEvent = function(req, res){
+// exports.confirmEvent = function(req, res){
+function confirmEvent(req, res) {
 	var id = req.params.id;
+	// console.log(id);
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -424,8 +649,20 @@ exports.confirmEvent = function(req, res){
 			currEvent = i;
 		}
 	}
-	var index = users.users[currUser].invites.indexOf(id);
-	users.users[currUser].invites.splice(index, 1);
+	// console.log("id: " + id);
+	// console.log("currUser " + currUser);
+	// console.log("currEvent " + currEvent);
+	// var invites = users["users"][currUser].invites;
+	// var index = invites.indexOf(id);
+	// console.log(invites);
+	var index;
+	for (var ev in users["users"][currUser].invites) {
+		if (users["users"][currUser].invites[ev] == id)
+			index = ev;
+	}
+	// console.log(index);
+	users["users"][currUser].invites.splice(index, 1);
+	users["users"][currUser].pendingEvents.push(id);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
 		if (attendees[i][0] == req.session.current_user)
@@ -444,25 +681,180 @@ exports.confirmEvent = function(req, res){
 		var organizer = users.events[currEvent].guests[0][0];
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
-				console.log(users["users"][user]);
-				users["users"][user].eventsAwaitingConfirmation.push(id);
+				// console.log(users["users"][user]);
+				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+				var pos;
+				for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+					if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+						pos = ev;
+				}
+				users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
+				users["users"][user].eventsToSchedule.push(id);
 				break;
 			}
 		}
 	}
-	res.render('confirm', {'isOrganizer': false });
+	// res.render('viewEvents');
+	// $.get("/view/#tentaive");
+	view(req, res);
 };
 
-exports.scheduleEvent = function(req, res){
+function rejectEvent(req, res) {
+	var id = req.params.id;
+	var currUser;
+	for (var user in users["users"]) {
+		if (users["users"][user].email == req.session.current_user) {
+			currUser = user;
+		}
+	}
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	// var index = users["users"][currUser].invites.indexOf(id);
+	var index;
+	for (var ev in users["users"][currUser].invites) {
+		if (users["users"][currUser].invites[ev] == id)
+			index = ev;
+	}
+	users["users"][currUser].invites.splice(index, 1);
+	users["users"][currUser].historicEvents.push(id);
+	var attendees = users.events[currEvent].guests;
+	for (var i in attendees){
+		if (i != 0) {
+			if (attendees[i][0] == req.session.current_user)
+				index = i;
+		}
+	}
+	users.events[currEvent].guests.splice(index, 1);
+	if (users.events[currEvent].guests.length == 1) {
+		console.log("IN HERE");
+		var organizer = users.events[currEvent].guests[0][0];
+		for (var user in users["users"]) {
+			if (users["users"][user].email == organizer) {
+				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+				var pos;
+				for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+					if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+						pos = ev;
+				}
+				users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
+				users["users"][user].historicEvents.push(id);
+				break;
+			}
+		}
+	}
+	view(req, res);
+};
+
+// exports.scheduleEvent = function(req, res) {
+// 	var id = req.params.id;
+// 	var eventToSchedule;
+// 	for (var ev in users["events"]) {
+// 		if (users["events"][ev].id == id) { // ? 
+// 			eventToSchedule = users["events"][ev];
+// 			break;
+// 		}
+// 	}
+
+// 	var guests = eventToSchedule.guests
+	
+// 	var calendars = new Array();
+// 	var organizer = eventToSchedule.guests[0];
+
+
+// 	for (var user in users["users"]) {
+// 		console.log("hubbubbub: " + users["users"][user].email);
+// 		console.log("organizer: " + organizer);;
+// 		if (users["users"][user].email == organizer) {
+// 			organizer = users["users"][user];
+// 			calendars.push(organizer.calendar);
+// 		}
+// 		for (var i = 0; i < guests.length; i++) {
+// 			if (guests[i].email == users["users"][user].email) {
+// 				calendars.push(guests[i].calendar);
+// 			}
+// 		}
+// 	}
+
+// 	console.log("organizer: " + organizer);
+// 	console.log("organizer email: " + organizer.email);
+
+// 	var timePeriods = eventToSchedule.timePeriod;
+// 	// var start = organizer.dayStart;
+// 	// var end = organizer.dayEnd;
+
+// 	console.log("timePeriods: " + timePeriods);
+// 	console.log("start: " + start);
+// 	console.log("end: " + end);
+// 	console.log("current: " + new Date());
+
+// 	var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, new Date());
+	
+// 	console.log("pre scheduler: " + masterSchedule);
+
+// 	masterSchedule = scheduler(masterSchedule, calendars, eventToSchedule.eventDuration);
+
+// 	console.log("post scheduler: " + masterSchedule);
+
+// 	// now just needs to select three time periods from the master schedule,
+// 	// make them the requested duration (only use the start period of the period)
+// 	// and then use the start, start+ duration, and date of each of these three.
+// 	var numEvents = 0;
+// 	var eventsToShow = new Array();
+
+// 	console.log(masterSchedule);
+
+// 	while (masterSchedule.length > 0 && numEvents < 3) {
+// 		var newEvent = masterSchedule.shift();
+// 		var periodStart = new Date(Date.parse(newEvent[0]));
+// 		var periodEnd = new Date(Date.parse(newEvent[1]));
+
+
+// 		var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+// 		var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
+// 		var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+
+// 		if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
+// 			masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
+// 		}
+		
+// 		var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
+		
+// 		eventsToShow.add([eventStart, eventEnd, date]);
+// 	}
+// }
+
+Date.prototype.addHours = function(h) {   
+	this.setTime(this.getTime() + (h*60*60*1000)); 
+	return this;   
+}
+
+
+// exports.scheduleEvent = function(req, res){
+function scheduleEvent(req, res) {
 	var id = req.params.id;
 	var currUser = users["users"][req.session.current_user_id];
 	//var currEvent = getObjects(users["events"], 'id', id);
 	var attendees = getObjects(users["events"], 'id', id)[0].guests;
 	var internal_counter = 0;
 	listSchedules = []
+
+	var toDateObject = function(time) { // toDateObject(results.items[item].start.date)
+		// console.log(time);           // '2014-02-20T13:00:00-08:00', '2014-02-20T14:00:00-08:00'
+		var indexOfT = time.indexOf('T');
+		var newDate = time.substring(0, indexOfT) + " " + time.substring(indexOfT+1, indexOfT+9);
+		newDate += (" GMT" + time.substring(indexOfT+9)); // GMT-0800"
+		// console.log(newDate);
+		return newDate;
+	}
+
 	var toRender = function() {
 		if (++internal_counter == attendees.length) {
-			console.log(listSchedules);
+			getTimes();
+			// console.log(listSchedules);
 			res.render('schedule', { "id": id });
 		}
 	}
@@ -491,9 +883,9 @@ exports.scheduleEvent = function(req, res){
 						// console.log(results.items[item]);
 						if (results.items[item]["status"] != "confirmed") continue;
 						if (results.items[item].start.dateTime != undefined && results.items[item].end.dateTime != undefined) {
-							currSchedule.push([results.items[item].start.dateTime, results.items[item].end.dateTime]);
+							currSchedule.push([toDateObject(results.items[item].start.dateTime), toDateObject(results.items[item].end.dateTime)]);
 						} else if (results.items[item].start.date != undefined && results.items[item].end.date != undefined) {
-							currSchedule.push([results.items[item].start.date, results.items[item].end.date]);
+							currSchedule.push([toDateObject(results.items[item].start.date), toDateObject(results.items[item].end.date)]);
 						}
 					}
 					// console.log(attendees[i][0], "currSchedule is ", currSchedule)
@@ -503,17 +895,139 @@ exports.scheduleEvent = function(req, res){
 			});
 		})(i);	
 	} 
+
+	var getTimes = function() {
+		var eventToSchedule;
+		for (var ev in users["events"]) {
+			if (users["events"][ev].id == id) { // ? 
+				eventToSchedule = users["events"][ev];
+				break;
+			}
+		}
+
+		var guests = eventToSchedule.guests
+		var organizer = eventToSchedule.guests[0];
+
+		// console.log("organizer: " + organizer);
+
+		var timePeriods = eventToSchedule.timePeriod;
+		var start = organizer.dayStart;
+		var end = organizer.dayEnd;
+
+		if (start == undefined) {
+			start = "10:00:00";
+		}
+		if (end == undefined) {
+			end = "20:00:00";
+		}
+
+		// console.log("timePeriods: " + timePeriods);
+		// console.log("start: " + start);
+		// console.log("end: " + end);
+		// console.log("current: " + new Date());
+
+		var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, today);
+		
+		// console.log("pre scheduler: ");
+		// console.log(masterSchedule);
+
+		for (var i = 0; i < listSchedules.length; i++) {
+			listSchedules[i] = convertToFreetime(listSchedules[i]);
+		}
+
+		console.log("free times: ");
+		console.log(listSchedules);
+
+		masterSchedule = scheduler(masterSchedule, listSchedules, eventToSchedule.eventDuration);
+
+		console.log("time slots to choose from: ");
+		console.log(masterSchedule);
+
+	// 	// now just needs to select three time periods from the master schedule,
+	// 	// make them the requested duration (only use the start period of the period)
+	// 	// and then use the start, start+ duration, and date of each of these three.
+		var numEvents = 0;
+		var eventsToShow = new Array();
+
+
+		while (masterSchedule.length > 0 && numEvents < 3) {
+			var newEvent = masterSchedule.shift();
+			console.log("length: " + masterSchedule.length);
+			console.log("numEvents: " + numEvents);
+			console.log("nextEvent: " + newEvent);
+			var periodStart = new Date(Date.parse(newEvent[0]));
+			var periodEnd = new Date(Date.parse(newEvent[1]));
+
+
+			var eventStart = "" + (((periodStart.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			console.log("start: " + periodStart + " -- eventStart: " + eventStart);
+
+
+			// console.log("equation: periodStart + (eventToSchedule.eventDuration*60000*60)");
+			// console.log("periodStart = " + periodStart);
+			// console.log("(eventToSchedule.eventDuration*60000*60) = " + (eventToSchedule.eventDuration*60000*60));
+			
+			var newEndTime = new Date(periodStart).addHours(eventToSchedule.eventDuration);
+			
+
+			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			console.log("end: " + periodEnd + " -- eventEnd: " + newEndTime);
+
+			if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
+				masterSchedule.push([new Date(periodStart.addHours(eventToSchedule.eventDuration)), periodEnd]);
+			}
+			
+			var date = "" + (periodStart.getMonth() + 1) + "/" + periodStart.getDate() + "/" + periodStart.getFullYear();
+			
+			eventsToShow.push([eventStart, eventEnd, date]);
+			numEvents++;
+		}
+
+		console.log("Awesome stuff: ");
+		console.log(eventsToShow);
+	}
+
 };
 
-exports.selectTime = function(req, res){
+// exports.selectTime = function(req, res) {
+function selectTime(req, res) {
 	var id = req.params.id;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
 			var currUser = user;
 		}
 	}
-	var index = users["users"][currUser].eventsAwaitingConfirmation.indexOf(id);
-	users["users"][currUser].eventsAwaitingConfirmation.splice(index, 1);
+	// var index = users["users"][currUser].eventsToSchedule.indexOf(id);
+	var index;
+	for (var ev in users["users"][currUser].eventsToSchedule) {
+		if (users["users"][currUser].eventsToSchedule[ev] == id)
+			index = ev;
+	}
+	users["users"][currUser].eventsToSchedule.splice(index, 1);
+	users["users"][currUser].historicEvents.push(id);
+	var currEvent;
+	for (var i in users["events"]) {
+		if (users["events"][i].id == id) {
+			currEvent = i;
+		}
+	}
+	var attendees = users.events[currEvent].guests;
+	for (var i in attendees){
+		if (i != 0) {
+			for (var user in users["users"]) {
+				if (attendees[i][0] == users["users"][user].email) {
+					// var j = users["users"][user].pendingEvents.indexOf(id);
+					var pos;
+					for (var ev in users["users"][user].pendingEvents) {
+						if (users["users"][user].pendingEvents[ev] == id)
+							pos = ev;
+					}
+					users["users"][user].pendingEvents.splice(pos, 1);
+					users["users"][user].historicEvents.push(id);
+				}
+			}
+		}
+	}
 	res.render('confirm', { 'isScheduled': true });
 };
 
@@ -538,7 +1052,7 @@ function createGCalendarJSON(start, end, attendees, creator, summary, location, 
 		"status": "tentative",
 		"guestsCanInviteOthers": false
 	}
-}
+};
 
 Date.prototype.yyyymmdd = function() {                                         
     var yyyy = this.getFullYear().toString();                                    
