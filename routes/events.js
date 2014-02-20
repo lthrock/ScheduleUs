@@ -1,3 +1,9 @@
+// var time = require('time');
+// var a = new time.Date(1337324400000);
+// a.setTimezone('Europe/Amsterdam');
+process.env.TZ = 'America/Los_Angeles'
+
+
 var googleapis = require('googleapis');
 var OAuth2Client = googleapis.OAuth2Client;
 var CLIENT_ID = "93833969413-qi1rveqpc52ut179c40dbdeba5a19k9q.apps.googleusercontent.com";
@@ -19,20 +25,27 @@ function getObjects(obj, key, val) {
 }
 
 function scheduler(masterSchedule, schedules, timeNeeded) {
-	console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	console.log(schedules);
+	timeNeeded *= (60*60*1000);
+
+	// console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	// console.log("duration: " + timeNeeded);
 
 	if (schedules.length == 0) return null;
 
 	for (var i = 0; i < schedules.length; i++) {
 		var schedule = schedules[i];
 		masterSchedule = editMasterSchedule(masterSchedule, schedule, timeNeeded);
+		// console.log("i th masterSched: " + masterSchedule);
 	}
 	return masterSchedule;
 }
 
 
 function editMasterSchedule(masterSchedule, newSchedule, timeNeeded) {
+	// console.log("oldMaster: " + masterSchedule + "////");
+	// console.log("newSched: " + newSchedule + "////");
+
+	;
 
 	var combinedSchedule = new Array();
 
@@ -46,13 +59,15 @@ function editMasterSchedule(masterSchedule, newSchedule, timeNeeded) {
 		
 
 		for (var i = newScheduleIndex; i < newSchedule.length; i++) {
-			var newWindowStartTime = newSchedule[i][0];
-			var newWindowEndTime = newSchedule[i][1];
+			var newWindowStartTime = new Date(Date.parse(newSchedule[i][0]));
+			var newWindowEndTime = new Date(Date.parse(newSchedule[i][1]));
 
 			// present for efficiency purposes to avoid unnecessary checks. 
 			if (newWindowStartTime > masterWindowEndTime) break; // This means that no future windows will fit in this slot
 
 			var newBlock = [0, 0];
+
+
 
 			if (newWindowStartTime >= masterWindowStartTime && newWindowStartTime <= masterWindowEndTime) {
 				newBlock = findOverlap(masterWindowStartTime, masterWindowEndTime, newWindowStartTime, newWindowEndTime);
@@ -61,6 +76,9 @@ function editMasterSchedule(masterSchedule, newSchedule, timeNeeded) {
 				newBlock = findOverlap(newWindowStartTime, newWindowEndTime, masterWindowStartTime, masterWindowEndTime);
 			}
 
+			// console.log("Duration: " + ((newBlock[1] - newBlock[0])/(60*60*1000)));
+			// console.log("Start: " + newBlock[1]);
+			// console.log("End: " + newBlock[0]);
 			if (newBlock[1] - newBlock[0] >= timeNeeded) {
 				combinedSchedule.push(newBlock);
 			}
@@ -151,6 +169,7 @@ function convertToFreetime(calendar) {
 		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
 		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
 	]);
+	console.log("returning: " + times);
 	return times;
 }
 
@@ -537,6 +556,11 @@ exports.confirmEvent = function(req, res){
 // 	}
 // }
 
+Date.prototype.addHours = function(h) {   
+	this.setTime(this.getTime() + (h*60*60*1000)); 
+	return this;   
+}
+
 
 exports.scheduleEvent = function(req, res){
 	var id = req.params.id;
@@ -545,10 +569,20 @@ exports.scheduleEvent = function(req, res){
 	var attendees = getObjects(users["events"], 'id', id)[0].guests;
 	var internal_counter = 0;
 	listSchedules = []
+
+	var toDateObject = function(time) { // toDateObject(results.items[item].start.date)
+		// console.log(time);           // '2014-02-20T13:00:00-08:00', '2014-02-20T14:00:00-08:00'
+		var indexOfT = time.indexOf('T');
+		var newDate = time.substring(0, indexOfT) + " " + time.substring(indexOfT+1, indexOfT+9);
+		newDate += (" GMT" + time.substring(indexOfT+9)); // GMT-0800"
+		// console.log(newDate);
+		return newDate;
+	}
+
 	var toRender = function() {
 		if (++internal_counter == attendees.length) {
-			getTimes();x
-			console.log(listSchedules);
+			getTimes();
+			// console.log(listSchedules);
 			res.render('schedule', { "id": id });
 		}
 	}
@@ -577,9 +611,9 @@ exports.scheduleEvent = function(req, res){
 						// console.log(results.items[item]);
 						if (results.items[item]["status"] != "confirmed") continue;
 						if (results.items[item].start.dateTime != undefined && results.items[item].end.dateTime != undefined) {
-							currSchedule.push([results.items[item].start.dateTime, results.items[item].end.dateTime]);
+							currSchedule.push([toDateObject(results.items[item].start.dateTime), toDateObject(results.items[item].end.dateTime)]);
 						} else if (results.items[item].start.date != undefined && results.items[item].end.date != undefined) {
-							currSchedule.push([results.items[item].start.date, results.items[item].end.date]);
+							currSchedule.push([toDateObject(results.items[item].start.date), toDateObject(results.items[item].end.date)]);
 						}
 					}
 					// console.log(attendees[i][0], "currSchedule is ", currSchedule)
@@ -602,8 +636,7 @@ exports.scheduleEvent = function(req, res){
 		var guests = eventToSchedule.guests
 		var organizer = eventToSchedule.guests[0];
 
-		console.log("organizer: " + organizer);
-		console.log("organizer email: " + organizer.email);
+		// console.log("organizer: " + organizer);
 
 		var timePeriods = eventToSchedule.timePeriod;
 		var start = organizer.dayStart;
@@ -616,18 +649,27 @@ exports.scheduleEvent = function(req, res){
 			end = "20:00:00";
 		}
 
-		console.log("timePeriods: " + timePeriods);
-		console.log("start: " + start);
-		console.log("end: " + end);
-		console.log("current: " + new Date());
+		// console.log("timePeriods: " + timePeriods);
+		// console.log("start: " + start);
+		// console.log("end: " + end);
+		// console.log("current: " + new Date());
 
 		var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, today);
 		
-		console.log("pre scheduler: " + masterSchedule);
+		// console.log("pre scheduler: ");
+		// console.log(masterSchedule);
+
+		for (var i = 0; i < listSchedules.length; i++) {
+			listSchedules[i] = convertToFreetime(listSchedules[i]);
+		}
+
+		console.log("free times: ");
+		console.log(listSchedules);
 
 		masterSchedule = scheduler(masterSchedule, listSchedules, eventToSchedule.eventDuration);
 
-		console.log("post scheduler: " + masterSchedule);
+		console.log("time slots to choose from: ");
+		console.log(masterSchedule);
 
 	// 	// now just needs to select three time periods from the master schedule,
 	// 	// make them the requested duration (only use the start period of the period)
@@ -635,29 +677,42 @@ exports.scheduleEvent = function(req, res){
 		var numEvents = 0;
 		var eventsToShow = new Array();
 
-		console.log(masterSchedule);
 
 		while (masterSchedule.length > 0 && numEvents < 3) {
 			var newEvent = masterSchedule.shift();
+			console.log("length: " + masterSchedule.length);
+			console.log("numEvents: " + numEvents);
+			console.log("nextEvent: " + newEvent);
 			var periodStart = new Date(Date.parse(newEvent[0]));
 			var periodEnd = new Date(Date.parse(newEvent[1]));
 
 
-			var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
-			var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
-			var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			var eventStart = "" + (((periodStart.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			console.log("start: " + periodStart + " -- eventStart: " + eventStart);
+
+
+			// console.log("equation: periodStart + (eventToSchedule.eventDuration*60000*60)");
+			// console.log("periodStart = " + periodStart);
+			// console.log("(eventToSchedule.eventDuration*60000*60) = " + (eventToSchedule.eventDuration*60000*60));
+			
+			var newEndTime = new Date(periodStart).addHours(eventToSchedule.eventDuration);
+			
+
+			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			console.log("end: " + periodEnd + " -- eventEnd: " + newEndTime);
 
 			if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
-				masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
+				masterSchedule.push([new Date(periodStart.addHours(eventToSchedule.eventDuration)), periodEnd]);
 			}
 			
-			var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
+			var date = "" + (periodStart.getMonth() + 1) + "/" + periodStart.getDate() + "/" + periodStart.getFullYear();
 			
-			eventsToShow.add([eventStart, eventEnd, date]);
+			eventsToShow.push([eventStart, eventEnd, date]);
+			numEvents++;
 		}
 
 		console.log("Awesome stuff: ");
-		console.log(masterSchedule);
+		console.log(eventsToShow);
 	}
 
 };
