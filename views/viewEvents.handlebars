@@ -24,7 +24,7 @@
 		        </div>
 		        <div class="d2">	
 					<span class="header">
-						<span class="btn-group">Your Events</span>
+						<span class="btn-group">Events</span>
 					</span>
 		        </div>
 		        <div class="d3"></div>
@@ -47,7 +47,7 @@
 	<div class="container">
 		<div id="content">
       		<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-          		<li class="active"><a href="#schedule" data-toggle="tab">schedule</a></li>
+          		<li class="active"><a href="#schedule" data-toggle="tab">my events</a></li>
           		<li><a href="#tentative" data-toggle="tab">tentative</a></li>
           		<li><a href="#history" data-toggle="tab">history</a></li>
       		</ul>
@@ -63,9 +63,22 @@
 									</span>
 						        </div>
 						        <div class="d3">
-						        	<a href="schedule/{{id}}">
+						        	<a href="/schedule/{{id}}">
 							        	<button id="{{id}}" class="btn btn-primary">Schedule!</button>
 							        </a>
+						        </div>
+						    </div>
+						    <hr>
+						{{/each}}
+						{{#each awaitingConfirmation}}
+						    <div class="tr">
+						        <div class="d12">	
+									<span class="list">
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.</span>
+									</span>
+						        </div>
+						        <div class="d3">
+						        	<button type="button" class="btn btn-primary" disabled>Schedule!</button>
 						        </div>
 						    </div>
 						    <hr>
@@ -83,7 +96,8 @@
 	                    		</div>
 	                        	<div class="d3">
 	                          		<!-- <a href="confirm/{{id}}" > -->
-	                          			<input href="#modal-dialog" data-toggle="modal" id="cancel_profile_changes" type="button" class="btn btn-large big_blkbtn hide_margtp_35_a" value="✓">
+	                          			<input href="#modal-dialog1" data-toggle="modal" type="button" class="btn btn-success btn-mini" value="✓">
+	                          			<input href="#modal-dialog2" data-toggle="modal" type="button" class="btn btn-danger btn-mini" value="✗">
 	                            		<!-- <button id="{{id}}" class="btn btn-primary">✓</button> -->
 	                          		<!-- </a> -->
 	                       		</div>
@@ -91,7 +105,7 @@
 	                		<hr>
 
 
-	                		<div id="modal-dialog" class="modal">
+	                		<div id="modal-dialog1" class="modal">
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
@@ -99,7 +113,7 @@
 							             <h3>Confirm Event?</h3>
 							        </div>
 							        <div class="modal-body">
-							             <p>...</p>
+							             <p>You are about to confirm this event. This means that once all of the invites have been accepted, the organizer will be able to see the availabilities in everyone's calendars and select a time that works for everyone.</p>
 							        </div>
 							        <div class="modal-footer">
 							          <a href="/confirm/{{id}}"  id="btnConfirm" class="btn confirm">OK</a> 
@@ -108,27 +122,34 @@
 							      </div>
 							    </div>
 							</div>
+
+							<div id="modal-dialog2" class="modal">
+							    <div class="modal-dialog">
+							      <div class="modal-content">
+							        <div class="modal-header">
+							            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
+							             <h3>Reject Event?</h3>
+							        </div>
+							        <div class="modal-body">
+							             <p>Are you sure you would like to reject the invitation to this event?</p>
+							        </div>
+							        <div class="modal-footer">
+							          <a href="/reject/{{id}}"  id="btnConfirm" class="btn confirm">YES</a> 
+							          <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a>
+							        </div>
+							      </div>
+							    </div>
+							</div>
 	            		{{/each}}
-
-	            		
-
-<!-- data-dismiss="modal" -->
-	            		
-
-
-
-
-
-
 	            		{{#each pending}}
 	                		<div class="tr">
 	                    		<div class="d12"> 
 	                  				<span class="list">
-	                    			<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+	                    				<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
 	                  				</span>
 	                    		</div>
-	                        	<div class="d3 disabled-button">
-	                            		✓
+	                        	<div class="d3">
+	                            	<button type="button" class="btn btn-success" disabled>✓</button>
 	                       		</div>
 	                		</div>
 	                		<hr>
@@ -139,18 +160,18 @@
 	          	<div class="tab-pane" id="history">
 	              	<div class="table">
 	            		{{#each history}}
-	                		<div class="tr">
-	                    		<div class="d12"> 
+	                		<div class="tr" style="text-align: center">
+	                    		<!-- <div class="d12">  -->
 	                  				<span class="list">
-	                    			<span class="btn-group">Reschedule {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+	                    				<span class="btn-group">{{eventName}} at {{eventLocation}} for {{eventDuration}} hours.</span>
 	                  				</span>
-	                    		</div>
+	                    		<!-- </div>
 	                        	<div class="d3">
 	                          		<a href="confirm/{{id}}">
 	                            		<button id="{{id}}" class="btn btn-primary"> Reuse!</button>
 	                          		</a>
 	                       		</div>
-	                		</div>
+ -->	                	</div>
 	                		<hr>
 	            		{{/each}}
 	          		</div>
@@ -161,10 +182,6 @@
 		<script type="text/javascript">
     		jQuery(document).ready(function ($) {
         		$('#tabs').tab();
-
-        		// $('#tentative button').click(function(e){
-        		// 	confirm("You have just confirmed this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.")
-        		// });
     		});
 		</script>
 

@@ -106,6 +106,7 @@ app.get('/settings', function(req, res) {
 app.get('/edit', events.editEvent);
 app.get('/add', events.addEvent);
 app.get('/confirm/:id', events.confirmEvent);
+app.get('/reject/:id', events.rejectEvent);
 app.get('/schedule/:id', events.scheduleEvent);
 app.get('/selectTime/:id', events.selectTime);
 
@@ -163,6 +164,7 @@ app.get('/oauth2callback', function(req, res) {
            "eventsAwaitingConfirmation": [],
            "pendingEvents": [],
            "invites": [],
+           "historicEvents": [],
            "dayStart": "10:00",
            "dayEnd": "22:00",
            "tokens": req.session.tokens
