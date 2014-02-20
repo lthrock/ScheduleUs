@@ -395,9 +395,9 @@ function view(req, res) {
 	}
 	console.log("CURRENT USER IS " + req.session.current_user);
 	var invites = [];
-	for (var invite in users.users[currUser].invites) {
+	for (var invite in users["users"][currUser].invites) {
 		for (var i in users["events"]) {
-			if (users["events"][i].id == users.users[currUser].invites[invite]) {
+			if (users["events"][i].id == users["users"][currUser].invites[invite]) {
 				invites.push(users["events"][i]);
 				break;
 			}
@@ -405,10 +405,10 @@ function view(req, res) {
 	}
 
 	var toSchedule = [];
-	for (var j in users.users[currUser].eventsToSchedule) {
+	for (var j in users["users"][currUser].eventsToSchedule) {
 		for (var i in users["events"]) {
 			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].eventsToSchedule[j]) {
+			if (users["events"][i].id == users["users"][currUser].eventsToSchedule[j]) {
 				toSchedule.push(users["events"][i]);
 				break;
 			}
@@ -416,10 +416,10 @@ function view(req, res) {
 	}
 
 	var awaitingConfirmation = [];
-	for (var j in users.users[currUser].eventsAwaitingConfirmation) {
+	for (var j in users["users"][currUser].eventsAwaitingConfirmation) {
 		for (var i in users["events"]) {
 			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].eventsAwaitingConfirmation[j]) {
+			if (users["events"][i].id == users["users"][currUser].eventsAwaitingConfirmation[j]) {
 				awaitingConfirmation.push(users["events"][i]);
 				break;
 			}
@@ -427,10 +427,10 @@ function view(req, res) {
 	}
 
   	var pending = [];
-	for (var j in users.users[currUser].pendingEvents) {
+	for (var j in users["users"][currUser].pendingEvents) {
 		for (var i in users["events"]) {
 			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].pendingEvents[j]) {
+			if (users["events"][i].id == users["users"][currUser].pendingEvents[j]) {
 				pending.push(users["events"][i]);
 				break;
 			}
@@ -438,10 +438,10 @@ function view(req, res) {
 	}
 
 	var history = [];
-	for (var j in users.users[currUser].historicEvents) {
+	for (var j in users["users"][currUser].historicEvents) {
 		for (var i in users["events"]) {
 			// console.log(users["users"][user]);
-			if (users["events"][i].id == users.users[currUser].historicEvents[j]) {
+			if (users["events"][i].id == users["users"][currUser].historicEvents[j]) {
 				history.push(users["events"][i]);
 				break;
 			}
@@ -455,6 +455,7 @@ function view(req, res) {
 // exports.confirmEvent = function(req, res){
 function confirmEvent(req, res) {
 	var id = req.params.id;
+	// console.log(id);
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -469,9 +470,20 @@ function confirmEvent(req, res) {
 			currEvent = i;
 		}
 	}
-	var index = users.users[currUser].invites.indexOf(id);
-	users.users[currUser].invites.splice(index, 1);
-	users.users[currUser].pendingEvents.push(id);
+	// console.log("id: " + id);
+	// console.log("currUser " + currUser);
+	// console.log("currEvent " + currEvent);
+	// var invites = users["users"][currUser].invites;
+	// var index = invites.indexOf(id);
+	// console.log(invites);
+	var index;
+	for (var ev in users["users"][currUser].invites) {
+		if (users["users"][currUser].invites[ev] == id)
+			index = ev;
+	}
+	console.log(index);
+	users["users"][currUser].invites.splice(index, 1);
+	users["users"][currUser].pendingEvents.push(id);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
 		if (attendees[i][0] == req.session.current_user)
@@ -491,7 +503,12 @@ function confirmEvent(req, res) {
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
 				// console.log(users["users"][user]);
-				var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+				var pos;
+				for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+					if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+						pos = ev;
+				}
 				users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
 				users["users"][user].eventsToSchedule.push(id);
 				break;
@@ -517,20 +534,33 @@ function rejectEvent(req, res) {
 			currEvent = i;
 		}
 	}
-	var index = users.users[currUser].invites.indexOf(id);
-	users.users[currUser].invites.splice(index, 1);
-	users.users[currUser].historicEvents.push(id);
+	// var index = users["users"][currUser].invites.indexOf(id);
+	var index;
+	for (var ev in users["users"][currUser].invites) {
+		if (users["users"][currUser].invites[ev] == id)
+			index = ev;
+	}
+	users["users"][currUser].invites.splice(index, 1);
+	users["users"][currUser].historicEvents.push(id);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
-		if (attendees[i][0] == req.session.current_user)
-			index = i;
+		if (i != 0) {
+			if (attendees[i][0] == req.session.current_user)
+				index = i;
+		}
 	}
 	users.events[currEvent].guests.splice(index, 1);
 	if (users.events[currEvent].guests.length == 1) {
+		console.log("IN HERE");
 		var organizer = users.events[currEvent].guests[0][0];
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
-				var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+				var pos;
+				for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+					if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+						pos = ev;
+				}
 				users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
 				users["users"][user].historicEvents.push(id);
 				break;
@@ -752,7 +782,12 @@ function selectTime(req, res) {
 			var currUser = user;
 		}
 	}
-	var index = users["users"][currUser].eventsToSchedule.indexOf(id);
+	// var index = users["users"][currUser].eventsToSchedule.indexOf(id);
+	var index;
+	for (var ev in users["users"][currUser].eventsToSchedule) {
+		if (users["users"][currUser].eventsToSchedule[ev] == id)
+			index = ev;
+	}
 	users["users"][currUser].eventsToSchedule.splice(index, 1);
 	users["users"][currUser].historicEvents.push(id);
 	var currEvent;
@@ -766,8 +801,13 @@ function selectTime(req, res) {
 		if (i != 0) {
 			for (var user in users["users"]) {
 				if (attendees[i][0] == users["users"][user].email) {
-					var j = users["users"][user].pendingEvents.indexOf(id);
-					users["users"][user].pendingEvents.splice(j, 1);
+					// var j = users["users"][user].pendingEvents.indexOf(id);
+					var pos;
+					for (var ev in users["users"][user].pendingEvents) {
+						if (users["users"][user].pendingEvents[ev] == id)
+							pos = ev;
+					}
+					users["users"][user].pendingEvents.splice(pos, 1);
 					users["users"][user].historicEvents.push(id);
 				}
 			}

@@ -96,8 +96,8 @@
 	                    		</div>
 	                        	<div class="d3">
 	                          		<!-- <a href="confirm/{{id}}" > -->
-	                          			<input href="#modal-dialog1" data-toggle="modal" type="button" class="btn btn-success btn-mini" value="✓">
-	                          			<input href="#modal-dialog2" data-toggle="modal" type="button" class="btn btn-danger btn-mini" value="✗">
+	                          			<input href="#modal-dialog1{{id}}" data-toggle="modal" type="button" class="btn btn-success btn-mini" value="✓">
+	                          			<input href="#modal-dialog2{{id}}" data-toggle="modal" type="button" class="btn btn-danger btn-mini" value="✗">
 	                            		<!-- <button id="{{id}}" class="btn btn-primary">✓</button> -->
 	                          		<!-- </a> -->
 	                       		</div>
@@ -105,7 +105,7 @@
 	                		<hr>
 
 
-	                		<div id="modal-dialog1" class="modal">
+	                		<div id="modal-dialog1{{id}}" class="modal">
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
@@ -123,7 +123,7 @@
 							    </div>
 							</div>
 
-							<div id="modal-dialog2" class="modal">
+							<div id="modal-dialog2{{id}}" class="modal">
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
@@ -134,7 +134,7 @@
 							             <p>Are you sure you would like to reject the invitation to this event?</p>
 							        </div>
 							        <div class="modal-footer">
-							          <a href="/reject/{{id}}"  id="btnConfirm" class="btn confirm">YES</a> 
+							          <a href="/reject/{{id}}"  id="btnConfirm" class="btn confirm">Yes</a> 
 							          <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a>
 							        </div>
 							      </div>
