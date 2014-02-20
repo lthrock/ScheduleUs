@@ -82,13 +82,44 @@
 	                  				</span>
 	                    		</div>
 	                        	<div class="d3">
-	                          		<a href="confirm/{{id}}">
-	                            		<button id="{{id}}" class="btn btn-primary">✓</button>
-	                          		</a>
+	                          		<!-- <a href="confirm/{{id}}" > -->
+	                          			<input href="#modal-dialog" data-toggle="modal" id="cancel_profile_changes" type="button" class="btn btn-large big_blkbtn hide_margtp_35_a" value="✓">
+	                            		<!-- <button id="{{id}}" class="btn btn-primary">✓</button> -->
+	                          		<!-- </a> -->
 	                       		</div>
 	                		</div>
 	                		<hr>
+
+
+	                		<div id="modal-dialog" class="modal">
+							    <div class="modal-dialog">
+							      <div class="modal-content">
+							        <div class="modal-header">
+							            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
+							             <h3>Confirm Event?</h3>
+							        </div>
+							        <div class="modal-body">
+							             <p>...</p>
+							        </div>
+							        <div class="modal-footer">
+							          <a href="/confirm/{{id}}"  id="btnConfirm" class="btn confirm">OK</a> 
+							          <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a>
+							        </div>
+							      </div>
+							    </div>
+							</div>
 	            		{{/each}}
+
+	            		
+
+<!-- data-dismiss="modal" -->
+	            		
+
+
+
+
+
+
 	            		{{#each pending}}
 	                		<div class="tr">
 	                    		<div class="d12"> 

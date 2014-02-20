@@ -455,7 +455,7 @@ exports.confirmEvent = function(req, res){
 		}
 	}
 	// confirm("You have just confirmed this event. Once all of the invites have been accepted, the organizer of this event will be able to select a time that works for everyone.")
-	res.render('confirm', {'isOrganizer': false});
+	res.render('viewEvents');
 };
 
 
