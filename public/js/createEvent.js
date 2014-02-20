@@ -40,9 +40,9 @@ function validateForm() {
 	var location = document.forms["createEventForm"]["location"].value;
 	var hours = document.forms["createEventForm"]["hrs"].value;
 	var mins = document.forms["createEventForm"]["mins"].value;
-	var morning = document.forms["createEventForm"]["morning"].value;
-	var afternoon = document.forms["createEventForm"]["afternoon"].value;
-	var evening = document.forms["createEventForm"]["evening"].value;
+	var morning = document.forms["createEventForm"]["morning"].checked;
+	var afternoon = document.forms["createEventForm"]["afternoon"].checked;
+	var evening = document.forms["createEventForm"]["evening"].checked;
 	if (name == null || name == "") {
 		alert("Please enter a name for your event.");
 		return false;
@@ -59,10 +59,10 @@ function validateForm() {
 		alert("Please select a duration for your event.");
 		return false;
 	}
-	// if (morning == null && afternoon == null && evening == null) {
-	// 	alert("Please select a time of day for this event.");
-	// 	return false;
-	// }
+	if (!morning && !afternoon && !evening) {
+		alert("Please select a time of day for this event.");
+		return false;
+	}
 	var emails = guests.split(",");
 	for (var i = 0; i < emails.length; i++) {
 		var email = emails[i].trim();
