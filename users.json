@@ -1,6 +1,65 @@
 {
 	"users": [
-		
+		{
+		"name": "Lucas Throckmorton",
+		"email": "davidwang21@gmail.com",
+		"calendarID": "dver2lp9huntm5a4suvvupgtmk@group.calendar.google.com",
+		"calendar": [
+		["2014-02-14 08:00:00 GMT-0800", "2014-02-14 09:30:00 GMT-0800"],
+		["2014-02-14 12:00:00 GMT-0800", "2014-02-14 13:00:00 GMT-0800"],
+		["2014-02-14 14:00:00 GMT-0800", "2014-02-14 16:00:00 GMT-0800"],
+		["2014-02-14 16:00:00 GMT-0800", "2014-02-14 17:00:00 GMT-0800"],
+		["2014-02-15 09:00:00 GMT-0800", "2014-02-15 09:30:00 GMT-0800"],
+		["2014-02-15 12:00:00 GMT-0800", "2014-02-15 13:00:00 GMT-0800"],
+		["2014-02-15 14:00:00 GMT-0800", "2014-02-15 16:00:00 GMT-0800"],
+		["2014-02-15 16:00:00 GMT-0800", "2014-02-15 17:00:00 GMT-0800"]
+		],
+		"eventsToSchedule": [
+
+		],
+		"eventsAwaitingConfirmation": [
+
+		],
+		"pendingEvents": [
+
+		],
+		"invites": [
+
+		],
+
+		"dayStart": "7:00",
+		"dayEnd": "22:00"
+		},
+		{
+		"name": "Lwef",
+		"email": "yungodtre@gmail.com",
+		"calendar": [
+		["2014-02-14 08:00:00 GMT-0800", "2014-02-14 09:30:00 GMT-0800"],
+		["2014-02-14 12:00:00 GMT-0800", "2014-02-14 13:00:00 GMT-0800"],
+		["2014-02-14 14:00:00 GMT-0800", "2014-02-14 16:00:00 GMT-0800"],
+		["2014-02-14 16:00:00 GMT-0800", "2014-02-14 17:00:00 GMT-0800"],
+		["2014-02-15 09:00:00 GMT-0800", "2014-02-15 09:30:00 GMT-0800"],
+		["2014-02-15 12:00:00 GMT-0800", "2014-02-15 13:00:00 GMT-0800"],
+		["2014-02-15 14:00:00 GMT-0800", "2014-02-15 16:00:00 GMT-0800"],
+		["2014-02-15 16:00:00 GMT-0800", "2014-02-15 17:00:00 GMT-0800"]
+		],
+		"eventsToSchedule": [
+
+		],
+		"eventsAwaitingConfirmation": [
+
+		],
+		"pendingEvents": [
+
+		],
+		"invites": [
+
+		],
+
+		"dayStart": "7:00",
+		"dayEnd": "22:00"
+		}
+			
 	],
 
 	"events": [
@@ -10,6 +69,7 @@
 	"samples": [
 		{
 			"name": "Lucas Throckmorton",
+			"calendarID": -1,
 			"email": "lucast@stanford.edu",
 			"calendar": [
 				["14:2:14:8:00", "14:2:14:9:00"],
@@ -35,6 +95,7 @@
 		{
 			"name": "Elena Frey",
 			"email": "ekfrey@stanford.edu",
+			"calendarID": -1,
 			"calendar": [
 				["14:2:14:9:00", "14:2:14:9:30"],
 				["14:2:14:12:00", "14:2:14:13:00"],
@@ -57,6 +118,7 @@
 		{
 			"name": "David Wang",
 			"email": "dwang21@stanford.edu",
+			"calendarID": -1,
 			"calendar": [
 				["14:2:14:10:30", "14:2:14:12:30"],
 				["14:2:14:16:00", "14:2:14:18:00"],
@@ -77,6 +139,7 @@
 		},
 		{	
 			"id": "0000000001",
+			"gcalID": -1,
 			"organizer": "lucast@stanford.edu",
 			"eventName": "147workParty",
 			"eventDuration": "5.0",
