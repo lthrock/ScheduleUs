@@ -1048,7 +1048,7 @@ function scheduleEvent(req, res) {
 			var periodEnd = new Date(Date.parse(newEvent[1]));
 
 
-			var eventStart = "" + (((periodStart.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + periodStart.getMinutes() + " " + ((periodStart / 12 >= 1) ? "PM" : "AM");
+			var eventStart = "" + (((periodStart.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + periodStart.getMinutes() + " " + ((periodStart.getHours() / 12 >= 1) ? "PM" : "AM");
 			console.log("start: " + periodStart + " -- eventStart: " + eventStart);
 
 
@@ -1059,7 +1059,7 @@ function scheduleEvent(req, res) {
 			var newEndTime = new Date(periodStart).addHours(eventToSchedule.eventDuration);
 			
 
-			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((newEndTime.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((newEndTime.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime.getHours() / 12 >= 1) ? "PM" : "AM");
 			console.log("end: " + periodEnd + " -- eventEnd: " + newEndTime);
 
 			if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
