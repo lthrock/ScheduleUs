@@ -121,7 +121,7 @@ app.get('/save/:id', events.saveEvent);
 app.get('/confirm/:id', events.confirmEvent);
 app.get('/reject/:id', events.rejectEvent);
 app.get('/schedule/:id', events.scheduleEvent);
-app.get('/selectTime/:id', events.selectTime);
+app.get('/selectTime/:id/:start/:end/:day', events.selectTime);
 
 var myClient;
 var users = require("./users.json");

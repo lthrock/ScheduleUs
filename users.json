@@ -79,22 +79,15 @@
 				["2014-02-15 14:00:00 GMT-0800", "2014-02-15 16:00:00 GMT-0800"],
 				["2014-02-15 16:00:00 GMT-0800", "2014-02-15 17:00:00 GMT-0800"]
 			],
-			"eventsToSchedule": [
-
-			],
-			"eventsAwaitingConfirmation": [
-				
-			],
-			"pendingEvents": [
-
-			],
-			"invites": [
-
-			],
+			"eventsToSchedule": [],
+			"eventsAwaitingConfirmation": [],
+			"pendingEvents": [],
+			"invites": [],
 
 			"dayStart": "07:00:00",
 			"dayEnd": "22:00:00"
 		},
+<<<<<<< HEAD
 		{
 			"name": "Elena Frey",
 			"email": "ekfrey@stanford.edu",
@@ -144,6 +137,8 @@
 			"dayStart": "10:00:00",
 			"dayEnd": "21:00:00"
 		},
+=======
+>>>>>>> da0ff1fa1fea0cd7953e69fed518797e9bd96401
 		{	
 			"id": "0000000001",
 			"gcalID": -1,
