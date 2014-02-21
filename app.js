@@ -191,6 +191,18 @@ app.get('/oauth2callback', function(req, res) {
               "calendar_auth_url": calendar_auth_url,
               "logged_in": logged_in
             }
+         /*   today = new Date();
+            var nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+            var eventBody = {
+              "end": {"date": nextWeek.yyyymmdd()},
+              "start": {"date": today.yyyymmdd()},
+              "attendees": [{"email": "yungodtre@gmail.com"}]
+            }
+            myClient.calendar.events.insert({'calendarId': results.id, 'sendNotifications': true}, eventBody).
+    withAuthClient(oauth2Client).execute(function(err, results) {
+      console.log(results);
+      console.log("err is ", err);
+    });*/
             /*  var currCalendar = {calendarId: newUser.email}
             myClient.calendar.events.list(currCalendar).withAuthClient(oauth2Client).execute(function(err, results) {
               console.log("Errors are ", err);
@@ -238,3 +250,11 @@ app.get('/oauth2callback', function(req, res) {
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+Date.prototype.yyyymmdd = function() {                                         
+    var yyyy = this.getFullYear().toString();                                    
+    var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based         
+    var dd  = this.getDate().toString();             
+                            
+    return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]);
+};  

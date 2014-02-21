@@ -512,56 +512,58 @@ function addEvent(req, res) {
 		"guests": guestsArray,
 		"time": ""
 	}
-	// var calendarID = users["users"][currUser].calendarID;
-	//var calendarID = currUser.calendarID;//req.session.calendar_id;
+	var calendarID = users["users"][currUser].calendarID;
+	// var calendarID = currUser.calendarID;//req.session.calendar_id;
 	// console.log("1 ", req.session.calendar_id, " 2 ", currUser.calendarID);
-	//var calendarID = currUser.calendarID;
-	// var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
-	// 	eventName, eventLocation, eventDuration);
+	// var calendarID = currUser.calendarID;
+	var eventBody = createGCalendarJSON(guests, req.session.current_user, 
+		eventName, eventLocation, eventDuration);
 	// console.log(eventBody.end);
-	//var myClient = req.session.client;
-	// var myClient = req.app.get('client')
-	// var oauth2Client = require("../app").oauth2[req.session.current_user];
-	// calendarID = req.session.calendar_id;
-	// var request = myClient.oauth2.userinfo.get();
-	// request.execute(function(err, results) {
-	// 	console.log("errors");
-	// 	console.log(err);
-	// 	console.log(results);
-	// });
-	// var oauth2 = req.app.get('oauth');
-	// oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
-	//	console.log("try #2");
-	//	console.log(err);
-	//	console.log(results);
-	// });
-	// var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': false}, eventBody);
-	// blah.withAuthClient(oauth2Client).execute(function(err, results) {
-		// console.log("wef5", blah);
-      	    // console.log("Create event ", err);
-            //newEvent.gcalID = results.id
-            //newEvent.gcalID = results.id;
-            
-        // });	
-	users["events"].push(newEvent);
-	users["users"][currUser].eventsAwaitingConfirmation.push(id);
-	for (var guest in guests) {
-		var currUser;
-		for (var user in users["users"]) {
-			// console.log(users["users"][user]);
-			if (users["users"][user].email == guests[guest].trim()) {
-				currUser = user;
-				break;
+	var myClient = req.app.get('client');
+	//var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+	var oauth2Client = require("../app").oauth2[req.session.current_user];
+	//oauth2Client.credentials = users["users"][currUser].tokens;
+	
+	/* var request = myClient.oauth2.userinfo.get();
+	request.execute(function(err, results) {
+		console.log("errors");
+		console.log(err);
+		console.log(results);
+	});
+	var oauth2 = req.app.get('oauth');
+	oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
+		console.log("try #2");
+		console.log(err);
+		console.log(results);
+	}); */
+	// var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody);
+	myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody).
+		withAuthClient(oauth2Client).execute(function(err, results) {
+			//console.log("wef5", blah);
+      	    console.log("Create event ", err);
+            newEvent.gcalID = results.id;
+            users["events"].push(newEvent);
+            console.log("Results ", results);
+            //users["users"][currUser].eventsAwaitingConfirmation.push(id);
+			for (var guest in guests) {
+				var currUser;
+				for (var user in users["users"]) {
+					// console.log(users["users"][user]);
+					if (users["users"][user].email == guests[guest].trim()) {
+						currUser = user;
+						break;
+					}
+				}
+				users["users"][currUser].invites.push(id);
 			}
-		}
-		users["users"][currUser].invites.push(id);
-	}
+			res.render('confirm');
+        });	
+
 
 	// console.log(users);
 	// res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
 	// 	'body': eventBody , 'event': newEvent});
 	// res.render('confirm', {'isOrganizer': true});
-	res.render('confirm');
 };
 
 // exports.viewEvents = function(req, res){
@@ -1012,6 +1014,15 @@ function selectTime(req, res) {
 		}
 	}
 	var attendees = users.events[currEvent].guests;
+	var gCalID = user.events[currEvent].gCalID;
+	var calendarID = users["users"][currUser].calendarID;
+	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+	oauth2Client.credentials = user["users"][currUser].tokens;
+	var myClient = req.app.get('client');
+	myClient.calendar.events.get('calendarId': calendarID, 'eventId': gCalID).withAuthClient(oauth2Client).execute(function(err, results) {
+
+	}
+			
 	for (var i in attendees){
 		if (i != 0) {
 			for (var user in users["users"]) {
@@ -1031,7 +1042,7 @@ function selectTime(req, res) {
 	res.render('confirm', { 'isScheduled': true });
 };
 
-function createGCalendarJSON(start, end, attendees, creator, summary, location, duration) {
+function createGCalendarJSON(attendees, creator, summary, location, duration) {
 	var listAttendees = []
 	for (var attendee in attendees) {
 		listAttendees.push({
@@ -1040,7 +1051,7 @@ function createGCalendarJSON(start, end, attendees, creator, summary, location, 
 	}
 	var today = new Date();
     var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-    var description = "Duration: " + duration + " hours." + "Go to http://scheduleus.herokuapp.com to RSVP!" 
+    var description = "Duration: " + duration + " hours. " + "Go to http://scheduleus.herokuapp.com to RSVP!" 
 	return {
 		"end": { "date": nextweek.yyyymmdd() },
 		"start": { "date": today.yyyymmdd() },
