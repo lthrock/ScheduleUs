@@ -864,7 +864,14 @@ function scheduleEvent(req, res) {
 		if (++internal_counter == attendees.length) {
 			var eventsToShow = getTimes();
 			// console.log(listSchedules);
-			res.render('schedule', { "id": id, "events": eventsToShow });
+			var events = [];
+			for (var item in eventsToShow) {
+				events.push({
+					"id": id,
+					"time": eventsToShow[item]
+				});
+			}
+			res.render('schedule', { "events": events });
 		}
 	}
 
