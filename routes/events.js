@@ -496,9 +496,19 @@ function deleteEvent(req, res) {
 			currEvent = i;
 		}
 	}
+
+	var calendarID = users["users"][currUser].calendarID;
+	var gCalID = users["events"][currEvent].gCalID;
+	var myClient = req.app.get('client');
+	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+	oauth2Client.credentials = users["users"][currUser].tokens;
+
 	var guests = users["events"][currEvent].guests;
 	for (var i in guests) {
 		if (i == 0) {
+			var blah = myClient.calendar.events.delete({'calendarId': calendarID, 'eventId': gCalID, 'sendNotifications': true});
+			blah.withAuthClient(oauth2Client).execute(function(err, results) {
+			});
 			var inside = false;
 			var index;
 			for (var ev in users["users"][currUser].eventsToSchedule) {
@@ -644,7 +654,7 @@ function addEvent(req, res) {
 		withAuthClient(oauth2Client).execute(function(err, results) {
 			//console.log("wef5", blah);
       	    console.log("Create event ", err);
-            newEvent.gcalID = results.id;
+            newEvent.gCalID = results.id;
             users["events"].push(newEvent);
             console.log("Results ", results);
             //users["users"][currUser].eventsAwaitingConfirmation.push(id);
@@ -787,6 +797,19 @@ function confirmEvent(req, res) {
 		var organizer = users.events[currEvent].guests[0][0];
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
+				var calendarID = users["users"][user].calendarID;
+				var gCalID = users["events"][currEvent].gCalID;
+				var myClient = req.app.get('client');
+				var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+				oauth2Client.credentials = users["users"][user].tokens;
+
+	var guests = users["events"][currEvent].guests;
+	for (var i in guests) {
+		if (i == 0) {
+			var blah = myClient.calendar.events.delete({'calendarId': calendarID, 'eventId': gCalID, 'sendNotifications': true});
+			blah.withAuthClient(oauth2Client).execute(function(err, results) {
+			});
+
 				// console.log(users["users"][user]);
 				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
 				var pos;
@@ -1131,9 +1154,9 @@ function selectTime(req, res) {
 	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 	oauth2Client.credentials = user["users"][currUser].tokens;
 	var myClient = req.app.get('client');
-	myClient.calendar.events.get('calendarId': calendarID, 'eventId': gCalID).withAuthClient(oauth2Client).execute(function(err, results) {
-
-	}
+	myClient.calendar.events.get({'calendarId': calendarID, 'eventId': gCalID}).withAuthClient(oauth2Client).execute(function(err, results) {
+		
+	});
 			
 	for (var i in attendees){
 		if (i != 0) {
