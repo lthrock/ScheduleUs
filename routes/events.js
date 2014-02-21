@@ -862,9 +862,9 @@ function scheduleEvent(req, res) {
 
 	var toRender = function() {
 		if (++internal_counter == attendees.length) {
-			getTimes();
+			var eventsToShow = getTimes();
 			// console.log(listSchedules);
-			res.render('schedule', { "id": id });
+			res.render('schedule', { "id": id, "event1": eventsToShow[0], "event2": eventsToShow[1], "event3": eventsToShow[2] });
 		}
 	}
 
@@ -994,6 +994,7 @@ function scheduleEvent(req, res) {
 
 		console.log("Awesome stuff: ");
 		console.log(eventsToShow);
+		return eventsToShow;
 	}
 
 };
