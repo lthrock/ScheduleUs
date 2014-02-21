@@ -864,7 +864,7 @@ function scheduleEvent(req, res) {
 		if (++internal_counter == attendees.length) {
 			var eventsToShow = getTimes();
 			// console.log(listSchedules);
-			res.render('schedule', { "id": id, "event1": eventsToShow[0], "event2": eventsToShow[1], "event3": eventsToShow[2] });
+			res.render('schedule', { "id": id, "events": eventsToShow });
 		}
 	}
 
@@ -979,7 +979,7 @@ function scheduleEvent(req, res) {
 			var newEndTime = new Date(periodStart).addHours(eventToSchedule.eventDuration);
 			
 
-			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((newEndTime.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
 			console.log("end: " + periodEnd + " -- eventEnd: " + newEndTime);
 
 			if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
