@@ -62,10 +62,18 @@
 			      <div class="modal-content">
 			        <div class="modal-header">
 			            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
-			             <h3>Event Created</h3>
+			            {{#if isEdit}}
+			        		<h3>Event Modified</h3>
+			        	{{else}}
+			            	<h3>Event Created</h3>
+		             	{{/if}}
 			        </div>
 			        <div class="modal-body">
-			             <p>You have successfully created your event. The other attendees have been sent an invitation to confirm the event before you may select a time.</p>
+			        	{{#if isEdit}}
+			        		<p>You have sucessfully edited your event. The other attendees have been asked to reconfirm the changes before you may select a time.</p>
+			        	{{else}}
+				            <p>You have successfully created your event. The other attendees have been sent an invitation to confirm the event before you may select a time.</p>
+			            {{/if}}
 			        </div>
 			        <div class="modal-footer">
 			          <a href="/view"  id="btnConfirm" class="btn confirm">OK</a> 

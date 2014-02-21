@@ -59,16 +59,16 @@
 				    <div class="tr">
 				        <div class="d6">
 				        	<span>
-								<select class="form-control top-buffer" id="hrs" name="{{eventHrs}}hrs">
+								<select class="form-control top-buffer" id="{{eventHrs}}hrs" name="hrs">
 								</select>
 							</span>
 				        </div>
 				        <div class="d7">	
-							<select class="form-control top-buffer" id="mins" name="{{eventMins}}mins">
-								<option value="0">0 minutes</option>
-								<option value="15">15 minutes</option>
-								<option value="30">30 minutes</option>
-								<option value="45">45 minutes</option>
+							<select class="form-control top-buffer" id="mins" name="mins">
+								<option value="0" {{#if first}}selected="selected"{{/if}}>0 minutes</option>
+								<option value="15" {{#if second}}selected="selected"{{/if}}>15 minutes</option>
+								<option value="30" {{#if third}}selected="selected"{{/if}}>30 minutes</option>
+								<option value="45" {{#if fourth}}selected="selected"{{/if}}>45 minutes</option>
 							</select>
 				        </div>
 				        <!-- <div class="d3"></div> -->
@@ -146,9 +146,10 @@
 			<button id="testjs" class="btn btn-primary btn-lg">Cancel</button>
 		</div> -->
 	<!-- </form> -->
+
 	</div>
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/createEvent.js"></script>
+	<script src="/js/editEvent.js"></script>
 </body>
 </html>

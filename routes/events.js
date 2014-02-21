@@ -95,23 +95,38 @@ function findOverlap(firstEventStart, firstEventEnd, secondEventStart, secondEve
 	return [secondEventStart, firstEndTime];
 }
 
-/*
- * converts a single array of all events of the form [[start, end]]
- * in which start/end are of the form yy:mm:dd:hh:mm 
- * (year/month/day/hour/minute) into an array of different days, 
- * where each day is its own array containing all the free blocks 
- * of time.
- */
+
+
+function getNextDay(date) {
+	var newDate = new Date();
+	newDate.setTime((new Date(Date.parse(date)).getTime() + (24*60*60*1000))); 
+	return newDate;
+	// month = (month < 10) ? "0" + month : "" + month;
+	// date = (date < 10) ? "0" + date : "" + date;
+}
+
+
 function convertToFreetime(calendar) {
 	var times = new Array();
 	var daysEvents = new Array();
 
-	var currYear = "2000";
-	var currMonth = "01";
-	var currDay = "01";
-	var hour, minute;
+	var today = new Date();
+	// console.log("after initialization: " + today);
+	// today = new Date(today.getFullYear + "/" + today.getMonth + "/" + today.getDate + " 00:00:00 GMT-0800");
+	// console.log("after slight modification: " + today);
 
+	var currYear = today.getFullYear();
+
+	var currMonth = today.getMonth() + 1;
+	var currDay = today.getDate();
+	var justStarted = true;
+
+	
+
+	var hour, minute;
 	var lastEnd = "00:00";
+
+	var endingDate = today;
 
 	for (var i = 0; i < calendar.length; i++) {
 		var start = new Date(Date.parse(calendar[i][0]));
@@ -136,9 +151,52 @@ function convertToFreetime(calendar) {
 			} else {
 				lastEnd = "23:59:59 GMT-0800"
 			}
-			
 		} else {
-			if (currYear != "2000") {
+			var nextDate = getNextDay(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd);
+			var nextYear = "" + nextDate.getFullYear();
+			var nextMonth = "" + (nextDate.getMonth() + 1);
+			// nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+			var nextDay = "" + nextDate.getDate();
+			nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+
+			// if a day was skipped...
+			while (parseInt(nextDay) != parseInt(newDay) || parseInt(nextMonth) != parseInt(newMonth) || parseInt(nextYear) != parseInt(newYear)) {
+				times.push([ 
+					new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "00:00:00 GMT-0800")), 
+					new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "23:59:59 GMT-0800"))
+				]);
+				nextDate = getNextDay(nextDate);
+				nextYear = "" + nextDate.getFullYear();
+				nextMonth = nextDate.getMonth() + 1;
+				nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+				nextDay = "" + nextDate.getDate();
+				nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+			}
+			
+			if (!justStarted) {
+				// var nextDate = getNextDay(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd);
+				// var nextYear = "" + nextDate.getFullYear();
+				// var nextMonth = "" + (nextDate.getMonth() + 1);
+				// // nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+				// var nextDay = "" + nextDate.getDate();
+				// nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+
+				// // if a day was skipped...
+				// while (parseInt(nextDay) != parseInt(newDay) || parseInt(nextMonth) != parseInt(newMonth) || parseInt(nextYear) != parseInt(newYear)) {
+				// 	times.push([ 
+				// 		new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "00:00:00 GMT-0800")), 
+				// 		new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "23:59:59 GMT-0800"))
+				// 	]);
+				// 	nextDate = getNextDay(nextDate);
+				// 	nextYear = "" + nextDate.getFullYear();
+				// 	nextMonth = nextDate.getMonth() + 1;
+				// 	nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+				// 	nextDay = "" + nextDate.getDate();
+				// 	nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+				// }
+
+
+
 				times.push([ 
 					new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
 					new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
@@ -151,6 +209,7 @@ function convertToFreetime(calendar) {
 
 
 			} else {
+				justStarted = false;
 				times.push([ 
 					new Date(Date.parse(newYear + "/" + newMonth + "/" + newDay + " " + lastEnd)), 
 					new Date(Date.parse(newYear + "/" + newMonth + "/" + newDay + " " + start.getHours() + ":" + start.getMinutes()))
@@ -163,13 +222,48 @@ function convertToFreetime(calendar) {
 			currMonth = newMonth;
 			currDay = newDay;
 		}
+
+		if (i == calendar.length-1) {
+			endingDate = new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " 00:00:00 GMT-0800"));
+		}
 	}
 
-	times.push([ 
-		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
-		new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
-	]);
-	console.log("returning: " + times);
+	if (calendar.length != 0) {
+		times.push([ 
+			new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd)), 
+			new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + "23:59:59 GMT-0800"))
+		]);
+	}	
+
+
+	// console.log("when i need it: " + today);
+	var weekFromNow = new Date(today);
+	for (var i = 0; i < 6; i++) {
+		weekFromNow = new Date(Date.parse(getNextDay(weekFromNow)));
+	}
+	
+
+	// console.log("actual end: " + weekFromNow.toDateString());
+	// console.log("last scheduled: " + endingDate.toDateString());
+	endingDate.setHours(23);
+	endingDate.setMinutes(59);
+	endingDate.setSeconds(59);
+	endingDate.setMilliseconds(999);
+	while (+weekFromNow > +endingDate) {//calendar.length == 0) {
+		// console.log("actual end: " + weekFromNow.toDateString())
+		// console.log("last scheduled: " + endingDate.toDateString());
+		var startSuffix = "00:00:00 GMT-0800"
+		var endSuffix = "23:59:59 GMT-0800"
+		
+		times.push([ 
+			new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + startSuffix)), 
+			new Date(Date.parse(currYear + "/" + currMonth + "/" + currDay + " " + endSuffix))
+		]);
+
+		endingDate = new Date(Date.parse(getNextDay(endingDate)));
+	}
+
+	// console.log("returning: " + times);
 	return times;
 }
 
@@ -302,11 +396,18 @@ function editEvent(req, res) {
 	if (duration[1]) {
 		var mins = parseFloat("0." + duration[1]) * 60;
 	}
+	if (mins == 0) var first = true;
+	if (mins == 15) var second = true;
+	if (mins == 30) var third = true;
+	if (mins == 45) var fourth = true;
 	var populatedFields = {
 		"id": id,
 		"eventName": users["events"][currEvent].eventName,
 		"eventHrs": hours,
-		"eventMins": mins,
+		"first": first,
+		"second": second,
+		"third": third,
+		"fourth": fourth,
 		"eventLocation": users["events"][currEvent].eventLocation,
 		"morning": morning,
 		"afternoon": afternoon, 
@@ -318,6 +419,7 @@ function editEvent(req, res) {
 
 function saveEvent(req, res) {
 	var id = req.params.id;
+
 	var organizer = req.session.current_user;
 	var currUser;
 	for (var user in users["users"]) {
@@ -375,6 +477,7 @@ function saveEvent(req, res) {
 	}
 
 	users["events"].splice(currEvent, 1);
+	req.query["edit"] = true;
 	addEvent(req, res);
 };
 
@@ -564,6 +667,7 @@ function addEvent(req, res) {
 	// res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
 	// 	'body': eventBody , 'event': newEvent});
 	// res.render('confirm', {'isOrganizer': true});
+	res.render('confirm', {'isEdit': req.query.edit});
 };
 
 // exports.viewEvents = function(req, res){
@@ -855,9 +959,16 @@ function scheduleEvent(req, res) {
 
 	var toRender = function() {
 		if (++internal_counter == attendees.length) {
-			getTimes();
+			var eventsToShow = getTimes();
 			// console.log(listSchedules);
-			res.render('schedule', { "id": id });
+			var events = [];
+			for (var item in eventsToShow) {
+				events.push({
+					"id": id,
+					"time": eventsToShow[item]
+				});
+			}
+			res.render('schedule', { "events": events });
 		}
 	}
 
@@ -961,7 +1072,7 @@ function scheduleEvent(req, res) {
 			var periodEnd = new Date(Date.parse(newEvent[1]));
 
 
-			var eventStart = "" + (((periodStart.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			var eventStart = "" + (((periodStart.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + periodStart.getMinutes() + " " + ((periodStart.getHours() / 12 >= 1) ? "PM" : "AM");
 			console.log("start: " + periodStart + " -- eventStart: " + eventStart);
 
 
@@ -972,7 +1083,7 @@ function scheduleEvent(req, res) {
 			var newEndTime = new Date(periodStart).addHours(eventToSchedule.eventDuration);
 			
 
-			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((periodStart.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
+			var eventEnd = "" + (((newEndTime.getHours()+11) % 12 ) + 1) + ":" + ((newEndTime.getMinutes() < 10) ? "0" : "") + newEndTime.getMinutes() + " " + ((newEndTime.getHours() / 12 >= 1) ? "PM" : "AM");
 			console.log("end: " + periodEnd + " -- eventEnd: " + newEndTime);
 
 			if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
@@ -987,6 +1098,7 @@ function scheduleEvent(req, res) {
 
 		console.log("Awesome stuff: ");
 		console.log(eventsToShow);
+		return eventsToShow;
 	}
 
 };
