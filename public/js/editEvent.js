@@ -10,22 +10,22 @@ $(document).ready(function() {
  */
 function initializePage() {
 	// add any functionality and listeners you want here
+	var select = $("select[id$='hrs']");
+    // var number = select.name;
+    var id = select.attr('id');
+    var number = id.substring(0, id.length-3);
 	for(var i = 0; i < 24; i++){
-	    var select = document.getElementById("hrs");
 	    var option = document.createElement("OPTION");
-	    select.options.add(option);
+	    select.append(option);
 	    if (i == 1) {
 	    	option.text = i + " hour";
 	    } else {
 		    option.text = i + " hours";
 		}
-			// option.selected = "selected";
-			// option.attr("selected", "");
+		if (i == number)
+			option.selected = "selected";
 	    option.value = i;
 	}
-	// $(window).onload(function() {
-	// 	makeSelected();
-	// })
 }
 
 function validateForm() {

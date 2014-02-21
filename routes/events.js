@@ -302,11 +302,18 @@ function editEvent(req, res) {
 	if (duration[1]) {
 		var mins = parseFloat("0." + duration[1]) * 60;
 	}
+	if (mins == 0) var first = true;
+	if (mins == 15) var second = true;
+	if (mins == 30) var third = true;
+	if (mins == 45) var fourth = true;
 	var populatedFields = {
 		"id": id,
 		"eventName": users["events"][currEvent].eventName,
 		"eventHrs": hours,
-		"eventMins": mins,
+		"first": first,
+		"second": second,
+		"third": third,
+		"fourth": fourth,
 		"eventLocation": users["events"][currEvent].eventLocation,
 		"morning": morning,
 		"afternoon": afternoon, 
@@ -318,6 +325,7 @@ function editEvent(req, res) {
 
 function saveEvent(req, res) {
 	var id = req.params.id;
+
 	var organizer = req.session.current_user;
 	var currUser;
 	for (var user in users["users"]) {
@@ -375,6 +383,7 @@ function saveEvent(req, res) {
 	}
 
 	users["events"].splice(currEvent, 1);
+	req.query["edit"] = true;
 	addEvent(req, res);
 };
 
@@ -561,7 +570,7 @@ function addEvent(req, res) {
 	// res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
 	// 	'body': eventBody , 'event': newEvent});
 	// res.render('confirm', {'isOrganizer': true});
-	res.render('confirm');
+	res.render('confirm', {'isEdit': req.query.edit});
 };
 
 // exports.viewEvents = function(req, res){

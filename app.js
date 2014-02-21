@@ -103,10 +103,21 @@ app.get('/settings', function(req, res) {
     settings.view(req, res);
   }
 });
+app.get('/add', function(req, res) {
+  if (req.session.tokens == null) {
+    data = {
+      "calendar_auth_url": calendar_auth_url,
+      "logged_in": false
+    }
+    res.render('index', data);
+  } else {
+    events.addEvent(req, res);
+  }
+});
 app.get('/edit/:id', events.editEvent);
 app.get('/delete/:id', events.deleteEvent);
 app.get('/save/:id', events.saveEvent);
-app.get('/add', events.addEvent);
+// app.get('/add', events.addEvent);
 app.get('/confirm/:id', events.confirmEvent);
 app.get('/reject/:id', events.rejectEvent);
 app.get('/schedule/:id', events.scheduleEvent);
