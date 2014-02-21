@@ -960,6 +960,8 @@ function scheduleEvent(req, res) {
 			// console.log(listSchedules);
 			var events = [];
 			for (var item in eventsToShow) {
+				eventsToShow[item][2] = eventsToShow[item][2].replace("/", "-");
+				eventsToShow[item][2] = eventsToShow[item][2].replace("/", "-");
 				events.push({
 					"id": id,
 					"time": eventsToShow[item]
@@ -1103,6 +1105,12 @@ function scheduleEvent(req, res) {
 // exports.selectTime = function(req, res) {
 function selectTime(req, res) {
 	var id = req.params.id;
+	var startTime = req.params.start;
+	var endTime = req.params.end;
+	var day = req.params.day;
+	console.log(startTime);
+	console.log(endTime);
+	console.log(day);
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
 			var currUser = user;
