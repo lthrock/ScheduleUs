@@ -111,9 +111,9 @@ function convertToFreetime(calendar) {
 	var daysEvents = new Array();
 
 	var today = new Date();
-	console.log("after initialization: " + today);
+	// console.log("after initialization: " + today);
 	// today = new Date(today.getFullYear + "/" + today.getMonth + "/" + today.getDate + " 00:00:00 GMT-0800");
-	console.log("after slight modification: " + today);
+	// console.log("after slight modification: " + today);
 
 	var currYear = today.getFullYear();
 
@@ -215,22 +215,22 @@ function convertToFreetime(calendar) {
 	}	
 
 
-	console.log("when i need it: " + today);
+	// console.log("when i need it: " + today);
 	var weekFromNow = new Date(today);
 	for (var i = 0; i < 6; i++) {
 		weekFromNow = new Date(Date.parse(getNextDay(weekFromNow)));
 	}
 	
 
-	console.log("actual end: " + weekFromNow.toDateString());
-	console.log("last scheduled: " + endingDate.toDateString());
+	// console.log("actual end: " + weekFromNow.toDateString());
+	// console.log("last scheduled: " + endingDate.toDateString());
 	endingDate.setHours(23);
 	endingDate.setMinutes(59);
 	endingDate.setSeconds(59);
 	endingDate.setMilliseconds(999);
 	while (+weekFromNow > +endingDate) {//calendar.length == 0) {
-		console.log("actual end: " + weekFromNow.toDateString())
-		console.log("last scheduled: " + endingDate.toDateString());
+		// console.log("actual end: " + weekFromNow.toDateString())
+		// console.log("last scheduled: " + endingDate.toDateString());
 		var startSuffix = "00:00:00 GMT-0800"
 		var endSuffix = "23:59:59 GMT-0800"
 		
