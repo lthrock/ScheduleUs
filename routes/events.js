@@ -152,27 +152,48 @@ function convertToFreetime(calendar) {
 				lastEnd = "23:59:59 GMT-0800"
 			}
 		} else {
-			if (!justStarted) {
-				var nextDate = getNextDay(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd);
-				var nextYear = "" + nextDate.getFullYear();
-				var nextMonth = "" + (nextDate.getMonth() + 1);
-				// nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
-				var nextDay = "" + nextDate.getDate();
-				nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+			var nextDate = getNextDay(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd);
+			var nextYear = "" + nextDate.getFullYear();
+			var nextMonth = "" + (nextDate.getMonth() + 1);
+			// nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+			var nextDay = "" + nextDate.getDate();
+			nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
 
-				// if a day was skipped...
-				while (parseInt(nextDay) != parseInt(newDay) || parseInt(nextMonth) != parseInt(newMonth) || parseInt(nextYear) != parseInt(newYear)) {
-					times.push([ 
-						new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "00:00:00 GMT-0800")), 
-						new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "23:59:59 GMT-0800"))
-					]);
-					nextDate = getNextDay(nextDate);
-					nextYear = "" + nextDate.getFullYear();
-					nextMonth = nextDate.getMonth() + 1;
-					nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
-					nextDay = "" + nextDate.getDate();
-					nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
-				}
+			// if a day was skipped...
+			while (parseInt(nextDay) != parseInt(newDay) || parseInt(nextMonth) != parseInt(newMonth) || parseInt(nextYear) != parseInt(newYear)) {
+				times.push([ 
+					new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "00:00:00 GMT-0800")), 
+					new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "23:59:59 GMT-0800"))
+				]);
+				nextDate = getNextDay(nextDate);
+				nextYear = "" + nextDate.getFullYear();
+				nextMonth = nextDate.getMonth() + 1;
+				nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+				nextDay = "" + nextDate.getDate();
+				nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+			}
+			
+			if (!justStarted) {
+				// var nextDate = getNextDay(currYear + "/" + currMonth + "/" + currDay + " " + lastEnd);
+				// var nextYear = "" + nextDate.getFullYear();
+				// var nextMonth = "" + (nextDate.getMonth() + 1);
+				// // nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+				// var nextDay = "" + nextDate.getDate();
+				// nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+
+				// // if a day was skipped...
+				// while (parseInt(nextDay) != parseInt(newDay) || parseInt(nextMonth) != parseInt(newMonth) || parseInt(nextYear) != parseInt(newYear)) {
+				// 	times.push([ 
+				// 		new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "00:00:00 GMT-0800")), 
+				// 		new Date(Date.parse(nextYear + "/" + nextMonth + "/" + nextDay + " " + "23:59:59 GMT-0800"))
+				// 	]);
+				// 	nextDate = getNextDay(nextDate);
+				// 	nextYear = "" + nextDate.getFullYear();
+				// 	nextMonth = nextDate.getMonth() + 1;
+				// 	nextMonth = (newMonth < 10) ? "0" + newMonth : "" + newMonth;
+				// 	nextDay = "" + nextDate.getDate();
+				// 	nextDay = (nextDay < 10) ? "0" + nextDay : "" + nextDay;
+				// }
 
 
 
