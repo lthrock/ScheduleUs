@@ -624,8 +624,9 @@ function addEvent(req, res) {
 	// console.log(eventBody.end);
 	//var myClient = req.session.client;
 	// var myClient = req.app.get('client')
+	// var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 	// var oauth2Client = require("../app").oauth2[req.session.current_user];
-	// calendarID = req.session.calendar_id;
+	// oauth2Client.credentials = users["users"][currUser].tokens;
 	// var request = myClient.oauth2.userinfo.get();
 	// request.execute(function(err, results) {
 	// 	console.log("errors");
@@ -833,7 +834,7 @@ function rejectEvent(req, res) {
 	}
 	users.events[currEvent].guests.splice(index, 1);
 	if (users.events[currEvent].guests.length == 1) {
-		console.log("IN HERE");
+		// console.log("IN HERE");
 		var organizer = users.events[currEvent].guests[0][0];
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
@@ -1147,6 +1148,26 @@ function selectTime(req, res) {
 			}
 		}
 	}
+
+	var gcalStartTime = new Date(day + " " + startTime);
+	var gcalEndTime = new Date(day + " " + endTime);
+	var calendarID = users["users"][currUser].calendarID;
+	var eventBody = createGCalendarJSON(gcalStartTime, gcalEndTime, attendees, req.session.current_user, 
+		users.events[currEvent].eventName, users.events[currEvent].eventLocation, users.events[currEvent].eventDuration);
+	var myClient = req.app.get('client');
+	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+	oauth2Client.credentials = users["users"][currUser].tokens;
+
+	myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody).
+		withAuthClient(oauth2Client).execute(function(err, results) {
+			if (err) { 
+				console.log("ERROR in inserting event ", err);
+			} else {
+	      	    console.log("Create event ", err);
+	            users.events[currEvent].gCalID = results.id;
+	        }
+	    });
+
 	res.render('confirm', { 'isScheduled': true });
 };
 
@@ -1154,21 +1175,21 @@ function createGCalendarJSON(start, end, attendees, creator, summary, location, 
 	var listAttendees = []
 	for (var attendee in attendees) {
 		listAttendees.push({
-			"email": attendees[attendee]
+			"email": attendees[attendee][0]
 		})
 	}
-	var today = new Date();
-    var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-    var description = "Duration: " + duration + " hours." + "Go to http://scheduleus.herokuapp.com to RSVP!" 
+	// var today = new Date();
+    // var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+    // var description = "Duration: " + duration + " hours." + "Go to http://scheduleus.herokuapp.com to RSVP!" 
 	return {
-		"end": { "date": nextweek.yyyymmdd() },
-		"start": { "date": today.yyyymmdd() },
+		"start": { "dateTime": start.toISOString() },
+		"end": { "dateTime": end.toISOString() },
 		"attendees": listAttendees,
 		"creator": creator,
 		"summary": summary,
 		"location": location,
-		"description": description,
-		"status": "tentative",
+		// "description": description,
+		// "status": "tentative",
 		"guestsCanInviteOthers": false
 	}
 };
