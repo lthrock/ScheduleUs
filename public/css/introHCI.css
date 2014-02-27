@@ -144,7 +144,7 @@ button {
 .jumbotron {
     /*position: relative;*/
     background: none;
-    /*padding-top: 100px;*/
+    padding-top: 0px;
     text-align: center;
     /*height: 600px;*/
     /*width: 100%;
@@ -191,4 +191,8 @@ img {
 
 .buttons {
      text-align: center;
+}
+
+.buttons button {
+    width: 190px;
 }
