@@ -2,9 +2,10 @@
 
 <html>
 <head>
-	<title>HCI Project Portfolio</title>	
+	<title>ScheduleUs - Preferences</title>	
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
 	<link href="/css/introHCI.css" rel="stylesheet">
@@ -23,8 +24,10 @@
 		    <div class="tr">
 		        <div class="d1">
 		        	<span class="btn-group">
-						<a href="/" class="btn">
-							<pre>&lt; </pre>
+						<a href="/">
+							<button type="button" class="btn btn-default">
+								<span class="glyphicon glyphicon-arrow-left"></span>
+							</button>
 						</a>
 					</span>
 		        </div>
@@ -42,7 +45,7 @@
 		<div class="center-block"><h5> In what time frame can events be scheduled? </h5></div>
 
 		<form id="preferencesForm" role="form" method="get" action="/settings">
-			<div class="table">
+			<div class="table" style="margin-bottom: 15px">
 			    <div class="tr">
 			        <div class="d4">
 						Starting as early as:

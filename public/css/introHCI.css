@@ -27,6 +27,7 @@ button {
 .table {
     display:table;
     width:100%;
+    margin-bottom: 0px;
 }
 .tr {
     display:table-row;
@@ -34,16 +35,20 @@ button {
 .d1 {
     display:table-cell;
     width:22%;
+    padding-bottom: 20px;
+    padding-left: 15px;
 }
 .d2 {
     display:table-cell;
     text-align:center;
     width:60%;
+    padding-top: 5px;
 }
 .d3 {
     display:table-cell;
     text-align:right;
     width:20%;
+    padding-right: 15px;
 }
 
 /* d4 and d5 are used for a two column format, as seen in the preference
@@ -75,6 +80,11 @@ button {
 .d12 {
     display:table-cell;
     width:50%;
+}
+.d13 {
+    display:table-cell;
+    text-align:right;
+    width:30%;
 }
 
 .tableLeftHalf {

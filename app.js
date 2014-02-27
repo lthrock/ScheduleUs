@@ -218,7 +218,7 @@ app.get('/oauth2callback', function(req, res) {
         }
         req.session.current_user_id = currUser;
         users["users"][currUser].tokens = req.session.tokens;
-        if (users["users"][currUser].calendarID == undefined) {
+        if (users["users"][currUser].calendarID == undefined || users["users"][currUser].calendarID == -1) {
           var calendar = {'summary': 'ScheduleUs Calendar'};
           myClient.calendar.calendars.insert(calendar).
             withAuthClient(oauth2Client).execute(function(err, results) {
