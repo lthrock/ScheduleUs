@@ -236,12 +236,12 @@
 						    <div class="tr">
 						        <div class="d12 clickable" id="host{{id}}">	
 									<span class="list">
-										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule!</span>
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule!  <span class="glyphicon glyphicon-pencil"></span></span>
 									</span>
 						        </div>
 						        <div class="d13">
 						        	<a href="/schedule/{{id}}">
-							        	<button id="{{id}}" class="btn btn-primary" style="width: 87px">Schedule!</button>
+							        	<button id="{{id}}" class="btn btn-primary" style="width: 87px;">Schedule!</button>
 							        </a>
 						        </div>
 						    </div>
@@ -278,12 +278,11 @@
 						        <div class="d12">	
 									<span class="list">
 										
-										<span class="btn-group"> </span> Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.<span class="glyphicon glyphicon-pencil"> </span>
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.</span></span>
 									</span>
 						        </div>
 						        <div class="d13">
-						        
-						        	<button type="button" class="btn btn-primary" disabled>Schedule!</button>
+						        	<button type="button" class="btn btn-primary" style="width: 87px;" disabled>Schedule!</button>
 						        	
 						        </div>
 						    </div>
@@ -327,7 +326,7 @@
 			      </h4>
 		      	</a>
 		    </div>
-		    <div id="collapseTwo" class="panel-collapse collapse">
+		    <div id="collapseTwo" class="panel-collapse collapse in">
 		      <div class="panel-body">
 		        <div class="table">
             		{{#each invites}}
@@ -337,7 +336,7 @@
                     			<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
                   				</span>
                     		</div>
-                        	<div class="d13">
+                        	<div class="d14">
                           			<input href="#modal-dialog1{{id}}" data-toggle="modal" type="button" class="btn btn-success btn-mini" value="✓">
                           			<input href="#modal-dialog2{{id}}" data-toggle="modal" type="button" class="btn btn-danger btn-mini" value="✗">
                        		</div>
@@ -411,7 +410,7 @@
 			      </h4>
 		      	</a>
 		    </div>
-		    <div id="collapseThree" class="panel-collapse collapse">
+		    <div id="collapseThree" class="panel-collapse collapse in">
 		      <div class="panel-body">
 		        <div class="table">
             		{{#each history}}
