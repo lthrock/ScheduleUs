@@ -24,9 +24,9 @@ var REDIRECT_LIVE_URL = "http://scheduleus.herokuapp.com/oauth2callback";
 var CLIENT_LIVE_ID2 = "93833969413-idt149ca9sjocseohqogtitb0farh6uu.apps.googleusercontent.com";
 var CLIENT_LIVE_SECRET2 = "D-1uASu0vQptel2oJoSl2rrm";
 var REDIRECT_LIVE_URL2 = "http://scheduleusv2.herokuapp.com/oauth2callback";
-// var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 // var oauth2Client = new OAuth2Client(CLIENT_LIVE_ID, CLIENT_LIVE_SECRET, REDIRECT_LIVE_URL);
-var oauth2Client = new OAuth2Client(CLIENT_LIVE_ID2, CLIENT_LIVE_SECRET2, REDIRECT_LIVE_URL2);
+// var oauth2Client = new OAuth2Client(CLIENT_LIVE_ID2, CLIENT_LIVE_SECRET2, REDIRECT_LIVE_URL2);
 var calendar_auth_url = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar'
