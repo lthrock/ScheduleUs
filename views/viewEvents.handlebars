@@ -225,7 +225,7 @@
 		    <div class="panel-heading">
 		    	<a data-toggle="collapse" href="#collapseOne">
 			      <h4 class="panel-title">
-			          Events I'm Hosting {{#if toSchedule.length}}({{toSchedule.length}}){{/if}}
+			          Events I'm Hosting <span class="alert">{{#if toSchedule.length}}({{toSchedule.length}}){{/if}} </span>
 			      </h4>
 		      	</a>
 		    </div>
@@ -277,12 +277,14 @@
 						    <div class="tr clickable" id="host{{id}}">
 						        <div class="d12">	
 									<span class="list">
-										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.</span>
+										
+										<span class="btn-group"> </span> Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.<span class="glyphicon glyphicon-pencil"> </span>
 									</span>
 						        </div>
 						        <div class="d13">
+						        
 						        	<button type="button" class="btn btn-primary" disabled>Schedule!</button>
-						        	<!-- <span class="glyphicon glyphicon-pencil"></span> -->
+						        	
 						        </div>
 						    </div>
 						    {{#unless @last}}<hr>{{/unless}}
@@ -321,7 +323,7 @@
 		    <div class="panel-heading">
 		    	<a data-toggle="collapse" href="#collapseTwo">
 			      <h4 class="panel-title">
-			          My Invites {{#if invites.length}}({{invites.length}}){{/if}}
+			          My Invites <span class="alert"> {{#if invites.length}}({{invites.length}}){{/if}} </span>
 			      </h4>
 		      	</a>
 		    </div>
