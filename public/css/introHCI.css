@@ -137,24 +137,43 @@ button {
 }
 
 .jumbotron {
-    position: relative;
+    /*position: relative;*/
     background: none;
-    padding-top: 100px;
+    /*padding-top: 100px;*/
     text-align: center;
+    /*height: 600px;*/
+    /*width: 100%;
+    margin: auto;
+    padding: 0 15px;
+    width: 90%;
+    height: 437px;*/
 }
 
 .jumbotron:after {
-     content:"";
-     background: url("../images/Calendar.jpeg");
-     background-repeat: no-repeat;
-     background-size: cover;
-     opacity: 0.2;
+     content:"";/*
+     background: url("../images/scheduleusicon0.png");*/
+     /*background-repeat: no-repeat;*/
+     /*background-size: cover;*/
+     opacity: 0.9;
      top: 0;
      left: 0;
      bottom: 0;
      right: 0;
-     position: absolute;
+     /*position: absolute;*/
      z-index: -1;   
+}
+
+
+img {
+    margin: auto;
+    width: 90%;
+    color: #6e6e6e;
+    display: block;
+    /*margin-left: auto;
+    margin-right: auto;*/ 
+}
+   
+
 }
 
 .jumbotron p {
