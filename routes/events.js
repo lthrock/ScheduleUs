@@ -678,8 +678,12 @@ function addEvent(req, res) {
 	res.render('confirm', {'isEdit': req.query.edit});
 };
 
+// function view1(req, res) {
+// 	view(req, res, true);
+// }
+
 // exports.viewEvents = function(req, res){
-function view(req, res) {
+function view(req, res, original) {
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -742,7 +746,12 @@ function view(req, res) {
 	}
 	// console.log(invites);
 	// console.log(pending);
-  	res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 'pending': pending, 'history': history });
+	console.log(req.session.drawers);
+	if (req.session.drawers) {
+		res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 'pending': pending, 'history': history });	
+	} else {
+		res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 'pending': pending, 'history': history });
+	}
 };
 
 // exports.confirmEvent = function(req, res){

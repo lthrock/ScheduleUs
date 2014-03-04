@@ -82,9 +82,25 @@ app.get('/view', function(req, res) {
     res.render('index', data);
   } else {
   // res.render('viewEvents');
+    req.session.drawers = true;
     events.viewEvents(req, res);
   }
 });
+
+app.get('/view/tabs', function(req, res) {
+  if (req.session.tokens == null) {
+    data = {
+      "calendar_auth_url": calendar_auth_url,
+      "logged_in": false
+    }
+    res.render('index', data);
+  } else {
+  // res.render('viewEvents');
+    req.session.drawers = false;
+    events.viewEvents(req, res);
+  }
+});
+
 app.get('/create', function(req, res) {
   if (req.session.tokens == null) {
     data = {
