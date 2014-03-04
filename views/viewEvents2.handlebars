@@ -75,7 +75,7 @@
 						        </div>
 						        <div class="d14">
 						        	<a href="/schedule/{{id}}">
-							        	<button id="{{id}}" class="btn btn-primary schedule">Schedule!</button>
+							        	<button id="{{id}}" data-prevtime="{{../prevTime}}" data-recentprevtime="{{../recentPrevTime}}" class="btn btn-primary schedule">Schedule!</button>
 							        </a>
 						        </div>
 						    </div>
@@ -159,8 +159,8 @@
 	                    		</div>
 	                        	<div class="d14">
 	                          		<!-- <a href="confirm/{{id}}" > -->
-	                          			<input href="#modal-dialog1{{id}}" data-toggle="modal" type="button" class="btn btn-success btn-mini accept" value="✓">
-	                          			<input href="#modal-dialog2{{id}}" data-toggle="modal" type="button" class="btn btn-danger btn-mini reject" value="✗">
+	                          			<input href="#modal-dialog1{{id}}" data-prevtime="{{../prevTime}}" data-recentprevtime="{{../recentPrevTime}}" data-toggle="modal" type="button" class="btn btn-success btn-mini accept" value="✓">
+	                          			<input href="#modal-dialog2{{id}}" data-prevtime="{{../prevTime}}" data-recentprevtime="{{../recentPrevTime}}" data-toggle="modal" type="button" class="btn btn-danger btn-mini reject" value="✗">
 	                            		<!-- <button id="{{id}}" class="btn btn-primary">✓</button> -->
 	                          		<!-- </a> -->
 	                       		</div>

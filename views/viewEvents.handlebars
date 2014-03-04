@@ -255,7 +255,7 @@
 						        </div>
 						        <div class="d13">
 						        	<a href="/schedule/{{id}}">
-							        	<button data-prevtime="{{../prevTime}}" id="{{id}}" class="btn btn-primary schedule" style="width: 87px;">Schedule!</button>
+							        	<button data-prevtime="{{../prevTime}}" data-recentprevtime="{{../recentPrevTime}}" id="{{id}}" class="btn btn-primary schedule" style="width: 87px;">Schedule!</button>
 							        </a>
 						        </div>
 						    </div>
@@ -350,8 +350,8 @@
                   				</span>
                     		</div>
                         	<div class="d14">
-                          			<input href="#modal-dialog1{{id}}" data-toggle="modal" data-prevtime="{{../prevTime}}" type="button" class="btn btn-success btn-mini accept" value="✓">
-                          			<input href="#modal-dialog2{{id}}" data-toggle="modal" data-prevtime="{{../prevTime}}" type="button" class="btn btn-danger btn-mini reject" value="✗">
+                          			<input href="#modal-dialog1{{id}}" data-toggle="modal" data-prevtime="{{../prevTime}}" data-recentprevtime="{{../recentPrevTime}}" type="button" class="btn btn-success btn-mini accept" value="✓">
+                          			<input href="#modal-dialog2{{id}}" data-toggle="modal" data-prevtime="{{../prevTime}}" data-recentprevtime="{{../recentPrevTime}}" type="button" class="btn btn-danger btn-mini reject" value="✗">
                        		</div>
                 		</div>
                 		{{#unless @last}}<hr>{{/unless}}

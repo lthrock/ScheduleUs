@@ -677,6 +677,7 @@ function view(req, res, original) {
 	if (req.session.prevTime == null) {
 		req.session.prevTime = new Date();
 	}
+	req.session.recentPrevTime = new Date();
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -742,10 +743,10 @@ function view(req, res, original) {
 	console.log(req.session.drawers);
 	if (req.session.drawers) {
 		res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
-			'pending': pending, 'history': history, 'prevTime': req.session.prevTime });	
+			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime});	
 	} else {
 		res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
-			'pending': pending, 'history': history, 'prevTime': req.session.prevTime});
+			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime});
 	}
 };
 

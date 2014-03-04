@@ -26,8 +26,11 @@ function initializePage() {
 
 function actionClicked(e) {
 	var prevTime = e.target.getAttribute("data-prevtime");
+	var recentPrevTime = e.target.getAttribute("data-recentprevtime");
 	var timeSpent = new Date() - new Date(prevTime);
+	var recentTimeSpent = new Date() - new Date(recentPrevTime);
 	console.log(timeSpent);
+	console.log(recentTimeSpent);
 	var label = 'schedule';
 	if (e.target.className.indexOf('accept') != -1) {
 		label = 'accept';
@@ -35,4 +38,5 @@ function actionClicked(e) {
 		label = 'reject';
 	}
 	ga("send", "event", "button", "click", label, timeSpent);
+	ga("send", "event", "button", "click", label, recentTimeSpent);
 }
