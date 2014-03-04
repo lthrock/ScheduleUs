@@ -1,3 +1,5 @@
+
+
 label, input {
     display: block;
 }
@@ -15,6 +17,11 @@ button {
     font-size: 15px;
 }*/
 
+.alert {
+  color:red;
+  hover:{text-decoration: underline overline; color: red;}
+}
+
 .center-block {
   display: block;
   margin-left: auto;
@@ -25,6 +32,7 @@ button {
 .table {
     display:table;
     width:100%;
+    margin-bottom: 0px;
 }
 .tr {
     display:table-row;
@@ -32,16 +40,20 @@ button {
 .d1 {
     display:table-cell;
     width:22%;
+    padding-bottom: 20px;
+    padding-left: 15px;
 }
 .d2 {
     display:table-cell;
     text-align:center;
     width:60%;
+    padding-top: 5px;
 }
 .d3 {
     display:table-cell;
     text-align:right;
     width:20%;
+    padding-right: 15px;
 }
 
 /* d4 and d5 are used for a two column format, as seen in the preference
@@ -73,6 +85,16 @@ button {
 .d12 {
     display:table-cell;
     width:50%;
+}
+.d13 {
+    display:table-cell;
+    text-align:right;
+    width:3%;
+}
+.d14 {
+    display:table-cell;
+    text-align:right;
+    width:30%;
 }
 
 .tableLeftHalf {
@@ -120,24 +142,43 @@ button {
 }
 
 .jumbotron {
-    position: relative;
+    /*position: relative;*/
     background: none;
-    padding-top: 100px;
+    padding-top: 0px;
     text-align: center;
+    /*height: 600px;*/
+    /*width: 100%;
+    margin: auto;
+    padding: 0 15px;
+    width: 90%;
+    height: 437px;*/
 }
 
 .jumbotron:after {
-     content:"";
-     background: url("../images/Calendar.jpeg");
-     background-repeat: no-repeat;
-     background-size: cover;
-     opacity: 0.2;
+     content:"";/*
+     background: url("../images/scheduleusicon0.png");*/
+     /*background-repeat: no-repeat;*/
+     /*background-size: cover;*/
+     opacity: 0.9;
      top: 0;
      left: 0;
      bottom: 0;
      right: 0;
-     position: absolute;
+     /*position: absolute;*/
      z-index: -1;   
+}
+
+
+img {
+    margin: auto;
+    width: 90%;
+    color: #6e6e6e;
+    display: block;
+    /*margin-left: auto;
+    margin-right: auto;*/ 
+}
+   
+
 }
 
 .jumbotron p {
@@ -150,4 +191,8 @@ button {
 
 .buttons {
      text-align: center;
+}
+
+.buttons button {
+    width: 190px;
 }

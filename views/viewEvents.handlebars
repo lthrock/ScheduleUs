@@ -2,9 +2,10 @@
 
 <html>
 <head>
-	<title>HCI Project Portfolio</title>	
+	<title>ScheduleUs - View Events</title>	
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
 	<link href="/css/introHCI.css" rel="stylesheet">     
@@ -17,8 +18,10 @@
 		    <div class="tr">
 		        <div class="d1">
 		        	<span class="btn-group">
-						<a href="/" class="btn">
-							<pre>&lt; </pre>
+						<a href="/">
+							<button type="button" class="btn btn-default">
+								<span class="glyphicon glyphicon-arrow-left"></span>
+							</button>
 						</a>
 					</span>
 		        </div>
@@ -27,7 +30,13 @@
 						<span class="btn-group">Events</span>
 					</span>
 		        </div>
-		        <div class="d3"></div>
+		        <div class="d3">
+		        	<a href="/view">
+		        		<button type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</a>
+				</div>
 		    </div>
 		</div>
 
@@ -45,7 +54,7 @@
 		</div> -->
 
 	<div class="container">
-		<div id="content">
+	<!-- 	<div id="content">
       		<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
           		<li class="active"><a href="#schedule" data-toggle="tab">my events</a></li>
           		<li><a href="#tentative" data-toggle="tab">tentative</a></li>
@@ -56,29 +65,25 @@
           		<div class="tab-pane active" id="schedule">
 					<div class="table">
 						{{#each toSchedule}}
-							<!-- <a href="/"> -->
-							<!-- <input href="/" data-toggle="modal" type="hidden"> -->
 						    <div class="tr">
 						        <div class="d12 clickable" id="host{{id}}">	
 									<span class="list">
 										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule!</span>
 									</span>
 						        </div>
-						        <div class="d3">
+						        <div class="d13">
 						        	<a href="/schedule/{{id}}">
 							        	<button id="{{id}}" class="btn btn-primary">Schedule!</button>
 							        </a>
 						        </div>
 						    </div>
-						   	<!-- </a> -->
-						   	<!-- </input> -->
 						    <hr>
 
 						    <div id="modal-dialog{{id}}" class="modal">
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
-							            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
+							        	<a href="/view" data-dismiss="modal" aria-hidden="true" class="close">×</a>
 							             <h3>Event Details</h3>
 							        </div>
 							        <div class="modal-body">
@@ -97,41 +102,35 @@
 							</div>
 						{{/each}}
 						{{#each awaitingConfirmation}}
-							<!-- <a href="/"> -->
 						    <div class="tr clickable" id="host{{id}}">
 						        <div class="d12">	
 									<span class="list">
 										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.</span>
 									</span>
 						        </div>
-						        <div class="d3">
+						        <div class="d13">
 						        	<button type="button" class="btn btn-primary" disabled>Schedule!</button>
 						        </div>
 						    </div>
-						    <!-- </a> -->
 						    <hr>
 
 						    <div id="modal-dialog{{id}}" class="modal">
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
-							            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
+							        	<a href="/view" data-dismiss="modal" aria-hidden="true" class="close">×</a>
 							             <h3>Event Details</h3>
 							        </div>
 							        <div class="modal-body">
 							             <p>{{eventName}} at {{eventLocation}} for {{eventDuration}} hours.</p>
 							        </div>
 							        <div class="modal-footer">
-							          <!-- <a href="/confirm/{{id}}"  id="btnConfirm" class="btn confirm">OK</a> 
-							          <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a> -->
 							        	<a href="/edit/{{id}}">
 									    	<button class="btn btn-primary">Edit</button>
 									    </a>
 									    <a href="/delete/{{id}}">
 									    	<button class="btn btn-primary">Delete</button>
 									    </a>
-							          	<!-- <input href="/edit/{{id}}" type="button" class="btn btn-primary" value="Edit"> -->
-                          				<!-- <input href="/delete/{{id}}" type="button" class="btn btn-primary" value="Delete"> -->
 							        </div>
 							      </div>
 							    </div>
@@ -148,12 +147,9 @@
 	                    			<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
 	                  				</span>
 	                    		</div>
-	                        	<div class="d3">
-	                          		<!-- <a href="confirm/{{id}}" > -->
+	                        	<div class="d13">
 	                          			<input href="#modal-dialog1{{id}}" data-toggle="modal" type="button" class="btn btn-success btn-mini" value="✓">
 	                          			<input href="#modal-dialog2{{id}}" data-toggle="modal" type="button" class="btn btn-danger btn-mini" value="✗">
-	                            		<!-- <button id="{{id}}" class="btn btn-primary">✓</button> -->
-	                          		<!-- </a> -->
 	                       		</div>
 	                		</div>
 	                		<hr>
@@ -163,7 +159,6 @@
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
-							            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
 							             <h3>Confirm Event?</h3>
 							        </div>
 							        <div class="modal-body">
@@ -181,7 +176,6 @@
 							    <div class="modal-dialog">
 							      <div class="modal-content">
 							        <div class="modal-header">
-							            <!-- <a href="confirm/{{id}}" data-dismiss="modal" aria-hidden="true" class="close">×</a> -->
 							             <h3>Reject Event?</h3>
 							        </div>
 							        <div class="modal-body">
@@ -215,23 +209,225 @@
 	              	<div class="table">
 	            		{{#each history}}
 	                		<div class="tr" style="text-align: center">
-	                    		<!-- <div class="d12">  -->
 	                  				<span class="list">
 	                    				<span class="btn-group">{{eventName}} at {{eventLocation}} for {{eventDuration}} hours.</span>
 	                  				</span>
-	                    		<!-- </div>
-	                        	<div class="d3">
-	                          		<a href="confirm/{{id}}">
-	                            		<button id="{{id}}" class="btn btn-primary"> Reuse!</button>
-	                          		</a>
-	                       		</div>
- -->	                	</div>
+		 	                	</div>
 	                		<hr>
 	            		{{/each}}
 	          		</div>
 	          	</div>
       		</div>
-  		</div>
+  		</div> -->
+
+  		<div class="panel-group" id="accordion">
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		    	<a data-toggle="collapse" href="#collapseOne">
+			      <h4 class="panel-title">
+			          Events I'm Hosting <span class="alert">{{#if toSchedule.length}}({{toSchedule.length}}){{/if}} </span>
+			      </h4>
+		      	</a>
+		    </div>
+		    <div id="collapseOne" class="panel-collapse collapse in">
+		      <div class="panel-body">
+		        <div class="table">
+						{{#each toSchedule}}
+						    <div class="tr">
+						        <div class="d12 clickable" id="host{{id}}">	
+									<span class="list">
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule! <span class="glyphicon glyphicon-pencil"></span></span>
+									</span>
+						        </div>
+						        <div class="d13">
+						        	<a href="/schedule/{{id}}">
+							        	<button id="{{id}}" class="btn btn-primary" style="width: 87px;">Schedule!</button>
+							        </a>
+						        </div>
+						    </div>
+						    {{#unless @last}}<hr>{{/unless}}
+						    <div id="modal-dialog{{id}}" class="modal">
+							    <div class="modal-dialog">
+							      <div class="modal-content">
+							        <div class="modal-header">
+							        	<a href="/view" data-dismiss="modal" aria-hidden="true" class="close">×</a>
+							             <h3>Event Details</h3>
+							        </div>
+							        <div class="modal-body">
+							             <p>{{eventName}} at {{eventLocation}} for {{eventDuration}} hours.</p>
+							        </div>
+							        <div class="modal-footer">
+							          <a href="/edit/{{id}}">
+									    	<button class="btn btn-primary">Edit</button>
+									    </a>
+									    <a href="/delete/{{id}}">
+									    	<button class="btn btn-primary">Delete</button>
+									    </a>
+							        </div>
+							      </div>
+							    </div>
+							</div>
+						{{/each}}
+						{{#if awaitingConfirmation.length}}
+							{{#if toSchedule.length}}
+								<hr>
+							{{/if}}
+						{{/if}}
+						{{#each awaitingConfirmation}}
+						    <div class="tr clickable" id="host{{id}}">
+						        <div class="d12">	
+									<span class="list">
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests. <span class="glyphicon glyphicon-pencil"></span></span>
+									</span>
+						        </div>
+						        <div class="d13">
+						        	<button type="button" class="btn btn-primary" style="width: 87px;" disabled>Schedule!</button>
+						        	
+						        </div>
+						    </div>
+						    {{#unless @last}}<hr>{{/unless}}
+						    <div id="modal-dialog{{id}}" class="modal">
+							    <div class="modal-dialog">
+							      <div class="modal-content">
+							        <div class="modal-header">
+							        	<a href="/view" data-dismiss="modal" aria-hidden="true" class="close">×</a>
+							            <h3>Event Details</h3>
+							        </div>
+							        <div class="modal-body">
+							             <p>{{eventName}} at {{eventLocation}} for {{eventDuration}} hours.</p>
+							        </div>
+							        <div class="modal-footer">
+							        	<a href="/edit/{{id}}">
+									    	<button class="btn btn-primary">Edit</button>
+									    </a>
+									    <a href="/delete/{{id}}">
+									    	<button class="btn btn-primary">Delete</button>
+									    </a>
+							        </div>
+							      </div>
+							    </div>
+							</div>
+						{{/each}}
+						{{#unless toSchedule.length}}
+							{{#unless awaitingConfirmation.length}}
+								<p>You have not created any events yet.</p>
+							{{/unless}}
+						{{/unless}}
+					</div>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		    	<a data-toggle="collapse" href="#collapseTwo">
+			      <h4 class="panel-title">
+			          My Invites <span class="alert"> {{#if invites.length}}({{invites.length}}){{/if}} </span>
+			      </h4>
+		      	</a>
+		    </div>
+		    <div id="collapseTwo" class="panel-collapse collapse in">
+		      <div class="panel-body">
+		        <div class="table">
+            		{{#each invites}}
+                		<div class="tr">
+                    		<div class="d12"> 
+                  				<span class="list">
+                    			<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+                  				</span>
+                    		</div>
+                        	<div class="d14">
+                          			<input href="#modal-dialog1{{id}}" data-toggle="modal" type="button" class="btn btn-success btn-mini" value="✓">
+                          			<input href="#modal-dialog2{{id}}" data-toggle="modal" type="button" class="btn btn-danger btn-mini" value="✗">
+                       		</div>
+                		</div>
+                		{{#unless @last}}<hr>{{/unless}}
+                		<div id="modal-dialog1{{id}}" class="modal">
+						    <div class="modal-dialog">
+						      <div class="modal-content">
+						        <div class="modal-header">
+						             <h3>Confirm Event?</h3>
+						        </div>
+						        <div class="modal-body">
+						             <p>You are about to confirm this event. This means that once all of the invites have been accepted, the organizer will be able to see the availabilities in everyone's calendars and select a time that works for everyone.</p>
+						        </div>
+						        <div class="modal-footer">
+						          <a href="/confirm/{{id}}"  id="btnConfirm" class="btn confirm">OK</a> 
+						          <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a>
+						        </div>
+						      </div>
+						    </div>
+						</div>
+						<div id="modal-dialog2{{id}}" class="modal">
+						    <div class="modal-dialog">
+						      <div class="modal-content">
+						        <div class="modal-header">
+						             <h3>Reject Event?</h3>
+						        </div>
+						        <div class="modal-body">
+						             <p>Are you sure you would like to reject the invitation to this event?</p>
+						        </div>
+						        <div class="modal-footer">
+						          <a href="/reject/{{id}}"  id="btnConfirm" class="btn confirm">Yes</a> 
+						          <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">Cancel</a>
+						        </div>
+						      </div>
+						    </div>
+						</div>
+            		{{/each}}
+            		{{#if pending.length}}
+            			{{#if invites.length}}
+							<hr>
+						{{/if}}
+            		{{/if}}
+            		{{#each pending}}
+                		<div class="tr">
+                    		<div class="d12"> 
+                  				<span class="list">
+                    				<span class="btn-group">{{organizer}} invited you to {{eventName}} at {{eventLocation}} for {{eventDuration}} hours!</span>
+                  				</span>
+                    		</div>
+                        	<div class="d13">
+                            	<button type="button" class="btn btn-success" disabled>✓</button>
+                       		</div>
+                		</div>
+                		{{#unless @last}}<hr>{{/unless}}
+            		{{/each}}
+            		{{#unless invites.length}}
+						{{#unless pending.length}}
+							<p>You have not been invited to any events.</p>
+						{{/unless}}
+					{{/unless}}
+          		</div>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		    	<a data-toggle="collapse" href="#collapseThree">
+			      <h4 class="panel-title">
+			          Past Events
+			      </h4>
+		      	</a>
+		    </div>
+		    <div id="collapseThree" class="panel-collapse collapse in">
+		      <div class="panel-body">
+		        <div class="table">
+            		{{#each history}}
+                		<div class="tr" style="text-align: center">
+              				<span class="list">
+                				<span class="btn-group">{{eventName}} at {{eventLocation}} for {{eventDuration}} hours.</span>
+              				</span>
+ 	                	</div>
+                		{{#unless @last}}<hr>{{/unless}}
+            		{{/each}}
+					{{#unless history.length}}
+						<p>You don't have any past events.</p>
+					{{/unless}}
+          		</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 
 		<script type="text/javascript">
     		// jQuery(document).ready(function ($) {

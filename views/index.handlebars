@@ -2,9 +2,10 @@
 
 <html>
 <head>
-	<title>HCI Project Portfolio</title>	
+	<title>ScheduleUs</title>	
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+	<!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
 	<link href="/css/introHCI.css" rel="stylesheet">
@@ -22,29 +23,37 @@
 	<div class="container">
 		<!-- h1 through h6 are headers. The higher the number, the smaller the header -->
 		<!-- p means paragraph -->
+		<!-- <div class="logo"> </div> -->
+
+		<img src="/images/scheduleusicon.png">
+		{{^logged_in}}
 		<div class="jumbotron">
-      		<h1>ScheduleUs</h1>
-      		{{^logged_in}}
+
       		<p>Login or Register with:</p>
       		<a href="{{calendar_auth_url}}" class="btn btn-danger">
 				<span class="fa fa-google-plus"></span> Google
 			</a>
-			{{/logged_in}}
      		<!-- <br><br> -->
     	</div>
+    	{{/logged_in}}
 
 	{{#if logged_in}}
-	<div class="buttons">
-		<a href="/create">
-	    	<button id="create" class="btn btn-primary btn-lg">Create Event</button>
-	    </a>
-		<a href="/view">
-	    	<button id="view" class="btn btn-primary btn-lg">View Events</button>
-	    </a>
-	    <a href="/settings">
-	    	<button id="settings" class="btn btn-primary btn-lg">Preferences</button>
-	    </a>
-	</div>
+		<div class="jumbotron">
+      		<div class="buttons">
+				<a href="/create">
+			    	<button id="create" class="btn btn-primary btn-lg">Create Event</button>
+			    </a>
+				<br>
+				<a href="/view">
+			    	<button id="view" class="btn btn-primary btn-lg">View Events</button>
+			    </a>
+				<br>
+			    <a href="/settings">
+			    	<button id="settings" class="btn btn-primary btn-lg">Preferences</button>
+			    </a>
+			    <br>
+			</div>
+    	</div>
 	{{/if}}
 	</div>
 

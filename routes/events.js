@@ -632,42 +632,40 @@ function addEvent(req, res) {
 	var eventBody = createGCalendarJSON(guests, req.session.current_user, 
 		eventName, eventLocation, eventDuration);
 	// console.log(eventBody.end);
-	var myClient = req.app.get('client');
-	//var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-	var oauth2Client = require("../app").oauth2[req.session.current_user];
-	//oauth2Client.credentials = users["users"][currUser].tokens;
-	
-	/* var request = myClient.oauth2.userinfo.get();
-	request.execute(function(err, results) {
-		console.log("errors");
-		console.log(err);
-		console.log(results);
-	});
-	var oauth2 = req.app.get('oauth');
-	oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
-		console.log("try #2");
-		console.log(err);
-		console.log(results);
-	}); */
-	// var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody);
-	myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody).
-		withAuthClient(oauth2Client).execute(function(err, results) {
-			//console.log("wef5", blah);
-      	    console.log("Create event ", err);
-            newEvent.gCalID = results.id;
-            users["events"].push(newEvent);
-            console.log("Results ", results);
-            //users["users"][currUser].eventsAwaitingConfirmation.push(id);
-			for (var guest in guests) {
-				var currUser;
-				for (var user in users["users"]) {
-					// console.log(users["users"][user]);
-					if (users["users"][user].email == guests[guest].trim()) {
-						currUser = user;
-						break;
-					}
-				}
-				users["users"][currUser].invites.push(id);
+	//var myClient = req.session.client;
+	// var myClient = req.app.get('client')
+	// var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+	// var oauth2Client = require("../app").oauth2[req.session.current_user];
+	// oauth2Client.credentials = users["users"][currUser].tokens;
+	// var request = myClient.oauth2.userinfo.get();
+	// request.execute(function(err, results) {
+	// 	console.log("errors");
+	// 	console.log(err);
+	// 	console.log(results);
+	// });
+	// var oauth2 = req.app.get('oauth');
+	// oauth2.userinfo.get().withAuthClient(oauth2Client).execute(function(err, results){
+	//	console.log("try #2");
+	//	console.log(err);
+	//	console.log(results);
+	// });
+	// var blah = myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': false}, eventBody);
+	// blah.withAuthClient(oauth2Client).execute(function(err, results) {
+		// console.log("wef5", blah);
+      	    // console.log("Create event ", err);
+            //newEvent.gcalID = results.id
+            //newEvent.gcalID = results.id;
+            
+        // });	
+	users["events"].push(newEvent);
+	users["users"][currUser].eventsAwaitingConfirmation.push(id);
+	for (var guest in guests) {
+		var currUser;
+		for (var user in users["users"]) {
+			// console.log(users["users"][user]);
+			if (users["users"][user].email == guests[guest].trim()) {
+				currUser = user;
+				break;
 			}
 			res.render('confirm');
         });	
@@ -859,7 +857,7 @@ function rejectEvent(req, res) {
 	}
 	users.events[currEvent].guests.splice(index, 1);
 	if (users.events[currEvent].guests.length == 1) {
-		console.log("IN HERE");
+		// console.log("IN HERE");
 		var organizer = users.events[currEvent].guests[0][0];
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
@@ -877,84 +875,6 @@ function rejectEvent(req, res) {
 	}
 	view(req, res);
 };
-
-// exports.scheduleEvent = function(req, res) {
-// 	var id = req.params.id;
-// 	var eventToSchedule;
-// 	for (var ev in users["events"]) {
-// 		if (users["events"][ev].id == id) { // ? 
-// 			eventToSchedule = users["events"][ev];
-// 			break;
-// 		}
-// 	}
-
-// 	var guests = eventToSchedule.guests
-	
-// 	var calendars = new Array();
-// 	var organizer = eventToSchedule.guests[0];
-
-
-// 	for (var user in users["users"]) {
-// 		console.log("hubbubbub: " + users["users"][user].email);
-// 		console.log("organizer: " + organizer);;
-// 		if (users["users"][user].email == organizer) {
-// 			organizer = users["users"][user];
-// 			calendars.push(organizer.calendar);
-// 		}
-// 		for (var i = 0; i < guests.length; i++) {
-// 			if (guests[i].email == users["users"][user].email) {
-// 				calendars.push(guests[i].calendar);
-// 			}
-// 		}
-// 	}
-
-// 	console.log("organizer: " + organizer);
-// 	console.log("organizer email: " + organizer.email);
-
-// 	var timePeriods = eventToSchedule.timePeriod;
-// 	// var start = organizer.dayStart;
-// 	// var end = organizer.dayEnd;
-
-// 	console.log("timePeriods: " + timePeriods);
-// 	console.log("start: " + start);
-// 	console.log("end: " + end);
-// 	console.log("current: " + new Date());
-
-// 	var masterSchedule = createWeekMasterSchedule(timePeriods, start, end, new Date());
-	
-// 	console.log("pre scheduler: " + masterSchedule);
-
-// 	masterSchedule = scheduler(masterSchedule, calendars, eventToSchedule.eventDuration);
-
-// 	console.log("post scheduler: " + masterSchedule);
-
-// 	// now just needs to select three time periods from the master schedule,
-// 	// make them the requested duration (only use the start period of the period)
-// 	// and then use the start, start+ duration, and date of each of these three.
-// 	var numEvents = 0;
-// 	var eventsToShow = new Array();
-
-// 	console.log(masterSchedule);
-
-// 	while (masterSchedule.length > 0 && numEvents < 3) {
-// 		var newEvent = masterSchedule.shift();
-// 		var periodStart = new Date(Date.parse(newEvent[0]));
-// 		var periodEnd = new Date(Date.parse(newEvent[1]));
-
-
-// 		var eventStart = "" + (periodStart.getHours() % 12) + ":" + periodStart.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
-// 		var newEndTime = new Date(periodStart + (eventToSchedule.eventDuration*60000*60));
-// 		var eventEnd = "" + (newEndTime.getHours() % 12) + ":" + newEndTime.getMinutes() + " " + ((newEndTime / 12 >= 1) ? "PM" : "AM");
-
-// 		if (periodStart.getHours() - periodEnd.getHours() > eventToSchedule.eventDuration * 2) {
-// 			masterSchedule.push([new Date(periodStart + (eventToSchedule.eventDuration*60000*60)), periodEnd]);
-// 		}
-		
-// 		var date = "" + (periodStart.getMonth()() + 1) + "/" + periodStart.getDate() + "/" + period.getFullYear();
-		
-// 		eventsToShow.add([eventStart, eventEnd, date]);
-// 	}
-// }
 
 Date.prototype.addHours = function(h) {   
 	this.setTime(this.getTime() + (h*60*60*1000)); 
@@ -1182,28 +1102,56 @@ function selectTime(req, res) {
 			}
 		}
 	}
+
+	var gcalStartTime = new Date(day + " " + startTime);
+	var gcalEndTime = new Date(day + " " + endTime);
+	var calendarID = users["users"][currUser].calendarID;
+	var eventBody = createGCalendarJSON(gcalStartTime, gcalEndTime, attendees, req.session.current_user, 
+		users.events[currEvent].eventName, users.events[currEvent].eventLocation, users.events[currEvent].eventDuration);
+	var myClient = req.app.get('client');
+	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+	oauth2Client.credentials = users["users"][currUser].tokens;
+
+	myClient.calendar.events.insert({'calendarId': calendarID, 'sendNotifications': true}, eventBody).
+		withAuthClient(oauth2Client).execute(function(err, results) {
+			if (err) { 
+				console.log("ERROR in inserting event ", err);
+			} else {
+	      	    console.log("Create event ", err);
+	            users.events[currEvent].gCalID = results.id;
+	        }
+	    });
+
 	res.render('confirm', { 'isScheduled': true });
 };
 
 function createGCalendarJSON(attendees, creator, summary, location, duration) {
 	var listAttendees = []
 	for (var attendee in attendees) {
-		listAttendees.push({
-			"email": attendees[attendee]
-		})
+		if (attendee > 0) {
+			listAttendees.push({
+				"email": attendees[attendee][0]
+			});
+		}
 	}
+<<<<<<< HEAD
 	var today = new Date();
     var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
     var description = "Duration: " + duration + " hours. " + "Go to http://scheduleus.herokuapp.com to RSVP!" 
+=======
+	// var today = new Date();
+    // var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+    // var description = "Duration: " + duration + " hours." + "Go to http://scheduleus.herokuapp.com to RSVP!" 
+>>>>>>> 396752d8f1c88b3acc466bea2df5cabf336808d6
 	return {
-		"end": { "date": nextweek.yyyymmdd() },
-		"start": { "date": today.yyyymmdd() },
+		"start": { "dateTime": start.toISOString() },
+		"end": { "dateTime": end.toISOString() },
 		"attendees": listAttendees,
 		"creator": creator,
 		"summary": summary,
 		"location": location,
-		"description": description,
-		"status": "tentative",
+		// "description": description,
+		// "status": "tentative",
 		"guestsCanInviteOthers": false
 	}
 };
