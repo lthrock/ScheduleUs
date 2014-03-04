@@ -496,19 +496,9 @@ function deleteEvent(req, res) {
 			currEvent = i;
 		}
 	}
-
-	var calendarID = users["users"][currUser].calendarID;
-	var gCalID = users["events"][currEvent].gCalID;
-	var myClient = req.app.get('client');
-	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-	oauth2Client.credentials = users["users"][currUser].tokens;
-
 	var guests = users["events"][currEvent].guests;
 	for (var i in guests) {
 		if (i == 0) {
-			var blah = myClient.calendar.events.delete({'calendarId': calendarID, 'eventId': gCalID, 'sendNotifications': true});
-			blah.withAuthClient(oauth2Client).execute(function(err, results) {
-			});
 			var inside = false;
 			var index;
 			for (var ev in users["users"][currUser].eventsToSchedule) {
@@ -625,12 +615,12 @@ function addEvent(req, res) {
 		"guests": guestsArray,
 		"time": ""
 	}
-	var calendarID = users["users"][currUser].calendarID;
-	// var calendarID = currUser.calendarID;//req.session.calendar_id;
+	// var calendarID = users["users"][currUser].calendarID;
+	//var calendarID = currUser.calendarID;//req.session.calendar_id;
 	// console.log("1 ", req.session.calendar_id, " 2 ", currUser.calendarID);
-	// var calendarID = currUser.calendarID;
-	var eventBody = createGCalendarJSON(guests, req.session.current_user, 
-		eventName, eventLocation, eventDuration);
+	//var calendarID = currUser.calendarID;
+	// var eventBody = createGCalendarJSON("2015-01-01", "2015-01-02", guests, req.session.current_user, 
+	// 	eventName, eventLocation, eventDuration);
 	// console.log(eventBody.end);
 	//var myClient = req.session.client;
 	// var myClient = req.app.get('client')
@@ -667,9 +657,9 @@ function addEvent(req, res) {
 				currUser = user;
 				break;
 			}
-			res.render('confirm');
-        });	
-
+		}
+		users["users"][currUser].invites.push(id);
+	}
 
 	// console.log(users);
 	// res.render('confirm', {'isOrganizer': true, 'calendarID': calendarID, 
@@ -684,6 +674,9 @@ function addEvent(req, res) {
 
 // exports.viewEvents = function(req, res){
 function view(req, res, original) {
+	if (req.session.prevTime == null) {
+		req.session.prevTime = new Date();
+	}
 	var currUser;
 	for (var user in users["users"]) {
 		if (users["users"][user].email == req.session.current_user) {
@@ -748,9 +741,11 @@ function view(req, res, original) {
 	// console.log(pending);
 	console.log(req.session.drawers);
 	if (req.session.drawers) {
-		res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 'pending': pending, 'history': history });	
+		res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
+			'pending': pending, 'history': history, 'prevTime': req.session.prevTime });	
 	} else {
-		res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 'pending': pending, 'history': history });
+		res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
+			'pending': pending, 'history': history, 'prevTime': req.session.prevTime});
 	}
 };
 
@@ -804,19 +799,6 @@ function confirmEvent(req, res) {
 		var organizer = users.events[currEvent].guests[0][0];
 		for (var user in users["users"]) {
 			if (users["users"][user].email == organizer) {
-				var calendarID = users["users"][user].calendarID;
-				var gCalID = users["events"][currEvent].gCalID;
-				var myClient = req.app.get('client');
-				var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-				oauth2Client.credentials = users["users"][user].tokens;
-
-	var guests = users["events"][currEvent].guests;
-	for (var i in guests) {
-		if (i == 0) {
-			var blah = myClient.calendar.events.delete({'calendarId': calendarID, 'eventId': gCalID, 'sendNotifications': true});
-			blah.withAuthClient(oauth2Client).execute(function(err, results) {
-			});
-
 				// console.log(users["users"][user]);
 				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
 				var pos;
@@ -1086,15 +1068,6 @@ function selectTime(req, res) {
 		}
 	}
 	var attendees = users.events[currEvent].guests;
-	var gCalID = user.events[currEvent].gCalID;
-	var calendarID = users["users"][currUser].calendarID;
-	var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-	oauth2Client.credentials = user["users"][currUser].tokens;
-	var myClient = req.app.get('client');
-	myClient.calendar.events.get({'calendarId': calendarID, 'eventId': gCalID}).withAuthClient(oauth2Client).execute(function(err, results) {
-		
-	});
-			
 	for (var i in attendees){
 		if (i != 0) {
 			for (var user in users["users"]) {
@@ -1134,7 +1107,7 @@ function selectTime(req, res) {
 	res.render('confirm', { 'isScheduled': true });
 };
 
-function createGCalendarJSON(attendees, creator, summary, location, duration) {
+function createGCalendarJSON(start, end, attendees, creator, summary, location, duration) {
 	var listAttendees = []
 	for (var attendee in attendees) {
 		if (attendee > 0) {
@@ -1143,15 +1116,9 @@ function createGCalendarJSON(attendees, creator, summary, location, duration) {
 			});
 		}
 	}
-<<<<<<< HEAD
-	var today = new Date();
-    var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-    var description = "Duration: " + duration + " hours. " + "Go to http://scheduleus.herokuapp.com to RSVP!" 
-=======
 	// var today = new Date();
     // var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
     // var description = "Duration: " + duration + " hours." + "Go to http://scheduleus.herokuapp.com to RSVP!" 
->>>>>>> 396752d8f1c88b3acc466bea2df5cabf336808d6
 	return {
 		"start": { "dateTime": start.toISOString() },
 		"end": { "dateTime": end.toISOString() },

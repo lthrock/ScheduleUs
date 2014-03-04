@@ -25,5 +25,14 @@ function initializePage() {
 }
 
 function actionClicked(e) {
-	ga("send", "event", "response", "cilck");
+	var prevTime = e.target.getAttribute("data-prevtime");
+	var timeSpent = new Date() - new Date(prevTime);
+	
+	var label = 'schedule';
+	if (e.target.className.indexOf('accept') != -1) {
+		label = 'accept';
+	} else if (e.target.className.indexOf('reject') != -1) {
+		label = 'reject';
+	}
+	ga("send", "event", "button", "click", label, timeSpent);
 }
