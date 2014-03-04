@@ -30,7 +30,13 @@
 						<span class="btn-group">Events</span>
 					</span>
 		        </div>
-		        <div class="d3"></div>
+		        <div class="d3">
+		        	<a href="/view">
+		        		<button type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</a>
+				</div>
 		    </div>
 		</div>
 
@@ -64,7 +70,7 @@
 						    <div class="tr">
 						        <div class="d12 clickable" id="host{{id}}">	
 									<span class="list">
-										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule!</span>
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is ready to schedule! <span class="glyphicon glyphicon-pencil"></span></span>
 									</span>
 						        </div>
 						        <div class="d14">
@@ -104,7 +110,7 @@
 						    <div class="tr clickable" id="host{{id}}">
 						        <div class="d12">	
 									<span class="list">
-										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests.</span>
+										<span class="btn-group">Your event {{eventName}} at {{eventLocation}} is awaiting confirmation from all guests. <span class="glyphicon glyphicon-pencil"></span></span>
 									</span>
 						        </div>
 						        <div class="d3">
