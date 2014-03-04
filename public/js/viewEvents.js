@@ -38,5 +38,5 @@ function actionClicked(e) {
 		label = 'reject';
 	}
 	ga("send", "event", "button", "click", label, timeSpent);
-	ga("send", "event", "button", "click", label, recentTimeSpent);
+	ga("send", "event", "button", "Time Since Page Reload", label, recentTimeSpent);
 }
