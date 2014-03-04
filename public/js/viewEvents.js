@@ -27,7 +27,7 @@ function initializePage() {
 function actionClicked(e) {
 	var prevTime = e.target.getAttribute("data-prevtime");
 	var timeSpent = new Date() - new Date(prevTime);
-	
+	console.log(timeSpent);
 	var label = 'schedule';
 	if (e.target.className.indexOf('accept') != -1) {
 		label = 'accept';
