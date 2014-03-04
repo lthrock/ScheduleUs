@@ -18,4 +18,12 @@ function initializePage() {
 		//     $modal.modal('show');
 		// });
 	});
+
+	$("button.schedule").click(actionClicked);
+	$("input.accept").click(actionClicked);
+	$("input.reject").click(actionClicked);
+}
+
+function actionClicked(e) {
+	ga("send", "event", "response", "cilck");
 }
