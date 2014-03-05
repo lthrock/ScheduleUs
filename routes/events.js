@@ -742,8 +742,9 @@ function view(req, res, original) {
 	// console.log(pending);
 	console.log(req.session.drawers);
 	if (req.session.drawers) {
+		console.log(req.query.scheduled);
 		res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
-			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime});	
+			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime, 'scheduled': req.query.scheduled});	
 	} else {
 		res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
 			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime});
@@ -788,28 +789,30 @@ function confirmEvent(req, res) {
 			users.events[currEvent].guests[i][1] = true;
 	}
 	// console.log(users.events[currEvent].guests);
-	var readyToSchedule = true;
-	for (var i in attendees){
-		// console.log(attendees[i][1]);
-		if (!attendees[i][1]) {
-			readyToSchedule = false;
-			break;
-		}
-	}
-	if (readyToSchedule) {
-		var organizer = users.events[currEvent].guests[0][0];
-		for (var user in users["users"]) {
-			if (users["users"][user].email == organizer) {
-				// console.log(users["users"][user]);
-				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
-				var pos;
-				for (var ev in users["users"][user].eventsAwaitingConfirmation) {
-					if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
-						pos = ev;
-				}
-				users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
-				users["users"][user].eventsToSchedule.push(id);
+	if (attendees.length > 1) {
+		var readyToSchedule = true;
+		for (var i in attendees){
+			// console.log(attendees[i][1]);
+			if (!attendees[i][1]) {
+				readyToSchedule = false;
 				break;
+			}
+		}
+		if (readyToSchedule) {
+			var organizer = users.events[currEvent].guests[0][0];
+			for (var user in users["users"]) {
+				if (users["users"][user].email == organizer) {
+					// console.log(users["users"][user]);
+					// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+					var pos;
+					for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+						if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+							pos = ev;
+					}
+					users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
+					users["users"][user].eventsToSchedule.push(id);
+					break;
+				}
 			}
 		}
 	}
@@ -839,7 +842,7 @@ function rejectEvent(req, res) {
 			index = ev;
 	}
 	users["users"][currUser].invites.splice(index, 1);
-	users["users"][currUser].historicEvents.push(id);
+	// users["users"][currUser].historicEvents.push(id);
 	var attendees = users.events[currEvent].guests;
 	for (var i in attendees){
 		if (i != 0) {
@@ -848,20 +851,48 @@ function rejectEvent(req, res) {
 		}
 	}
 	users.events[currEvent].guests.splice(index, 1);
-	if (users.events[currEvent].guests.length == 1) {
-		// console.log("IN HERE");
-		var organizer = users.events[currEvent].guests[0][0];
-		for (var user in users["users"]) {
-			if (users["users"][user].email == organizer) {
-				// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
-				var pos;
-				for (var ev in users["users"][user].eventsAwaitingConfirmation) {
-					if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
-						pos = ev;
-				}
-				users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
-				users["users"][user].historicEvents.push(id);
+	// if (users.events[currEvent].guests.length == 1) {
+	// 	// console.log("IN HERE");
+	// 	var organizer = users.events[currEvent].guests[0][0];
+	// 	for (var user in users["users"]) {
+	// 		if (users["users"][user].email == organizer) {
+	// 			// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+	// 			var pos;
+	// 			for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+	// 				if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+	// 					pos = ev;
+	// 			}
+	// 			users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
+	// 			users["users"][user].historicEvents.push(id);
+	// 			break;
+	// 		}
+	// 	}
+	// }
+	var attendees = users.events[currEvent].guests;
+	if (attendees.length > 1) {
+		var readyToSchedule = true;
+		for (var i in attendees){
+			// console.log(attendees[i][1]);
+			if (!attendees[i][1]) {
+				readyToSchedule = false;
 				break;
+			}
+		}
+		if (readyToSchedule) {
+			var organizer = users.events[currEvent].guests[0][0];
+			for (var user in users["users"]) {
+				if (users["users"][user].email == organizer) {
+					// console.log(users["users"][user]);
+					// var pos = users["users"][user].eventsAwaitingConfirmation.indexOf(id);
+					var pos;
+					for (var ev in users["users"][user].eventsAwaitingConfirmation) {
+						if (users["users"][user].eventsAwaitingConfirmation[ev] == id)
+							pos = ev;
+					}
+					users["users"][user].eventsAwaitingConfirmation.splice(pos, 1);
+					users["users"][user].eventsToSchedule.push(id);
+					break;
+				}
 			}
 		}
 	}
