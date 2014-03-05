@@ -37,6 +37,6 @@ function actionClicked(e) {
 	} else if (e.target.className.indexOf('reject') != -1) {
 		label = 'reject';
 	}
-	ga("send", "event", "button", "click", label, timeSpent);
-	ga("send", "event", "button", "Time Since Page Reload", label, recentTimeSpent);
+	ga("send", "event", "response", "click", label, timeSpent);
+	// ga("send", "event", "response", "Time Since Page Reload", label, recentTimeSpent);
 }
