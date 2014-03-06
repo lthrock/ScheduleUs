@@ -19,30 +19,25 @@
     <![endif]-->        
 </head>
 
-<body>
-	<div class="container">
+<body style="padding-top: 55px; padding-bottom: 70px;">
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="table">
+			<div class="navbar-brand">Schedule!</div>
 		    <div class="tr">
 		        <div class="d1">
 		        	<span class="btn-group">
-						<a href="/view">
-							<button type="button" class="btn btn-default">
+						<a href="/">
+							<button class="btn btn-default">
 								<span class="glyphicon glyphicon-arrow-left"></span>
 							</button>
 						</a>
 					</span>
 		        </div>
-		        <div class="d2">	
-					<span class="header">
-						<span class="btn-group">Schedule!</span>
-					</span>
-		        </div>
-		        <div class="d3"></div>
 		    </div>
 		</div>
+	</nav>
 
-		<hr>
-
+	<div class="container">
 		<div class="table">
 			<!-- <form> -->
 			{{#each events}}
@@ -55,9 +50,21 @@
 				<br>
 			{{/each}}
 		</div>
-
-
 	</div>
+
+	<div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+	    <div class="container pull-right" style="width: 50%; text-align: center">  
+	    	<ul class="nav navbar-nav">
+			  <li><a href="/create"><span class="glyphicon glyphicon-plus"></span> Create Event</a></li>  
+			</ul>
+	    </div>
+	    <div class="container pull-left" style="width: 50%; text-align: center">  
+	    	<ul class="nav navbar-nav">
+			  <li><a href="/view"><span class="glyphicon glyphicon-home"></span> View Events</a></li>  
+			</ul>
+	    </div>
+	</div>
+
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	<script>

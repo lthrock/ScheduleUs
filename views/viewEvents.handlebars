@@ -2,70 +2,42 @@
 
 <html>
 <head>
-	<!-- Google Analytics Content Experiment code -->
-	<script>function utmx_section(){}function utmx(){}(function(){var
-		k='82936492-1',d=document,l=d.location,c=d.cookie;
-		if(l.search.indexOf('utm_expid='+k)>0)return;
-		function f(n){if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.
-		indexOf(';',i);return escape(c.substring(i+n.length+1,j<0?c.
-		length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;d.write(
-		'<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':
-		'://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+
-		'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().
-		valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
-		'" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
-	</script><script>utmx('url','A/B');</script>
-	<!-- End of Google Analytics Content Experiment code -->
-	<title>ScheduleUs - View Events</title>	
+	<title>ScheduleUs</title>	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
-	<meta name="apple-mobile-web-app-capable" content="yes">
+	<!-- <link rel="apple-touch-startup-image" href="/apple-touch-startup-image.png">  -->
+	<!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
-	<link href="/css/introHCI.css" rel="stylesheet">     
+	<link href="/css/introHCI.css" rel="stylesheet">
 </head>
 
-<body>
-	<!-- h1 through h6 are headers. The higher the number, the smaller the header -->
-	<!-- p means paragraph -->
-	<div class="table">
-	    <div class="tr">
-	        <div class="d1">
-	        	<span class="btn-group">
-					<a href="/">
-						<button type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-arrow-left"></span>
-						</button>
-					</a>
-				</span>
-	        </div>
-	        <div class="d2">	
-				<span class="header">
-					<span class="btn-group">Events</span>
-				</span>
-	        </div>
-	        <div class="d3">
-	        	<a href="/view">
-	        		<button type="button" class="btn btn-default">
-						<span class="glyphicon glyphicon-refresh"></span>
-					</button>
-				</a>
-			</div>
-	    </div>
-	</div>
-
-		<!-- <a href="/edit">
-		    <button id="edit" class="btn btn-primary btn-lg">Edit Event</button>
-	    </a> -->
-
-	    <!-- <div class="buttons">
-			<a href="/readyToSchedule">
-		    	<button id="create" class="btn btn-primary btn-lg">Confirmed Events</button>
-		    </a>
-			<a href="/invitations">
-		    	<button id="view" class="btn btn-primary btn-lg">My Invites</button>
-		    </a>
-		</div> -->
+<body style="padding-top: 55px; padding-bottom: 70px;">
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="table">
+			<div class="navbar-brand">Events</div>
+		    <div class="tr">
+		        <div class="d1">
+		        	<span class="btn-group">
+						<a href="/settings">
+							<button class="btn btn-default">
+								<span class="glyphicon glyphicon-cog"></span>
+							</button>
+						</a>
+					</span>
+		        </div>
+		        <div class="d3">
+		        	<span class="btn-group">
+			        	<a href="/view">
+			        		<button class="btn btn-default">
+								<span class="glyphicon glyphicon-repeat"></span>
+							</button>
+						</a>
+					</span>
+				</div>
+		    </div>
+		</div>
+	</nav>
 
 	<div class="container">
   		<div class="panel-group" id="accordion">
@@ -301,6 +273,19 @@
 		  </div>
 		</div>
 
+	</div>
+
+	<div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+	    <div class="container pull-right" style="width: 50%; text-align: center">  
+	    	<ul class="nav navbar-nav">
+			  <li><a href="/create"><span class="glyphicon glyphicon-plus"></span> Create Event</a></li>  
+			</ul>
+	    </div>
+	    <div class="container pull-left" style="width: 50%; text-align: center">  
+	    	<ul class="nav navbar-nav">
+			  <li class="active"><a href="/view"><span class="glyphicon glyphicon-home"></span> View Events</a></li>  
+			</ul>
+	    </div>
 	</div>
 
 	<script src="https://code.jquery.com/jquery.js"></script>

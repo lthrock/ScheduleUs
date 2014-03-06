@@ -740,15 +740,15 @@ function view(req, res, original) {
 	}
 	// console.log(invites);
 	// console.log(pending);
-	console.log(req.session.drawers);
-	if (req.session.drawers) {
-		console.log(req.query.scheduled);
-		res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
-			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime, 'scheduled': req.query.scheduled});	
-	} else {
-		res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
-			'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime});
-	}
+	// console.log(req.session.drawers);
+	// if (req.session.drawers) {
+	// 	console.log(req.query.scheduled);
+	res.render('viewEvents', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
+		'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime, 'scheduled': req.query.scheduled});	
+	// } else {
+	// 	res.render('viewEvents2', { 'invites': invites, 'toSchedule': toSchedule, 'awaitingConfirmation': awaitingConfirmation, 
+	// 		'pending': pending, 'history': history, 'prevTime': req.session.prevTime, 'recentPrevTime': req.session.recentPrevTime});
+	// }
 };
 
 // exports.confirmEvent = function(req, res){

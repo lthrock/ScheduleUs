@@ -69,7 +69,11 @@ app.get('/', function(req, res) {
 		"calendar_auth_url": calendar_auth_url,
 		"logged_in": logged_in
 	}
-	res.render('index', data);
+  if (!logged_in) {
+  	res.render('index', data);
+  } else {
+    events.viewEvents(req, res);
+  }
 });
 
 // app.get('/view', events.viewEvents);
@@ -82,24 +86,24 @@ app.get('/view', function(req, res) {
     res.render('index', data);
   } else {
   // res.render('viewEvents');
-    req.session.drawers = true;
+    // req.session.drawers = true;
     events.viewEvents(req, res);
   }
 });
 
-app.get('/view/tabs', function(req, res) {
-  if (req.session.tokens == null) {
-    data = {
-      "calendar_auth_url": calendar_auth_url,
-      "logged_in": false
-    }
-    res.render('index', data);
-  } else {
-  // res.render('viewEvents');
-    req.session.drawers = false;
-    events.viewEvents(req, res);
-  }
-});
+// app.get('/view/tabs', function(req, res) {
+//   if (req.session.tokens == null) {
+//     data = {
+//       "calendar_auth_url": calendar_auth_url,
+//       "logged_in": false
+//     }
+//     res.render('index', data);
+//   } else {
+//   // res.render('viewEvents');
+//     req.session.drawers = false;
+//     events.viewEvents(req, res);
+//   }
+// });
 
 app.get('/create', function(req, res) {
   if (req.session.tokens == null) {
@@ -240,7 +244,11 @@ app.get('/oauth2callback', function(req, res) {
               console.log("Results are ", results);
               res.render('index', data);
             }); */
-            res.render('index', data);
+            if (!logged_in) {
+              res.render('index', data);
+            } else {
+              events.viewEvents(req, res);
+            }
             // console.log("currUser is " + currUser);
           });
       } else {
@@ -258,10 +266,12 @@ app.get('/oauth2callback', function(req, res) {
             console.log("The new calendar is ", results.id);
             // req.session.calendar_id = results.id;
                 
-            res.render('index', data);
+            // res.render('index', data);
+            events.viewEvents(req, res);
           });
         } else {
-          res.render('index', data);
+          // res.render('index', data);
+          events.viewEvents(req, res);
         }
         // console.log("currUser is " + currUser);
       }
